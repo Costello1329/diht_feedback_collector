@@ -5,6 +5,7 @@ from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager
 from flask_login import UserMixin
+import uuid
 
 app = Flask(__name__)
 login = LoginManager(app)
@@ -17,13 +18,14 @@ migrate = Migrate(app, db)
 class Users(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     guid = db.Column(db.Integer, db.ForeignKey('guid.guid'))
-    role = db.Column(db.String(20), default="student", unique=True, nullable=True)
+    role = db.Column(db.String(20), default="student", unique=False, nullable=True)
     login = db.Column(db.String(30), unique=True, nullable=True)
-    password = db.Column(db.String(16), unique=True, nullable=True)
-    first_name = db.Column(db.String(30), unique=True, nullable=True)
-    second_name = db.Column(db.String(30), unique=True, nullable=True)
-    middle_name = db.Column(db.String(30), unique=True, nullable=True)
+    password = db.Column(db.String(16), unique=False, nullable=True)
+    first_name = db.Column(db.String(30), unique=False, nullable=True)
+    second_name = db.Column(db.String(30), unique=False, nullable=True)
+    middle_name = db.Column(db.String(30), unique=False, nullable=True)
     email = db.Column(db.String(30), unique=True, nullable=True)
+    token = db.Column(db.Integer, unique=True, nullable=True)
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
@@ -60,13 +62,13 @@ def reg():
     try:
         guid = Guid.query.filter_by(guid=user_data['guid']).first()
         if guid is None:
-            return "Отстутствует токен регистрации"
+            return abort(400)
         if not guid.active:
-            return "Неактивный токен регистрации"
+            return abort(400)
     except:
         return abort(400)
     try:
-        User = Users(login=user_data['login'],first_name=user_data['first_name'],second_name=user_data['second_name'],middle_name=user_data['middle_name'],email = user_data['email'])
+        User = Users(login=user_data['login'],email = user_data['email'],token=uuid.uuid4().hex)
         User.set_password(user_data['password'])
     except:
         return abort(400)
@@ -77,16 +79,16 @@ def reg():
         return abort(500)
     return abort(200)
 
-@app.route('/login', methods=['POST'], )
+@app.route('/login', methods=['POST'])
 def login():
     user_data = request.get_json()
+    print(user_data)
     if user_data is None:
         return abort(400)
-
-@login.user_loader
-def load_user(user_id):
-    return Users.get(user_id)
-
+    user = Users.query.filter_by(login = user_data['login'], password = generate_password_hash(user_data['password'])).first()
+    if user is not None:
+        return user.token
+    return abort(401)
 @app.route('/')
 def hello_world1():
     return "2"
