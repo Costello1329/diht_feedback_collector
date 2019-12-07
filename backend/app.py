@@ -68,7 +68,7 @@ def reg():
     except:
         return abort(400)
     try:
-        User = Users(login=user_data['login'],email = user_data['email'],token=uuid.uuid4().hex)
+        User = Users(login=user_data['login'], email=user_data['email'], token=uuid.uuid4().hex)
         User.set_password(user_data['password'])
     except:
         return abort(400)
@@ -79,20 +79,23 @@ def reg():
         return abort(500)
     return abort(200)
 
+
 @app.route('/login', methods=['POST'])
 def login():
     user_data = request.get_json()
     print(user_data)
     if user_data is None:
         return abort(400)
-    user = Users.query.filter_by(login = user_data['login'], password = generate_password_hash(user_data['password'])).first()
+    user = Users.query.filter_by(login=user_data['login'],
+                                 password=generate_password_hash(user_data['password'])).first()
     if user is not None:
         return user.token
     return abort(401)
+
+
 @app.route('/')
 def hello_world1():
     return "2"
-
 
 
 if __name__ == '__main__':
