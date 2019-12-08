@@ -1,15 +1,15 @@
 import React, {Component} from 'react';
-import {localization} from '../services/localizationService';
-import {validationService} from '../services/validationService';
+import {localization} from '../services/LocalizationService';
+import {validationService} from '../services/ValidationService';
+import {registrationService, RegistrationData} from '../services/RegistrationService';
 import '../styles/ui.css';
-import { JSXElement, StringLiteral } from '@babel/types';
 
 
-export interface RegisterFormProps {
-  
+export interface RegistrationFormProps {
+
 }
 
-export interface RegisterFormState {
+export interface RegistrationFormState {
   expanded: boolean;
   token: string;
   login: string;
@@ -17,10 +17,10 @@ export interface RegisterFormState {
   confirmation: string;
 }
 
-export class RegisterForm extends Component<RegisterFormProps, RegisterFormState> {
-  state: RegisterFormState;
+export class RegistrationForm extends Component<RegistrationFormProps, RegistrationFormState> {
+  state: RegistrationFormState;
 
-  constructor (props: RegisterFormProps) {
+  constructor (props: RegistrationFormProps) {
     super(props);
 
     this.state = {
@@ -30,8 +30,6 @@ export class RegisterForm extends Component<RegisterFormProps, RegisterFormState
       password: "",
       confirmation: ""
     };
-
-    this.handleTokenChange.bind(this);
   }
 
   // Change handlers:
@@ -73,7 +71,7 @@ export class RegisterForm extends Component<RegisterFormProps, RegisterFormState
     event.preventDefault();
   }
 
-  handleRegisterSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  handleRegistrationSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     const isAllValid: boolean =
       validationService.validateToken(this.state.token) &&
       validationService.validateLogin(this.state.login) &&
@@ -81,8 +79,16 @@ export class RegisterForm extends Component<RegisterFormProps, RegisterFormState
       validationService.validateConfirmation(
         this.state.password, this.state.confirmation);
 
-    if (isAllValid)
-        alert("Hello world!");
+    if (isAllValid) {
+      const data: RegistrationData = {
+        token: this.state.token,
+        login: this.state.login,
+        password: this.state.password,
+        confirmation: this.state.confirmation
+      };
+
+      registrationService.sendRegistrationData(data);
+    }
 
     event.preventDefault();
   }
@@ -105,8 +111,8 @@ export class RegisterForm extends Component<RegisterFormProps, RegisterFormState
         </button>
       </form>;
 
-    const registerForm : JSX.Element =
-      <form onSubmit = {this.handleRegisterSubmit} className = {"authFormContainer"}>
+    const registrationForm : JSX.Element =
+      <form onSubmit = {this.handleRegistrationSubmit} className = {"authFormContainer"}>
         <label>
           <input
             type = "text"
@@ -132,14 +138,14 @@ export class RegisterForm extends Component<RegisterFormProps, RegisterFormState
             required />
         </label>
         <button>
-          {localization.registerButton()}
+          {localization.registrationButton()}
         </button>
       </form>;
 
     return (
-      <div className = {"registerFormComponent"}>
+      <div className = {"registrationFormComponent"}>
         <h1>{localization.registrationHeader()}</h1>
-        {this.state.expanded ? registerForm : activateTokenForm}
+        {this.state.expanded ? registrationForm : activateTokenForm}
       </div>
     );
   }

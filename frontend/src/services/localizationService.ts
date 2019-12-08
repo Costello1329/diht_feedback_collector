@@ -5,7 +5,7 @@ class LocalizationService {
     loginPlaceholder = () => "Costello1329";
     passwordPlaceholder = () => "password";
     confirmationPlaceholder = () => "password";
-    registerButton = () => "Зарегистрироваться";
+    registrationButton = () => "Зарегистрироваться";
     continueButton = () => "Продолжить";
 }
 
