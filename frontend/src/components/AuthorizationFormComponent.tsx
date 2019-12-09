@@ -4,6 +4,7 @@ import {
   AuthorizationData
 } from "../services/AuthorizationService";
 import {localization} from "../services/LocalizationService";
+import "../styles/ui.less";
 
 
 export interface AuthorizationFormProps {
