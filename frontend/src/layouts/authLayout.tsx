@@ -1,14 +1,11 @@
 import React, {Component} from "react";
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter as Router} from 'react-router-dom';
+import {RegistrationForm} from "../components/RegistrationFormComponent";
+import {AuthorizationForm} from "../components/AuthorizationFormComponent";
 
 
-class authLayout extends Component {
+export class AuthLayout extends Component {
   render () {
-    <HashRouter
-      basename={optionalString}
-      getUserConfirmation={optionalFunc}
-      hashType={optionalString}
-    >
-    <RegistrationForm />
+    return <RegistrationForm />
   }
 }

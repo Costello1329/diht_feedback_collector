@@ -1,11 +1,10 @@
 import React from "react";
-import {RegistrationForm} from "./components/RegistrationFormComponent";
-import {AuthorizationForm} from "./components/AuthorizationFormComponent";
+import {AuthLayout} from "./layouts/authLayout";
 
 const App: React.FC = () => {
   return (
     <div className = "App">
-      <RegistrationForm />
+      <AuthLayout />
     </div>
   );
 }
