@@ -1,34 +1,50 @@
 import axios from "axios";
 
 
-export let commonRoutes = {
+export const commonRoutes = {
   authorization: "/authorize",
   registration: "/register"
 };
 
 class HTTPService {
-  serverHostPort: string;
+  private readonly serverHostPort: string;
+  private readonly defaultHeaders = {
+    "Access-Control-Allow-Origin": this.serverHostPort
+  };
 
   constructor (serverHostPort: string) {
     this.serverHostPort = serverHostPort;
   }
 
-  async sendGet (resource: string, headers: Object) {
+  async sendGet (
+    resource: string,
+    headers: Object,
+    addDefaultHeaders: boolean = false) {
+
     await axios({
       method: 'get',
       url: this.serverHostPort + resource,
-      headers: headers
+      headers:
+        addDefaultHeaders ? {...this.defaultHeaders, ...headers}
+        : headers
     });
   }
 
-  async sendPost (resource: string, headers: Object, body: Object) {
+  async sendPost (
+    resource: string,
+    headers: Object,
+    body: Object,
+    addDefaultHeaders: boolean = false) {
+
     await axios({
       method: 'post',
       url: this.serverHostPort + resource,
-      headers: headers,
+      headers:
+        addDefaultHeaders ? {...this.defaultHeaders, ...headers}
+        : headers,
       data: body
     });
   }
 }
 
-export const httpService = new HTTPService("http://localhost:3000");
+export const httpService = new HTTPService("http://localhost:5000");

@@ -37,25 +37,25 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
 
   // Change handlers:
 
-  handleTokenChange = (event: React.FormEvent<HTMLInputElement>) => {
+  private readonly handleTokenChange = (event: React.FormEvent<HTMLInputElement>) => {
     this.setState({
       token: event.currentTarget.value
     });
   }
   
-  handleLoginChange = (event: React.FormEvent<HTMLInputElement>) => {
+  private readonly handleLoginChange = (event: React.FormEvent<HTMLInputElement>) => {
     this.setState({
       login: event.currentTarget.value
     });
   }
   
-  handlePasswordChange = (event: React.FormEvent<HTMLInputElement>) => {
+  private readonly handlePasswordChange = (event: React.FormEvent<HTMLInputElement>) => {
     this.setState({
       password: event.currentTarget.value
     });
   }
   
-  handleConfirmationChange = (event: React.FormEvent<HTMLInputElement>) => {
+  private readonly handleConfirmationChange = (event: React.FormEvent<HTMLInputElement>) => {
     this.setState({
       confirmation: event.currentTarget.value
     });
@@ -63,13 +63,13 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
 
   // Submit handlers:
 
-  handleGoBackClick = () => {
+  private readonly handleGoBackClick = () => {
     this.setState({
       expanded: false
     });
   }
 
-  handleTokenSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  private readonly handleTokenSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     const isTokenValid: boolean =
       validationService.validateToken(this.state.token);
 
@@ -80,7 +80,7 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
     event.preventDefault();
   }
 
-  handleRegistrationSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  private readonly handleRegistrationSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     const isAllValid: boolean =
       validationService.validateToken(this.state.token) &&
       validationService.validateLogin(this.state.login) &&
@@ -126,9 +126,9 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
         onSubmit = {this.handleRegistrationSubmit}
         className = "commonForm"
       >
-        <a onClick = {this.handleGoBackClick}>
+        <div onClick = {this.handleGoBackClick}>
           Назад
-        </a>
+        </div>
         <label>
           <input
             type = "text"

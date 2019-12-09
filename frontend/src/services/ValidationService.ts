@@ -1,17 +1,17 @@
 class ValidationService {
-  validateToken = (token: string) => {
+  readonly validateToken = (token: string) => {
     return true;
   }
 
-  validateLogin = (token: string) => {
+  readonly validateLogin = (token: string) => {
     return true;
   }
 
-  validatePassword = (password: string) => {
+  readonly validatePassword = (password: string) => {
     return true;
   }
 
-  validateConfirmation = (password: string, confirmation: string) => {
+  readonly validateConfirmation = (password: string, confirmation: string) => {
     return password === confirmation;
   }
 }
