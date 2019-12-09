@@ -29,13 +29,13 @@ extends Component<AuthorizationFormProps, AuthorizationFormState> {
 
   // Change handlers:
   
-  handleLoginChange = (event: React.FormEvent<HTMLInputElement>) => {
+  private readonly handleLoginChange = (event: React.FormEvent<HTMLInputElement>) => {
     this.setState({
       login: event.currentTarget.value
     });
   }
   
-  handlePasswordChange = (event: React.FormEvent<HTMLInputElement>) => {
+  private readonly handlePasswordChange = (event: React.FormEvent<HTMLInputElement>) => {
     this.setState({
       password: event.currentTarget.value
     });
@@ -43,7 +43,7 @@ extends Component<AuthorizationFormProps, AuthorizationFormState> {
 
   // Submit handlers:
 
-  handleAuthorizationSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  private readonly handleAuthorizationSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     const data: AuthorizationData = {
       login: this.state.login,
       password: this.state.password,
