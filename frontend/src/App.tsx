@@ -5,7 +5,7 @@ import {AuthorizationForm} from "./components/AuthorizationFormComponent";
 const App: React.FC = () => {
   return (
     <div className = "App">
-      <AuthorizationForm />
+      <RegistrationForm />
     </div>
   );
 }

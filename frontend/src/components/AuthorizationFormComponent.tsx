@@ -64,7 +64,8 @@ extends Component<AuthorizationFormProps, AuthorizationFormState> {
             placeholder = {localization.loginPlaceholder()}
             value = {this.state.login}
             onChange = {this.handleLoginChange}
-            required />
+            required
+          />
         </label>
         <label>
           <input
@@ -72,7 +73,8 @@ extends Component<AuthorizationFormProps, AuthorizationFormState> {
             placeholder = {localization.passwordPlaceholder()}
             value = {this.state.password}
             onChange = {this.handlePasswordChange}
-            required />
+            required
+          />
         </label>
         <button>
           {localization.authorizationButton()}

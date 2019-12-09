@@ -63,6 +63,12 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
 
   // Submit handlers:
 
+  handleGoBackClick = () => {
+    this.setState({
+      expanded: false
+    });
+  }
+
   handleTokenSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     const isTokenValid: boolean =
       validationService.validateToken(this.state.token);
@@ -107,7 +113,8 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
             placeholder = {localization.tokenPlaceholder()}
             value = {this.state.token}
             onChange = {this.handleTokenChange}
-            required />
+            required
+          />
         </label>
         <button>
           {localization.continueButton()}
@@ -115,14 +122,21 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
       </form>;
 
     const registrationForm : JSX.Element =
-      <form onSubmit = {this.handleRegistrationSubmit} className = "commonForm">
+      <form
+        onSubmit = {this.handleRegistrationSubmit}
+        className = "commonForm"
+      >
+        <a onClick = {this.handleGoBackClick}>
+          Назад
+        </a>
         <label>
           <input
             type = "text"
             placeholder = {localization.loginPlaceholder()}
             value = {this.state.login}
             onChange = {this.handleLoginChange}
-            required />
+            required
+          />
         </label>
         <label>
           <input
@@ -130,7 +144,8 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
             placeholder = {localization.passwordPlaceholder()}
             value = {this.state.password}
             onChange = {this.handlePasswordChange}
-            required />
+            required
+          />
         </label>
         <label>
           <input
@@ -138,7 +153,8 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
             placeholder = {localization.confirmationPlaceholder()}
             value = {this.state.confirmation}
             onChange = {this.handleConfirmationChange}
-            required />
+            required
+          />
         </label>
         <button>
           {localization.registrationButton()}

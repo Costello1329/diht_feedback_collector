@@ -9,6 +9,9 @@ export interface AuthorizationData {
 }
 
 class AuthorizationService {
+  authorized: boolean = false;
+  userLogin: string = "";
+
   async sendAuthorizationData (data: AuthorizationData) {
     const encryptedData = this.encryptAuthorizationData(data);
 
@@ -17,6 +20,18 @@ class AuthorizationService {
         commonRoutes.authorization,
         {'Content-Type': 'application/json'},
         encryptedData)
+      // Установить куки сессии по возвращенному токену и авторизовать юзера.
+      .then(response => alert(JSON.stringify(response)));
+  }
+
+  async authorize (token: string) {
+    httpService
+      .sendPost(
+        commonRoutes.authorization,
+        {'Content-Type': 'application/json'},
+        {token: token}
+      )
+      // Получить логин юзера по токену, и авторизовать сервис.
       .then(response => alert(JSON.stringify(response)));
   }
 
