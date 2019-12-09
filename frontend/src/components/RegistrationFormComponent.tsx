@@ -1,8 +1,10 @@
-import React, {Component} from 'react';
-import {localization} from '../services/LocalizationService';
-import {validationService} from '../services/ValidationService';
-import {registrationService, RegistrationData} from '../services/RegistrationService';
-import '../styles/ui.css';
+import React, {Component} from "react";
+import {localization} from "../services/LocalizationService";
+import {validationService} from "../services/ValidationService";
+import {
+  registrationService,
+  RegistrationData
+} from "../services/RegistrationService";
 
 
 export interface RegistrationFormProps {
@@ -10,25 +12,26 @@ export interface RegistrationFormProps {
 }
 
 export interface RegistrationFormState {
-  expanded: boolean;
   token: string;
   login: string;
   password: string;
   confirmation: string;
+  expanded: boolean;
 }
 
-export class RegistrationForm extends Component<RegistrationFormProps, RegistrationFormState> {
+export class RegistrationForm
+extends Component<RegistrationFormProps, RegistrationFormState> {
   state: RegistrationFormState;
 
   constructor (props: RegistrationFormProps) {
     super(props);
 
     this.state = {
-      expanded: false,
       token: "",
       login: "",
       password: "",
-      confirmation: ""
+      confirmation: "",
+      expanded: false
     };
   }
 
@@ -97,7 +100,7 @@ export class RegistrationForm extends Component<RegistrationFormProps, Registrat
 
   render () {
     const activateTokenForm : JSX.Element =
-      <form onSubmit = {this.handleTokenSubmit} className = {"authFormContainer"}>
+      <form onSubmit = {this.handleTokenSubmit} className = "commonForm">
         <label>
           <input
             type = "text"
@@ -112,7 +115,7 @@ export class RegistrationForm extends Component<RegistrationFormProps, Registrat
       </form>;
 
     const registrationForm : JSX.Element =
-      <form onSubmit = {this.handleRegistrationSubmit} className = {"authFormContainer"}>
+      <form onSubmit = {this.handleRegistrationSubmit} className = "commonForm">
         <label>
           <input
             type = "text"

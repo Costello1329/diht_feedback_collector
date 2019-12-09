@@ -1,5 +1,5 @@
-import {httpService} from "../services/HTTPService"
-import {encryptionService} from "../services/EncryptionService"
+import {httpService, commonRoutes} from "../services/HTTPService";
+import {encryptionService} from "../services/EncryptionService";
 
 
 // An interface for packing unencrypted registration data:
@@ -16,7 +16,7 @@ class RegistrationService {
 
     httpService
       .sendPost(
-        "/register",
+        commonRoutes.registration,
         {'Content-Type': 'application/json'},
         encryptedData)
       .then(response => alert(JSON.stringify(response)));
