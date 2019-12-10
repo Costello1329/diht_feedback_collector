@@ -7,44 +7,54 @@ export const commonRoutes = {
 };
 
 class HTTPService {
+  private readonly clientHostPort: string;
   private readonly serverHostPort: string;
-  private readonly defaultHeaders = {
-    "Access-Control-Allow-Origin": this.serverHostPort
-  };
+  private readonly defaultHeaders: any;
 
-  constructor (serverHostPort: string) {
+  constructor (clientHostPort: string, serverHostPort: string) {
+    this.clientHostPort = clientHostPort;
     this.serverHostPort = serverHostPort;
+    this.defaultHeaders = {
+      Access_Control_Cross_Origin: this.clientHostPort
+    }
   }
 
   async sendGet (
     resource: string,
-    headers: Object,
-    addDefaultHeaders: boolean = false) {
+    headers: any,
+    addDefaultHeaders: boolean = true) {
 
-    await axios({
-      method: 'get',
-      url: this.serverHostPort + resource,
-      headers:
-        addDefaultHeaders ? {...this.defaultHeaders, ...headers}
-        : headers
-    });
+    await fetch(
+      this.serverHostPort + resource,
+      {
+        method: "get",
+        headers:
+            addDefaultHeaders ? {...this.defaultHeaders, ...headers}
+            : headers
+      }
+    );
   }
 
   async sendPost (
     resource: string,
-    headers: Object,
-    body: Object,
-    addDefaultHeaders: boolean = false) {
+    headers: any,
+    body: any,
+    addDefaultHeaders: boolean = true) {
 
-    await axios({
-      method: 'post',
-      url: this.serverHostPort + resource,
-      headers:
-        addDefaultHeaders ? {...this.defaultHeaders, ...headers}
-        : headers,
-      data: body
-    });
+    await fetch(
+      this.serverHostPort + resource,
+      {
+        method: "post",
+        headers:
+            addDefaultHeaders ? {...this.defaultHeaders, ...headers}
+            : headers,
+        body: body
+      }
+    );
   }
 }
 
-export const httpService = new HTTPService("http://localhost:5000");
+export const httpService = new HTTPService(
+  "http://localhost:3000",
+  "http://127.0.0.1:5000"
+);
