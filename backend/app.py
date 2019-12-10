@@ -1,10 +1,10 @@
+import uuid
+
 from flask import Flask, request
 from flask import abort
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from werkzeug.security import generate_password_hash, check_password_hash
 from flask import jsonify
-import uuid
+from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
@@ -42,15 +42,17 @@ email:string
 '''
 
 
-def set_reg_json(isTokenValid,isTokenActivated, isConfirmationValid, isLoginValid):
+def set_reg_json(isTokenValid, isTokenActivated, isConfirmationValid, isLoginValid):
     return jsonify(isTokenValid=isTokenValid,
-                   isTokenActivated=isTokenActivated,
+                   isTokenUnActivated=isTokenActivated,
                    isConfirmationValid=isConfirmationValid,
                    isLoginValid=isLoginValid)
 
 
-@app.route('/reg', methods=['POST'], )
+@app.route('/reg', methods=['POST'], provide_automatic_options=False)
 def reg():
+    if request.method != "POST":
+        return abort(405)
     user_data = request.get_json()
     if user_data is None:
         return abort(400)
@@ -59,15 +61,15 @@ def reg():
         if guid is None:
             return set_reg_json(False, "undefined", "undefined", "undefined"), 400
         if guid.active:
-            return set_reg_json(True, True, "undefined", "undefined"), 400
+            return set_reg_json(True, False, "undefined", "undefined"), 400
     except:
         return abort(500)
     try:
         # uuid.uuid4().hex
         if user_data["password"] != user_data["confirmation"]:
-            return set_reg_json(True, False, False, "undefined"), 400
+            return set_reg_json(True, True, False, "undefined"), 400
         if Users.query.filter_by(login=user_data['login']).first() is not None:
-            return set_reg_json(True, False, True, False), 400
+            return set_reg_json(True, True, True, False), 400
         User = Users(login=user_data['login'], password=user_data['password'], guid=guid.guid)
     except:
         return abort(500)
@@ -78,20 +80,33 @@ def reg():
         db.session.commit()
     except:
         return abort(500)
-    return set_reg_json(True, False, True, True), 200
+    return set_reg_json(True, True, True, True), 200
 
 
-@app.route('/login', methods=['POST'])
+def set_login_json(isLoginExist, isPasswordValid):
+    return jsonify(isLoginExist=isLoginExist,
+                   isPasswordValid=isPasswordValid)
+
+
+@app.route('/login', methods=['POST'], provide_automatic_options=False)
 def login():
     user_data = request.get_json()
-    print(user_data)
+    if request.method != "POST":
+        return abort(405)
     if user_data is None:
         return abort(400)
-    user = Users.query.filter_by(login=user_data['login'],
-                                 password=generate_password_hash(user_data['password'])).first()
-    if user is not None:
-        return user.token
-    return abort(401)
+    try:
+        user = Users.query.filter_by(login=user_data['login']).first()
+        if user is None:
+            return set_login_json(False, "undefined"), 403
+        if not user.check_password(user_data["password"]):
+            return set_login_json(True, False), 403
+    except:
+        return abort(500)
+    res = set_login_json(True, True)
+
+    res.set_cookie("auth-token", value=uuid.uuid4().hex, )
+    return res
 
 
 @app.route('/')
