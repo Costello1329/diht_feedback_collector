@@ -105,7 +105,7 @@ def login():
         return abort(500)
     res = set_login_json(True, True)
 
-    res.set_cookie("auth-token", value=uuid.uuid4().hex, )
+    res.set_cookie("auth-token", value=uuid.uuid4().hex)
     return res
 
 
