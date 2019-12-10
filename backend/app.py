@@ -5,6 +5,7 @@ from flask import abort
 from flask import jsonify
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime, date, time
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
@@ -87,9 +88,55 @@ def set_login_json(isLoginExist, isPasswordValid):
     return jsonify(isLoginExist=isLoginExist,
                    isPasswordValid=isPasswordValid)
 
+class Tokens:
+    """
+    map<token, list<Session> >
+    Session = {
+  guid (user-а),
+  lastActivity
+}
+    """
+    data : dict()
 
-@app.route('/login', methods=['POST'], provide_automatic_options=False)
-def login():
+    def __init__(self):
+        self.data = dict()
+
+    def add_token(self, token, user_guid):
+        self.data.update({token: Session(user_guid)})
+
+    def check_token(self, token):
+        if self.data.get(token) is None:
+            return False
+        else:
+            return True
+
+    def clear_data(self):
+        self.data.clear()
+
+    def get_user_data(self, token):
+        data = self.data.get(token)
+        if data is not None:
+            return data.user_guid
+        else:
+            return None
+
+
+class Session:
+    user_guid: str
+    last_activity: datetime
+
+    def __init__(self, user_guid):
+        self.user_guid = user_guid
+        self.last_activity = datetime.now(tz=None)
+
+tokens = Tokens()
+
+
+
+
+@app.route('/authorize', methods=['POST'], provide_automatic_options=False)
+@app.route('/authorize')
+def authorize():
     user_data = request.get_json()
     if request.method != "POST":
         return abort(405)
@@ -104,9 +151,37 @@ def login():
     except:
         return abort(500)
     res = set_login_json(True, True)
-
-    res.set_cookie("auth-token", value=uuid.uuid4().hex)
+    value = uuid.uuid4().hex
+    global tokens
+    tokens.add_token(value, Users.guid)
+    res.set_cookie("auth-token", value=value)
     return res
+
+
+@app.route('/authorize/user',methods=['POST'])
+def get_user_data():
+    user_data = request.get_json()
+    if request.method != "POST":
+        return abort(405)
+    if user_data is None:
+        return abort(400)
+    try:
+        token = request.cookies['auth-token']
+        global tokens
+        user_guid =tokens.get_user_data(token)
+        if user_guid is None:
+            return abort(401)
+        user = Users.query.filter_by(guid=user_guid).first()
+        if user is None:
+            return abort(401)
+        res = jsonify(
+            login=user.login,
+            role=user.role)
+    except:
+        return abort(500)
+    return res
+
+
 
 
 @app.route('/')
