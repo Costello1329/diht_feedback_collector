@@ -1,6 +1,5 @@
 import {httpService, commonRoutes} from "../services/HTTPService";
 import {encryptionService} from "../services/EncryptionService";
-import {keys} from 'ts-transformer-keys';
 
 
 export interface RegistrationData {
@@ -8,13 +7,6 @@ export interface RegistrationData {
   login: string;
   password: string;
   confirmation: string;
-}
-
-interface RegistrationResponseData {
-  isTokenValid: string,
-  isTokenUnactivated: string,
-  isConfirmationValid: string
-  isLoginValid: string
 }
 
 export enum RegistrationErrorType {
@@ -27,6 +19,13 @@ export enum RegistrationErrorType {
 }
 
 class RegistrationService {
+  readonly validResponse = {
+    "isTokenValid": "True",
+    "isTokenUnactivated": "True",
+    "isConfirmationValid": "True",
+    "isLoginValid": "True"
+  }
+
   async sendRegistrationData (data: RegistrationData) {
     const encryptedData = this.encryptRegistrationData(data);
 
@@ -36,21 +35,28 @@ class RegistrationService {
         {'Content-Type': 'application/json'},
         JSON.stringify(encryptedData))
       .then(response => {
-        if (response.status !== 200)
+        if (
+          response.status !== 200 ||
+          this.checkResponseData(response.data) === false
+        ) {
           throw response;
+        }
 
         alert(response.status);
       })
       .catch(error => {
-        let errorType: RegistrationErrorType;
+        let errorType: RegistrationErrorType =
+          RegistrationErrorType.contractDataError;
 
         if (error.response.status === 500) {
           errorType = RegistrationErrorType.internalServerError;
         }
 
         else if (error.response.status === 400) {
-          this.getClientError(error.response.data);
+          errorType = this.getErrorType(error.response.data);
         }
+
+        alert(errorType);
       });
   }
 
@@ -63,9 +69,52 @@ class RegistrationService {
     };
   }
 
-  private getClientError (body: any) {
-    alert(JSON.stringify(body));
-    keys<RegistrationResponseData>();
+  private checkResponseData (data: any) {
+    try {
+      if (Object.keys(data).length !== Object.keys(this.validResponse).length)
+        return false;
+
+      for (let [key, value] of Object.entries(this.validResponse)) {
+        if (data[key] !== value) {
+          return false;
+        }
+      }
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  private getErrorType (data: any) {
+    try {
+      if (Object.keys(data).length !== Object.keys(this.validResponse).length)
+        return RegistrationErrorType.contractDataError;
+
+      for (let [key, value] of Object.entries(this.validResponse)) {
+        if (data[key] === undefined)
+          return RegistrationErrorType.contractDataError;
+        
+        if (data[key] !== value && data[key] !== "undefined") {
+          switch (key) {
+            case "isTokenValid":
+              return RegistrationErrorType.tokenDoesNotExist;
+            case "isTokenUnactivated":
+              return RegistrationErrorType.tokenAlreadyActivated;
+            case "isConfirmationValid":
+              return RegistrationErrorType.passwordsDoesNotMatch;
+            case "isLoginValid":
+              return RegistrationErrorType.loginAlreadyTaken;
+            default:
+              return RegistrationErrorType.contractDataError;
+          }
+        }
+      }
+
+      return RegistrationErrorType.contractDataError;
+    } catch (e) {
+      return RegistrationErrorType.contractDataError;
+    }
   }
 }
 
