@@ -52,11 +52,11 @@ def get_registration_response (is_token_valid, is_token_unactivated, is_confirma
     res.headers["Access-Control-Allow-Origin"] = "http://localhost:3000"
     res.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,DELETE,OPTIONS"
     res.headers["Access-Control-Allow-Headers"] = \
-                "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
+        "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
     is_all_valid = \
-        (is_token_valid == True and \
-        is_token_unactivated == True and \
-        is_confirmation_valid == True and \
+        (is_token_valid == True and
+        is_token_unactivated == True and
+        is_confirmation_valid == True and
         is_login_valid == True)
     res.status_code = 200 if is_all_valid else 400
 
