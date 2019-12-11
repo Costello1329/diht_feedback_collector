@@ -19,7 +19,7 @@ class AuthorizationService {
       .sendPost(
         commonRoutes.authorization,
         {Content_Type: 'application/json'},
-        encryptedData)
+        JSON.stringify(encryptedData))
       // Установить куки сессии по возвращенному токену и авторизовать юзера.
       .then(response => alert(JSON.stringify(response)));
   }
@@ -29,7 +29,7 @@ class AuthorizationService {
       .sendPost(
         commonRoutes.authorization,
         {content_type: 'application/json'},
-        {token: token}
+        JSON.stringify({token: token})
       )
       // Получить логин юзера по токену, и авторизовать сервис.
       .then(response => alert(JSON.stringify(response)));

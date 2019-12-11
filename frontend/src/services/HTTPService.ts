@@ -15,19 +15,18 @@ class HTTPService {
     this.clientHostPort = clientHostPort;
     this.serverHostPort = serverHostPort;
     this.defaultHeaders = {
-      Access_Control_Cross_Origin: this.clientHostPort
+      "Origin": this.clientHostPort
     }
   }
 
-  async sendGet (
+  sendGet (
     resource: string,
     headers: any,
     addDefaultHeaders: boolean = true) {
 
-    await fetch(
+    axios.post(
       this.serverHostPort + resource,
       {
-        method: "get",
         headers:
             addDefaultHeaders ? {...this.defaultHeaders, ...headers}
             : headers
@@ -35,20 +34,19 @@ class HTTPService {
     );
   }
 
-  async sendPost (
+  sendPost (
     resource: string,
     headers: any,
-    body: any,
+    body: string,
     addDefaultHeaders: boolean = true) {
 
-    await fetch(
+    return axios.post(
       this.serverHostPort + resource,
+      body,
       {
-        method: "post",
         headers:
             addDefaultHeaders ? {...this.defaultHeaders, ...headers}
             : headers,
-        body: body
       }
     );
   }

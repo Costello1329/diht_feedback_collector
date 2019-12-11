@@ -1,6 +1,6 @@
 import uuid
 
-from flask import Flask, request
+from flask import Flask, request, Response
 from flask import abort
 from flask import jsonify
 from flask_migrate import Migrate
@@ -12,6 +12,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS '] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
+
+################################################################################
+# Database models:                                                             #
+################################################################################
 
 
 class Users(db.Model):
@@ -32,71 +37,75 @@ class Guid(db.Model):
     active = db.Column(db.BOOLEAN(), default=False, unique=False, nullable=False)
 
 
-'''
-{
-guid:int
-login:string
-password:string
-confirmation:string
-email:string 
-}
-'''
+################################################################################
+# Registration service:                                                        #
+################################################################################
 
 
-def set_reg_json(isTokenValid, isTokenActivated, isConfirmationValid, isLoginValid):
-    return jsonify(isTokenValid=isTokenValid,
-                   isTokenUnActivated=isTokenActivated,
-                   isConfirmationValid=isConfirmationValid,
-                   isLoginValid=isLoginValid)
+def get_registration_response (is_token_valid, is_token_unactivated, is_confirmation_valid, is_login_valid):
+    res = jsonify(
+        isTokenValid=is_token_valid,
+        isTokenUnactivated=is_token_unactivated,
+        isConfirmationValid=is_confirmation_valid,
+        isLoginValid=is_login_valid
+    )
+    res.headers["Access-Control-Allow-Origin"] = "http://localhost:3000"
+    res.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,DELETE,OPTIONS"
+    res.headers["Access-Control-Allow-Headers"] = \
+                "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
+    is_all_valid = \
+        (is_token_valid == True and \
+        is_token_unactivated == True and \
+        is_confirmation_valid == True and \
+        is_login_valid == True)
+    res.status_code = 200 if is_all_valid else 400
+
+    return res
 
 
-@app.route('/reg', methods=['POST'], provide_automatic_options=False)
-def reg():
+@app.route("/register", methods=["POST"], provide_automatic_options=False)
+def reg ():
     if request.method != "POST":
         return abort(405)
+
     user_data = request.get_json()
+
     if user_data is None:
         return abort(400)
+
     try:
-        guid = Guid.query.filter_by(guid=user_data['token']).first()
+        guid = Guid.query.filter_by(guid=user_data["token"]).first()
+
         if guid is None:
-            return set_reg_json(False, "undefined", "undefined", "undefined"), 400
+            return get_registration_response(False, "undefined", "undefined", "undefined")
+
         if guid.active:
-            return set_reg_json(True, False, "undefined", "undefined"), 400
-    except:
-        return abort(500)
-    try:
-        # uuid.uuid4().hex
+            return get_registration_response(True, False, "undefined", "undefined")
+
         if user_data["password"] != user_data["confirmation"]:
-            return set_reg_json(True, True, False, "undefined"), 400
+            return get_registration_response(True, True, False, "undefined")
+
         if Users.query.filter_by(login=user_data['login']).first() is not None:
-            return set_reg_json(True, True, True, False), 400
+            return get_registration_response(True, True, True, False)
+
         User = Users(login=user_data['login'], password=user_data['password'], guid=guid.guid)
-    except:
-        return abort(500)
-    try:
         db.session.add(User)
         guid.active = True
         db.session.add(guid)
         db.session.commit()
     except:
         return abort(500)
-    return set_reg_json(True, True, True, True), 200
+
+    return get_registration_response(True, True, True, True)
 
 
-def set_login_json(isLoginExist, isPasswordValid):
-    return jsonify(isLoginExist=isLoginExist,
-                   isPasswordValid=isPasswordValid)
+################################################################################
+# Authorization service:                                                       #
+################################################################################
+
 
 class Tokens:
-    """
-    map<token, list<Session> >
-    Session = {
-  guid (user-а),
-  lastActivity
-}
-    """
-    data : dict()
+    data: dict()
 
     def __init__(self):
         self.data = dict()
@@ -129,64 +138,117 @@ class Session:
         self.user_guid = user_guid
         self.last_activity = datetime.now(tz=None)
 
+
 tokens = Tokens()
 
 
+def get_authorization_response_body(is_login_exists, is_password_valid):
+    return jsonify(
+        isLoginExist=is_login_exists,
+        isPasswordValid=is_password_valid
+    )
 
 
 @app.route('/authorize', methods=['POST'], provide_automatic_options=False)
-@app.route('/authorize')
 def authorize():
     user_data = request.get_json()
+
     if request.method != "POST":
         return abort(405)
+
     if user_data is None:
         return abort(400)
+
     try:
         user = Users.query.filter_by(login=user_data['login']).first()
         if user is None:
-            return set_login_json(False, "undefined"), 403
+            return get_authorization_response_body(False, "undefined"), 401
         if not user.check_password(user_data["password"]):
-            return set_login_json(True, False), 403
+            return get_authorization_response_body(True, False), 401
     except:
         return abort(500)
-    res = set_login_json(True, True)
-    value = uuid.uuid4().hex
+
+    auth_token = uuid.uuid4().hex
     global tokens
-    tokens.add_token(value, Users.guid)
-    res.set_cookie("auth-token", value=value)
+    tokens.add_token(auth_token, Users.guid)
+
+    res = get_authorization_response_body(True, True)
+    res.set_cookie("auth-token", value=auth_token)
     return res
 
 
-@app.route('/authorize/user',methods=['POST'])
+def get_user_response_body(login, role):
+    return jsonify(
+        login=login,
+        role=role
+    )
+
+
+@app.route('/user', methods=['POST'], provide_automatic_options=False)
 def get_user_data():
     user_data = request.get_json()
+
     if request.method != "POST":
         return abort(405)
+
     if user_data is None:
         return abort(400)
+
     try:
         token = request.cookies['auth-token']
         global tokens
-        user_guid =tokens.get_user_data(token)
+        user_guid = tokens.get_user_data(token)
+
         if user_guid is None:
             return abort(401)
+
         user = Users.query.filter_by(guid=user_guid).first()
         if user is None:
             return abort(401)
+
         res = jsonify(
             login=user.login,
             role=user.role)
     except:
         return abort(500)
+
     return res
 
 
+################################################################################
+# Options handling for xhr http-clients:                                       #
+################################################################################
 
 
-@app.route('/')
-def hello_world1():
-    return "2"
+@app.route("/authorize", methods=["OPTIONS"], provide_automatic_options=False)
+def handle_options_request_for_authorization ():
+    return setup_xhr_request_headers()
+
+
+@app.route("/register", methods=["OPTIONS"], provide_automatic_options=False)
+def handle_options_request_for_registration ():
+    return setup_xhr_request_headers()
+
+
+# This is a necessary handler for xhr cross-domain requests.
+# When HTTP-client on frontend sends a xhr request to server,
+# browser automatically sends options request to check it's
+# rights (so we need to provide some rights to it).
+def setup_xhr_request_headers ():
+    return "", 204, get_headers_for_cors_requests()
+
+def get_headers_for_cors_requests ():
+    return {
+            "Access-Control-Allow-Origin": "http://localhost:3000",
+            "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
+            "Access-Control-Allow-Headers": \
+                "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
+        }
+
+
+################################################################################
+# main:                                                                        #
+################################################################################
 
 
 if __name__ == '__main__':
