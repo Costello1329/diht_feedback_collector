@@ -42,7 +42,7 @@ class Guid(db.Model):
 ################################################################################
 
 
-def get_registration_response (is_token_valid, is_token_unactivated, is_confirmation_valid, is_login_valid):
+def get_registration_response(is_token_valid, is_token_unactivated, is_confirmation_valid, is_login_valid):
     res = jsonify(
         isTokenValid=is_token_valid,
         isTokenUnactivated=is_token_unactivated,
@@ -53,17 +53,18 @@ def get_registration_response (is_token_valid, is_token_unactivated, is_confirma
     res.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,DELETE,OPTIONS"
     res.headers["Access-Control-Allow-Headers"] = \
         "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
-    is_all_valid = \
-        (is_token_valid == True and
-        is_token_unactivated == True and
-        is_confirmation_valid == True and
-        is_login_valid == True)
-    res.status_code = 200 if is_all_valid else 400
+    is_all_valid = (
+        is_token_valid is True and
+        is_token_unactivated is True and
+        is_confirmation_valid is True and
+        is_login_valid is True
+    )
 
+    res.status_code = 200 if is_all_valid else 400
     return res
 
 
-def get_registration_response_error (status_code):
+def get_registration_response_error(status_code):
     res = Response()
     res.headers["Access-Control-Allow-Origin"] = "http://localhost:3000"
     res.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,DELETE,OPTIONS"
@@ -74,14 +75,14 @@ def get_registration_response_error (status_code):
 
 
 @app.route("/register", methods=["POST"], provide_automatic_options=False)
-def reg ():
+def reg():
     if request.method != "POST":
-        return get_registration_response_error(405)
+        return get_registration_response_error(status_code=405)
 
     user_data = request.get_json()
 
     if user_data is None:
-        return get_registration_response_error(400)
+        return get_registration_response_error(status_code=400)
 
     try:
         guid = Guid.query.filter_by(guid=user_data["token"]).first()
@@ -103,9 +104,8 @@ def reg ():
         guid.active = True
         db.session.add(guid)
         db.session.commit()
-    except:
-        return get_registration_response_error(500)
-
+    except():
+        return get_registration_response_error(status_code=500)
 
     return get_registration_response(True, True, True, True)
 
@@ -176,7 +176,7 @@ def authorize():
             return get_authorization_response_body(False, "undefined"), 401
         if not user.check_password(user_data["password"]):
             return get_authorization_response_body(True, False), 401
-    except:
+    except():
         return abort(500)
 
     auth_token = uuid.uuid4().hex
@@ -220,7 +220,7 @@ def get_user_data():
         res = jsonify(
             login=user.login,
             role=user.role)
-    except:
+    except():
         return abort(500)
 
     return res
@@ -245,10 +245,11 @@ def handle_options_request_for_registration ():
 # When HTTP-client on frontend sends a xhr request to server,
 # browser automatically sends options request to check it's
 # rights (so we need to provide some rights to it).
-def setup_xhr_request_headers ():
+def setup_xhr_request_headers():
     return "", 204, get_headers_for_cors_requests()
 
-def get_headers_for_cors_requests ():
+
+def get_headers_for_cors_requests():
     return {
             "Access-Control-Allow-Origin": "http://localhost:3000",
             "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
