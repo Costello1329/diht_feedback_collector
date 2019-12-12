@@ -15,32 +15,17 @@ class HTTPService {
     this.clientHostPort = clientHostPort;
     this.serverHostPort = serverHostPort;
     this.defaultHeaders = {
-      "Origin": this.clientHostPort
+
     }
   }
 
-  sendGet (
-    resource: string,
-    headers: any,
-    addDefaultHeaders: boolean = true) {
-
-    axios.post(
-      this.serverHostPort + resource,
-      {
-        headers:
-            addDefaultHeaders ? {...this.defaultHeaders, ...headers}
-            : headers
-      }
-    );
-  }
-
-  sendPost (
+  async sendPost (
     resource: string,
     headers: any,
     body: string,
     addDefaultHeaders: boolean = true) {
 
-    return axios.post(
+    return await axios.post(
       this.serverHostPort + resource,
       body,
       {

@@ -20,35 +20,35 @@ export enum RegistrationErrorType {
 
 class RegistrationService {
   readonly validResponse = {
-    "isTokenValid": "True",
-    "isTokenUnactivated": "True",
-    "isConfirmationValid": "True",
-    "isLoginValid": "True"
+    "isTokenValid": true,
+    "isTokenUnactivated": true,
+    "isConfirmationValid": true,
+    "isLoginValid": true
   }
 
   async sendRegistrationData (data: RegistrationData) {
     const encryptedData = this.encryptRegistrationData(data);
 
-    httpService
+    return await httpService
       .sendPost(
         commonRoutes.registration,
         {'Content-Type': 'application/json'},
         JSON.stringify(encryptedData))
-      .then(response => {
-        if (
-          response.status !== 200 ||
-          this.checkResponseData(response.data) === false
-        ) {
-          throw response;
+      .then(
+        response => {
+          if (
+            response.status !== 200 ||
+            this.checkResponseData(response.data) === false
+          ) {
+            throw response;
+          }
         }
-
-        alert(response.status);
-      })
+      )
       .catch(error => {
         let errorType: RegistrationErrorType =
           RegistrationErrorType.contractDataError;
 
-        if (error.response.status === 500) {
+        if (error.response === undefined || error.response.status === 500) {
           errorType = RegistrationErrorType.internalServerError;
         }
 
@@ -56,7 +56,7 @@ class RegistrationService {
           errorType = this.getErrorType(error.response.data);
         }
 
-        alert(errorType);
+        throw errorType;
       });
   }
 
@@ -71,8 +71,12 @@ class RegistrationService {
 
   private checkResponseData (data: any) {
     try {
-      if (Object.keys(data).length !== Object.keys(this.validResponse).length)
+      if (
+        Object.keys(data).length
+        !== Object.keys(this.validResponse).length
+      ) {
         return false;
+      }
 
       for (let [key, value] of Object.entries(this.validResponse)) {
         if (data[key] !== value) {
@@ -88,8 +92,12 @@ class RegistrationService {
 
   private getErrorType (data: any) {
     try {
-      if (Object.keys(data).length !== Object.keys(this.validResponse).length)
+      if (
+        Object.keys(data).length
+        !== Object.keys(this.validResponse).length
+      ) {
         return RegistrationErrorType.contractDataError;
+      }
 
       for (let [key, value] of Object.entries(this.validResponse)) {
         if (data[key] === undefined)

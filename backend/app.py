@@ -63,15 +63,25 @@ def get_registration_response (is_token_valid, is_token_unactivated, is_confirma
     return res
 
 
+def get_registration_response_error (status_code):
+    res = Response()
+    res.headers["Access-Control-Allow-Origin"] = "http://localhost:3000"
+    res.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,DELETE,OPTIONS"
+    res.headers["Access-Control-Allow-Headers"] = \
+        "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
+    res.status_code = status_code
+    return res
+
+
 @app.route("/register", methods=["POST"], provide_automatic_options=False)
 def reg ():
     if request.method != "POST":
-        return abort(405)
+        return get_registration_response_error(405)
 
     user_data = request.get_json()
 
     if user_data is None:
-        return abort(400)
+        return get_registration_response_error(400)
 
     try:
         guid = Guid.query.filter_by(guid=user_data["token"]).first()
@@ -88,13 +98,14 @@ def reg ():
         if Users.query.filter_by(login=user_data['login']).first() is not None:
             return get_registration_response(True, True, True, False)
 
-        User = Users(login=user_data['login'], password=user_data['password'], guid=guid.guid)
-        db.session.add(User)
+        user = Users(login=user_data['login'], password=user_data['password'], guid=guid.guid)
+        db.session.add(user)
         guid.active = True
         db.session.add(guid)
         db.session.commit()
     except:
-        return abort(500)
+        return get_registration_response_error(500)
+
 
     return get_registration_response(True, True, True, True)
 

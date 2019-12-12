@@ -96,7 +96,14 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
         confirmation: this.state.confirmation
       };
 
-      registrationService.sendRegistrationData(data);
+      registrationService.sendRegistrationData(data)
+      .then(_ => {
+        alert("all is ok");
+      })
+      .catch(reject => {
+        alert(reject);
+      })
+      ;
     }
 
     event.preventDefault();
