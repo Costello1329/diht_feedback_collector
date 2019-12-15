@@ -232,12 +232,13 @@ def get_user_data():
 
 
 @app.route("/authorize", methods=["OPTIONS"], provide_automatic_options=False)
-def handle_options_request_for_authorization ():
+
+def handle_options_request_for_authorization():
     return setup_xhr_request_headers()
 
 
 @app.route("/register", methods=["OPTIONS"], provide_automatic_options=False)
-def handle_options_request_for_registration ():
+def handle_options_request_for_registration():
     return setup_xhr_request_headers()
 
 
@@ -253,8 +254,7 @@ def get_headers_for_cors_requests():
     return {
             "Access-Control-Allow-Origin": "http://localhost:3000",
             "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
-            "Access-Control-Allow-Headers": \
-                "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
+            "Access-Control-Allow-Headers": "Content-Type, Access-Control-Allow-Headers, Authorization"
         }
 
 
