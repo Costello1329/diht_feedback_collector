@@ -8,8 +8,9 @@
   },
   "main": "./src/index.tsx",
   "scripts": {
-    "dev": "NODE_ENV=development webpack-dev-server --open --config ./config/webpack.config.js --mode development",
-    "build": "rm -rf ./build && NODE_ENV=production webpack --open --config ./config/webpack.config.js --mode production"
+    "dev": "webpack-dev-server --open --config ./config/webpack.dev.config.js --mode development",
+    "build": "npm run clean && webpack --config ./config/webpack.build.config.js --mode production",
+    "clean": "rm -rf ./build"
   },
   "keywords": [],
   "author": "Konstantin Leladze, Kirill Semennikov",
