@@ -1,29 +1,29 @@
 import React, {Component} from "react";
 import {
-  HashRouter as Router,
+  HashRouter,
   Switch,
-  Route,
-  Link
+  Route
 } from 'react-router-dom';
 import {RegistrationForm} from "../components/RegistrationFormComponent";
 import {AuthorizationForm} from "../components/AuthorizationFormComponent";
+import "../styles/authLayout"
 
 
 export class AuthLayout extends Component {
   render () {
     const layout: JSX.Element =
-      <Router>
+      <HashRouter hashType = "noslash">
         <div>
           <Switch>
             <Route path = "/registration">
               <RegistrationForm />
             </Route>
             <Route path = "/authorization">
-              <AuthorizationForm />
+              <AuthorizationForm registrationLink = "/registration"/>
             </Route>
           </Switch>
         </div>
-      </Router>
+      </HashRouter>
     
     return layout;
   }

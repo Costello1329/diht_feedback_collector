@@ -1,0 +1,100 @@
+.authLayoutCommonFormWrapper {
+  width: 640px;
+  background-color: #fff;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  display: block;
+  font-family: PT Sans;
+  box-shadow: 0 0 32px  rgba(0, 0, 0, 0.025);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  > .authLayoutHeader {
+    margin: 32px auto 0 auto;
+    width: 100%;
+
+    > h1 {
+      font-style: normal;
+      font-size: 42px;
+      color: #333;
+      width: 100%;
+      text-align: center;
+      margin: 0;
+    }
+  }
+
+  > .authLayoutCommonForm {
+    width: 480px;
+    margin: 16px auto 16px auto;
+
+    > .authLayoutCommonFormControl {
+      > span {
+        margin-left: 8px;
+        color: #333;
+      }
+
+      > label {
+        display: inline-block;
+        width: 100%;
+
+        > input {
+          /* here we need to reduce by 6px because of standart user-agent */
+          width: calc(100% - 6px);
+          display: block;
+          margin: 4px auto;
+          height: 32px;
+          border-radius: 4px;
+          border: 1px solid #aaa;
+          padding-left: 8px;
+          font-size: 14px;
+
+          &:focus {
+            outline: none;
+          }
+        }
+      }
+    }
+
+    > .authLayoutCommonFormButton {
+      width: 320px;
+      background-color: #fca23b;
+      border: none;
+      height: 40px;
+      border-radius: 4px;
+      font-size: 16px;
+      color: #333;
+      display: block;
+      margin: 8px auto;
+
+      &:hover {
+        color: white;
+      }
+
+      &:active {
+        background-color: #eb912a;
+      }
+    }
+  }
+
+  > .authLayoutCommonFormBottomLinks {
+    display: table;
+    margin: 16px auto 32px auto;
+
+    > span {
+      text-align: center;
+      margin: 0 auto;
+    }
+
+    > a {
+      margin-left: 4px;
+      text-decoration: none;
+      color: #fca23b;
+
+      &:hover {
+        color: #eb912a;
+      }
+    }
+  }
+}
