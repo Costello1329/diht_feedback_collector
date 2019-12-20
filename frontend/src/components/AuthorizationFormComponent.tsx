@@ -1,12 +1,10 @@
 import React, {Component} from "react";
+import {Link} from 'react-router-dom';
+import {localization} from "../services/LocalizationService";
 import {
   authorizationService,
   AuthorizationData
 } from "../services/AuthorizationService";
-import {localization} from "../services/LocalizationService";
-import {
-  Link
-} from 'react-router-dom';
 
 
 export interface AuthorizationFormProps {
@@ -64,70 +62,73 @@ extends Component<AuthorizationFormProps, AuthorizationFormState> {
   // Rendering:
 
   render () {  
-    const authorizationFormHeader : JSX.Element = 
-      <div className = "authLayoutHeader">
+    const authorizationFormHeader: JSX.Element = 
+      <div className = "authLayoutCommonFormHeader">
         <h1>
           {localization.authorizationHeader()}
         </h1>
       </div>;
   
-    const authorizationFormControls : JSX.Element[] = [
+    const authorizationFormControls: JSX.Element[] = [
       <div className = "authLayoutCommonFormControl">
-          <span>
-            {localization.login()}
-          </span>
-          <label>
-            <input
-              type = "text"
-              placeholder = {localization.loginPlaceholder()}
-              value = {this.state.login}
-              onChange = {this.handleLoginChange}
-              required
-            />
-          </label>
-        </div>,
+        <span>
+          {localization.login()}
+        </span>
+        <label>
+          <input
+            type = "text"
+            placeholder = {localization.loginPlaceholder()}
+            value = {this.state.login}
+            onChange = {this.handleLoginChange}
+            required
+          />
+        </label>
+      </div>,
         
-        <div className = "authLayoutCommonFormControl">
-          <span>
-            {localization.password()}
-          </span>
-          <label>
-            <input
-              type = "password"
-              placeholder = {localization.passwordPlaceholder()}
-              value = {this.state.password}
-              onChange = {this.handlePasswordChange}
-              required
-            />
-          </label>
-        </div>
+      <div className = "authLayoutCommonFormControl">
+        <span>
+          {localization.password()}
+        </span>
+        <label>
+          <input
+            type = "password"
+            placeholder = {localization.passwordPlaceholder()}
+            value = {this.state.password}
+            onChange = {this.handlePasswordChange}
+            required
+          />
+        </label>
+      </div>
     ];
 
-    const authorizationFormButton : JSX.Element = 
+    const authorizationFormButton: JSX.Element = 
       <button className = "authLayoutCommonFormButton">
         {localization.authorizationButton()}
       </button>;
 
-    const authorizationFormBottomLinks : JSX.Element = 
+    const authorizationFormBottomLinks: JSX.Element = 
       <div className = "authLayoutCommonFormBottomLinks">
         <span>
-          {localization.noAccount()}
+          {localization.yetNoAccount()}
         </span>
         <Link to = {this.props.registrationLink}>
           {localization.register()}
         </Link>
       </div>;
+
+    const authorizationForm: JSX.Element = 
+      <form
+          onSubmit = {this.handleAuthorizationSubmit}
+          className = "authLayoutCommonForm"
+      >
+        {authorizationFormControls}
+        {authorizationFormButton}
+      </form>
     
     return (
       <div className = "authLayoutCommonFormWrapper">
         {authorizationFormHeader}
-        <form
-          onSubmit = {this.handleAuthorizationSubmit}
-          className = "authLayoutCommonForm"
-        >
-          {authorizationFormControls}
-          {authorizationFormButton}
-        </form>
+        {authorizationForm}
         {authorizationFormBottomLinks}
       </div>
     );

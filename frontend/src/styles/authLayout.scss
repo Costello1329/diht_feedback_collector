@@ -11,8 +11,20 @@
   left: 50%;
   transform: translate(-50%, -50%);
 
-  > .authLayoutHeader {
-    margin: 32px auto 0 auto;
+  > .authLayoutCommonFormGoBackButton {
+    position: absolute;
+    top: 12px;
+    left: 16px;
+    color: #fca23b;
+
+    &:hover {
+      color: #eb912a;
+      cursor: pointer;
+    }
+  }
+
+  > .authLayoutCommonFormHeader {
+    margin: 40px auto 0 auto;
     width: 100%;
 
     > h1 {
@@ -30,6 +42,8 @@
     margin: 16px auto 16px auto;
 
     > .authLayoutCommonFormControl {
+      margin-bottom: 4px;
+
       > span {
         margin-left: 8px;
         color: #333;
@@ -66,7 +80,7 @@
       font-size: 16px;
       color: #333;
       display: block;
-      margin: 8px auto;
+      margin: 12px auto 8px auto;
 
       &:hover {
         color: white;

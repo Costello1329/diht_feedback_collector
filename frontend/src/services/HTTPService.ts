@@ -14,9 +14,7 @@ class HTTPService {
   constructor (clientHostPort: string, serverHostPort: string) {
     this.clientHostPort = clientHostPort;
     this.serverHostPort = serverHostPort;
-    this.defaultHeaders = {
-
-    }
+    this.defaultHeaders = {}
   }
 
   async sendPost (
@@ -30,7 +28,8 @@ class HTTPService {
       body,
       {
         headers:
-            addDefaultHeaders ? {...this.defaultHeaders, ...headers}
+            addDefaultHeaders ?
+            {...this.defaultHeaders, ...headers}
             : headers,
       }
     );

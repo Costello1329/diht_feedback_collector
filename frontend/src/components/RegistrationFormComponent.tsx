@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import {Link} from 'react-router-dom';
 import {localization} from "../services/LocalizationService";
 import {validationService} from "../services/ValidationService";
 import {
@@ -8,7 +9,7 @@ import {
 
 
 export interface RegistrationFormProps {
-
+  authorizationLink: string;
 }
 
 export interface RegistrationFormState {
@@ -16,7 +17,7 @@ export interface RegistrationFormState {
   login: string;
   password: string;
   confirmation: string;
-  expanded: boolean;
+  slide: number;
 }
 
 export class RegistrationForm
@@ -31,31 +32,39 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
       login: "",
       password: "",
       confirmation: "",
-      expanded: false
+      slide: 0
     };
   }
 
   // Change handlers:
 
-  private readonly handleTokenChange = (event: React.FormEvent<HTMLInputElement>) => {
+  private readonly handleTokenChange = (
+    event: React.FormEvent<HTMLInputElement>
+  ) => {
     this.setState({
       token: event.currentTarget.value
     });
   }
   
-  private readonly handleLoginChange = (event: React.FormEvent<HTMLInputElement>) => {
+  private readonly handleLoginChange = (
+    event: React.FormEvent<HTMLInputElement>
+  ) => {
     this.setState({
       login: event.currentTarget.value
     });
   }
   
-  private readonly handlePasswordChange = (event: React.FormEvent<HTMLInputElement>) => {
+  private readonly handlePasswordChange = (
+    event: React.FormEvent<HTMLInputElement>
+  ) => {
     this.setState({
       password: event.currentTarget.value
     });
   }
   
-  private readonly handleConfirmationChange = (event: React.FormEvent<HTMLInputElement>) => {
+  private readonly handleConfirmationChange = (
+    event: React.FormEvent<HTMLInputElement>
+  ) => {
     this.setState({
       confirmation: event.currentTarget.value
     });
@@ -65,22 +74,26 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
 
   private readonly handleGoBackClick = () => {
     this.setState({
-      expanded: false
+      slide: this.state.slide - 1
     });
   }
 
-  private readonly handleTokenSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  private readonly handleTokenSubmit = (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
     const isTokenValid: boolean =
       validationService.validateToken(this.state.token);
 
     this.setState({
-      expanded: isTokenValid || this.state.expanded
+      slide: isTokenValid ? 1 : 0
     })
 
     event.preventDefault();
   }
 
-  private readonly handleRegistrationSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  private readonly handleRegistrationSubmit = (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
     const isAllValid: boolean =
       validationService.validateToken(this.state.token) &&
       validationService.validateLogin(this.state.login) &&
@@ -112,8 +125,26 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
   // Rendering:
 
   render () {
-    const activateTokenForm : JSX.Element =
-      <form onSubmit = {this.handleTokenSubmit} className = "commonForm">
+    const registrationFormHeader: JSX.Element = 
+      <div className = "authLayoutCommonFormHeader">
+        <h1>
+          {localization.registrationHeader()}
+        </h1>
+      </div>;
+
+    const registrationFormGoBackButton: JSX.Element =
+      <div
+        className = "authLayoutCommonFormGoBackButton"
+        onClick = {this.handleGoBackClick}
+      >
+        {localization.goBack()}
+      </div>
+
+    const registrationByTokenFormControls: JSX.Element[] = [
+      <div className = "authLayoutCommonFormControl">
+        <span>
+          {localization.token()}
+        </span>
         <label>
           <input
             type = "text"
@@ -123,19 +154,19 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
             required
           />
         </label>
-        <button>
-          {localization.continueButton()}
-        </button>
-      </form>;
+      </div>
+    ];
 
-    const registrationForm : JSX.Element =
-      <form
-        onSubmit = {this.handleRegistrationSubmit}
-        className = "commonForm"
-      >
-        <div onClick = {this.handleGoBackClick}>
-          Назад
-        </div>
+    const registrationByTokenFormButton: JSX.Element = 
+      <button className = "authLayoutCommonFormButton">
+        {localization.continue()}
+      </button>;
+
+    const registrationMainFormControls: JSX.Element[] = [
+      <div className = "authLayoutCommonFormControl">
+        <span>
+          {localization.login()}
+        </span>
         <label>
           <input
             type = "text"
@@ -145,6 +176,12 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
             required
           />
         </label>
+      </div>,
+      
+      <div className = "authLayoutCommonFormControl">
+        <span>
+          {localization.password()}
+        </span>
         <label>
           <input
             type = "password"
@@ -154,6 +191,12 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
             required
           />
         </label>
+      </div>,
+
+      <div className = "authLayoutCommonFormControl">
+        <span>
+          {localization.confirmation()}
+        </span>
         <label>
           <input
             type = "password"
@@ -163,15 +206,53 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
             required
           />
         </label>
-        <button>
-          {localization.registrationButton()}
-        </button>
+      </div>
+    ];
+
+    const registrationMainFormButton: JSX.Element =
+      <button className = "authLayoutCommonFormButton">
+        {localization.registrate()}
+      </button>;
+
+    const registrationFormBottomLinks: JSX.Element = 
+      <div className = "authLayoutCommonFormBottomLinks">
+        <span>
+          {localization.alreadyHaveAnAccount()}
+        </span>
+        <Link to = {this.props.authorizationLink}>
+          {localization.authorize()}
+        </Link>
+      </div>;
+
+    const registrationByTokenForm: JSX.Element = 
+      <form
+        onSubmit = {this.handleTokenSubmit}
+        className = "authLayoutCommonForm"
+      >
+        {registrationByTokenFormControls}
+        {registrationByTokenFormButton}
       </form>;
 
+    const registrationMainForm: JSX.Element = 
+      <form
+        onSubmit = {this.handleRegistrationSubmit}
+        className = "authLayoutCommonForm"
+      >
+        {registrationMainFormControls}
+        {registrationMainFormButton}
+      </form>;
+
+    const forms: JSX.Element[] = [
+      registrationByTokenForm,
+      registrationMainForm
+    ]
+  
     return (
-      <div className = {"registrationFormComponent"}>
-        <h1>{localization.registrationHeader()}</h1>
-        {this.state.expanded ? registrationForm : activateTokenForm}
+      <div className = "authLayoutCommonFormWrapper">
+        {this.state.slide >= 1 ? registrationFormGoBackButton : null}
+        {registrationFormHeader}
+        {forms[this.state.slide]}
+        {registrationFormBottomLinks}
       </div>
     );
   }

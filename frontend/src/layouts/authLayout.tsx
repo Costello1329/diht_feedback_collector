@@ -16,7 +16,7 @@ export class AuthLayout extends Component {
         <div>
           <Switch>
             <Route path = "/registration">
-              <RegistrationForm />
+              <RegistrationForm authorizationLink = "/authorization"/>
             </Route>
             <Route path = "/authorization">
               <AuthorizationForm registrationLink = "/registration"/>
