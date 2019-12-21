@@ -1,11 +1,14 @@
 import React, {Component} from "react";
 import {Link} from 'react-router-dom';
 import {localization} from "../services/LocalizationService";
-import {validationService} from "../services/ValidationService";
 import {
   registrationService,
   RegistrationData
 } from "../services/RegistrationService";
+import {
+  validationService,
+  ValidationError
+} from "../services/ValidationService";
 
 
 export interface RegistrationFormProps {
@@ -13,11 +16,14 @@ export interface RegistrationFormProps {
 }
 
 export interface RegistrationFormState {
+  slide: number;
   token: string;
   login: string;
   password: string;
   confirmation: string;
-  slide: number;
+  tokenValidationError: ValidationError;
+  loginValidationError: ValidationError;
+  passwordAndConfirmationValidationError: ValidationError;
 }
 
 export class RegistrationForm
@@ -28,11 +34,14 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
     super(props);
 
     this.state = {
+      slide: 0,
       token: "",
       login: "",
       password: "",
       confirmation: "",
-      slide: 0
+      tokenValidationError: ValidationError.ok,
+      loginValidationError: ValidationError.ok,
+      passwordAndConfirmationValidationError: ValidationError.ok
     };
   }
 
@@ -41,32 +50,54 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
   private readonly handleTokenChange = (
     event: React.FormEvent<HTMLInputElement>
   ) => {
+    const token: string = event.currentTarget.value;
+    
     this.setState({
-      token: event.currentTarget.value
+      token: token,
+      tokenValidationError:
+        validationService.validateRegistrationToken(token)
     });
   }
   
   private readonly handleLoginChange = (
     event: React.FormEvent<HTMLInputElement>
   ) => {
+    const login: string = event.currentTarget.value;
+    
     this.setState({
-      login: event.currentTarget.value
+      login: login,
+      loginValidationError:
+        validationService.validateRegistrationLogin(login)
     });
   }
   
   private readonly handlePasswordChange = (
     event: React.FormEvent<HTMLInputElement>
   ) => {
+    const password: string = event.currentTarget.value;
+    
     this.setState({
-      password: event.currentTarget.value
+      password: password,
+      passwordAndConfirmationValidationError:
+        validationService.validateRegistrationPasswordAndConfirmation(
+          password,
+          this.state.confirmation
+        )
     });
   }
   
   private readonly handleConfirmationChange = (
     event: React.FormEvent<HTMLInputElement>
   ) => {
+    const confirmation: string = event.currentTarget.value;
+    
     this.setState({
-      confirmation: event.currentTarget.value
+      confirmation: confirmation,
+      passwordAndConfirmationValidationError:
+        validationService.validateRegistrationPasswordAndConfirmation(
+          this.state.password,
+          confirmation
+        )
     });
   }
 
@@ -81,12 +112,13 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
   private readonly handleTokenSubmit = (
     event: React.FormEvent<HTMLFormElement>
   ) => {
-    const isTokenValid: boolean =
-      validationService.validateToken(this.state.token);
+    const tokenValidationError: ValidationError =
+      validationService.validateRegistrationToken(this.state.token);
 
     this.setState({
-      slide: isTokenValid ? 1 : 0
-    })
+      slide: tokenValidationError === ValidationError.ok ? 1 : 0,
+      tokenValidationError: tokenValidationError
+    });
 
     event.preventDefault();
   }
@@ -94,14 +126,21 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
   private readonly handleRegistrationSubmit = (
     event: React.FormEvent<HTMLFormElement>
   ) => {
-    const isAllValid: boolean =
-      validationService.validateToken(this.state.token) &&
-      validationService.validateLogin(this.state.login) &&
-      validationService.validatePassword(this.state.password) &&
-      validationService.validateConfirmation(
-        this.state.password, this.state.confirmation);
+    const tokenValidationError =
+      validationService.validateRegistrationToken(this.state.token);
+    const loginValidationError =
+      validationService.validateRegistrationLogin(this.state.login);
+    const passwordAndConfirmationValidationError =
+      validationService.validateRegistrationPasswordAndConfirmation(
+        this.state.password,
+        this.state.confirmation
+      );
 
-    if (isAllValid) {
+    if (
+      tokenValidationError == ValidationError.ok &&
+      loginValidationError == ValidationError.ok &&
+      passwordAndConfirmationValidationError == ValidationError.ok
+    ) {
       const data: RegistrationData = {
         token: this.state.token,
         login: this.state.login,
@@ -115,9 +154,15 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
       })
       .catch(reject => {
         alert(reject);
-      })
-      ;
+      });
     }
+
+    this.setState({
+      tokenValidationError: tokenValidationError,
+      loginValidationError: loginValidationError,
+      passwordAndConfirmationValidationError:
+        passwordAndConfirmationValidationError
+    });
 
     event.preventDefault();
   }
@@ -140,6 +185,22 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
         {localization.goBack()}
       </div>
 
+    const tokenInputClassName: string = 
+      this.state.tokenValidationError !== ValidationError.ok
+      ? "authLayoutCommonFormInputError"
+      : "";
+
+    const tokenValidationErrorText: string =
+      validationService
+        .getErrorTextByValidationError(this.state.tokenValidationError);
+
+    const tokenInputErrorText: JSX.Element = 
+      this.state.tokenValidationError !== ValidationError.ok
+      ? <span className = {"authLayoutCommonFormInputErrorText"}>
+          {tokenValidationErrorText}
+        </span>
+      : <></>;
+
     const registrationByTokenFormControls: JSX.Element[] = [
       <div className = "authLayoutCommonFormControl">
         <span>
@@ -147,13 +208,14 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
         </span>
         <label>
           <input
+            className = {tokenInputClassName}
             type = "text"
             placeholder = {localization.tokenPlaceholder()}
             value = {this.state.token}
             onChange = {this.handleTokenChange}
-            required
           />
         </label>
+        {tokenInputErrorText}
       </div>
     ];
 
@@ -162,6 +224,40 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
         {localization.continue()}
       </button>;
 
+    const loginInputClassName: string = 
+      this.state.loginValidationError !== ValidationError.ok
+      ? "authLayoutCommonFormInputError"
+      : "";
+    
+    const passwordAndConfirmationInputClassName: string = 
+      this.state.passwordAndConfirmationValidationError !== ValidationError.ok
+      ? "authLayoutCommonFormInputError"
+      : "";
+
+    const loginValidationErrorText: string =
+      validationService
+        .getErrorTextByValidationError(this.state.loginValidationError);
+
+    const passwordAndConfirmationValidationErrorText: string =
+      validationService
+        .getErrorTextByValidationError(
+          this.state.passwordAndConfirmationValidationError
+        );
+
+    const loginInputErrorText: JSX.Element = 
+      this.state.loginValidationError !== ValidationError.ok
+      ? <span className = {"authLayoutCommonFormInputErrorText"}>
+          {loginValidationErrorText}
+        </span>
+      : <></>;
+
+    const passwordAndConfirmationInputErrorText: JSX.Element = 
+      this.state.passwordAndConfirmationValidationError !== ValidationError.ok
+      ? <span className = {"authLayoutCommonFormInputErrorText"}>
+          {passwordAndConfirmationValidationErrorText}
+        </span>
+      : <></>;
+
     const registrationMainFormControls: JSX.Element[] = [
       <div className = "authLayoutCommonFormControl">
         <span>
@@ -169,13 +265,14 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
         </span>
         <label>
           <input
+            className = {loginInputClassName}
             type = "text"
             placeholder = {localization.loginPlaceholder()}
             value = {this.state.login}
             onChange = {this.handleLoginChange}
-            required
           />
         </label>
+        {loginInputErrorText}
       </div>,
       
       <div className = "authLayoutCommonFormControl">
@@ -184,13 +281,14 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
         </span>
         <label>
           <input
+            className = {passwordAndConfirmationInputClassName}
             type = "password"
             placeholder = {localization.passwordPlaceholder()}
             value = {this.state.password}
             onChange = {this.handlePasswordChange}
-            required
           />
         </label>
+        {passwordAndConfirmationInputErrorText}
       </div>,
 
       <div className = "authLayoutCommonFormControl">
@@ -199,13 +297,14 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
         </span>
         <label>
           <input
+            className = {passwordAndConfirmationInputClassName}
             type = "password"
             placeholder = {localization.confirmationPlaceholder()}
             value = {this.state.confirmation}
             onChange = {this.handleConfirmationChange}
-            required
           />
         </label>
+        {passwordAndConfirmationInputErrorText}
       </div>
     ];
 
@@ -249,7 +348,7 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
   
     return (
       <div className = "authLayoutCommonFormWrapper">
-        {this.state.slide >= 1 ? registrationFormGoBackButton : null}
+        {this.state.slide >= 1 ? registrationFormGoBackButton : <></>}
         {registrationFormHeader}
         {forms[this.state.slide]}
         {registrationFormBottomLinks}

@@ -5,6 +5,10 @@ import {
   authorizationService,
   AuthorizationData
 } from "../services/AuthorizationService";
+import {
+  validationService,
+  ValidationError
+} from "../services/ValidationService";
 
 
 export interface AuthorizationFormProps {
@@ -14,6 +18,8 @@ export interface AuthorizationFormProps {
 export interface AuthorizationFormState {
   login: string;
   password: string;
+  loginValidationError: ValidationError;
+  passwordValidationError: ValidationError;
 }
 
 export class AuthorizationForm
@@ -24,6 +30,8 @@ extends Component<AuthorizationFormProps, AuthorizationFormState> {
     this.state = {
       login: "",
       password: "",
+      loginValidationError: ValidationError.ok,
+      passwordValidationError: ValidationError.ok
     };
   }
 
@@ -32,16 +40,24 @@ extends Component<AuthorizationFormProps, AuthorizationFormState> {
   private readonly handleLoginChange = (
     event: React.FormEvent<HTMLInputElement>
   ) => {
+    const login: string = event.currentTarget.value;
+    
     this.setState({
-      login: event.currentTarget.value
+      login: login,
+      loginValidationError:
+        validationService.validateAuthorizationLogin(login)
     });
   }
   
   private readonly handlePasswordChange = (
     event: React.FormEvent<HTMLInputElement>
   ) => {
+    const password: string = event.currentTarget.value;
+    
     this.setState({
-      password: event.currentTarget.value
+      password: password,
+      passwordValidationError:
+        validationService.validateAuthorizationPassword(password)
     });
   }
 
@@ -50,12 +66,35 @@ extends Component<AuthorizationFormProps, AuthorizationFormState> {
   private readonly handleAuthorizationSubmit = (
     event: React.FormEvent<HTMLFormElement>
   ) => {
-    const data: AuthorizationData = {
-      login: this.state.login,
-      password: this.state.password,
-    };
+    const loginValidationError: ValidationError = 
+      validationService.validateAuthorizationLogin(this.state.login);
+    
+    const passwordValidationError: ValidationError = 
+        validationService.validateAuthorizationLogin(this.state.password);
 
-    authorizationService.sendAuthorizationData(data);
+    if (
+      loginValidationError === ValidationError.ok && 
+      passwordValidationError === ValidationError.ok
+    ) {
+      const data: AuthorizationData = {
+        login: this.state.login,
+        password: this.state.password,
+      };
+
+      authorizationService.sendAuthorizationData(data)
+      .then(_ => {
+        alert("all is ok");
+      })
+      .catch(reject => {
+        alert(reject);
+      });
+    }
+
+    this.setState({
+      loginValidationError: loginValidationError,
+      passwordValidationError: passwordValidationError
+    });
+
     event.preventDefault();
   }
 
@@ -68,6 +107,38 @@ extends Component<AuthorizationFormProps, AuthorizationFormState> {
           {localization.authorizationHeader()}
         </h1>
       </div>;
+
+    const loginInputClassName: string = 
+      this.state.loginValidationError !== ValidationError.ok
+      ? "authLayoutCommonFormInputError"
+      : "";
+
+    const passwordInputClassName: string = 
+      this.state.passwordValidationError !== ValidationError.ok
+      ? "authLayoutCommonFormInputError"
+      : "";
+
+    const loginValidationErrorText: string =
+      validationService
+        .getErrorTextByValidationError(this.state.loginValidationError);
+
+    const passwordValidationErrorText: string =
+      validationService
+        .getErrorTextByValidationError(this.state.passwordValidationError);
+
+    const loginInputErrorText: JSX.Element = 
+      this.state.loginValidationError !== ValidationError.ok
+      ? <span className = {"authLayoutCommonFormInputErrorText"}>
+          {loginValidationErrorText}
+        </span>
+      : <></>;
+
+    const passwordInputErrorText: JSX.Element = 
+      this.state.passwordValidationError !== ValidationError.ok
+      ? <span className = {"authLayoutCommonFormInputErrorText"}>
+          {passwordValidationErrorText}
+        </span>
+      : <></>;
   
     const authorizationFormControls: JSX.Element[] = [
       <div className = "authLayoutCommonFormControl">
@@ -76,13 +147,14 @@ extends Component<AuthorizationFormProps, AuthorizationFormState> {
         </span>
         <label>
           <input
+            className = {loginInputClassName}
             type = "text"
             placeholder = {localization.loginPlaceholder()}
             value = {this.state.login}
             onChange = {this.handleLoginChange}
-            required
           />
         </label>
+        {loginInputErrorText}
       </div>,
         
       <div className = "authLayoutCommonFormControl">
@@ -91,13 +163,14 @@ extends Component<AuthorizationFormProps, AuthorizationFormState> {
         </span>
         <label>
           <input
+            className = {passwordInputClassName}
             type = "password"
             placeholder = {localization.passwordPlaceholder()}
             value = {this.state.password}
             onChange = {this.handlePasswordChange}
-            required
           />
         </label>
+        {passwordInputErrorText}
       </div>
     ];
 

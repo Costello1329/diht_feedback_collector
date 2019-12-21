@@ -39,7 +39,7 @@
 
   > .authLayoutCommonForm {
     width: 480px;
-    margin: 16px auto 16px auto;
+    margin: 16px auto 12px auto;
 
     > .authLayoutCommonFormControl {
       margin-bottom: 4px;
@@ -47,6 +47,16 @@
       > span {
         margin-left: 8px;
         color: #333;
+      }
+
+      > .authLayoutCommonFormInputErrorText {
+        float: right;
+        /* very strange troubles with input size... 
+         * We need 2px to perfectly align text with input.
+         */
+        margin-right: 2px;
+        color: #ff3333;
+        font-size: 14px;
       }
 
       > label {
@@ -57,6 +67,7 @@
           /* here we need to reduce by 6px because of standart user-agent */
           width: calc(100% - 6px);
           display: block;
+          box-sizing: border-box;
           margin: 4px auto;
           height: 32px;
           border-radius: 4px;
@@ -67,6 +78,11 @@
           &:focus {
             outline: none;
           }
+        }
+
+        > .authLayoutCommonFormInputError {
+          border: 1px solid #ff3333;
+          background-color: #ffeeee;
         }
       }
     }
@@ -80,10 +96,11 @@
       font-size: 16px;
       color: #333;
       display: block;
-      margin: 12px auto 8px auto;
+      margin: 24px auto 0 auto;
 
       &:hover {
         color: white;
+        cursor: pointer;
       }
 
       &:active {
@@ -94,7 +111,7 @@
 
   > .authLayoutCommonFormBottomLinks {
     display: table;
-    margin: 16px auto 32px auto;
+    margin: 0 auto 32px auto;
 
     > span {
       text-align: center;

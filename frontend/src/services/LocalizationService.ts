@@ -1,4 +1,12 @@
 class LocalizationService {
+    // Validation:
+    readonly thisFieldIsNecessaryToFill = () =>
+        "Это поле обязательно для заполнения.";
+    readonly unforseenValidationError = () =>
+        "Непредвиденная форматная ошибка.";
+    readonly passwordsDoesNotMatch = () =>
+        "Пароли не совпадают.";
+
     // AuthLayout:
     readonly authorizationHeader = () => "Авторизация";
     readonly authorizationButton = () => "Войти";
