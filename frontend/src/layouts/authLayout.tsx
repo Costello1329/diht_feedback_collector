@@ -9,17 +9,26 @@ import {AuthorizationForm} from "../components/AuthorizationFormComponent";
 import "../styles/authLayout"
 
 
-export class AuthLayout extends Component {
+export interface AuthLayoutProps {
+  authorizationLink: string;
+  registrationLink: string;
+}
+
+export class AuthLayout extends Component<AuthLayoutProps> {
   render () {
     const layout: JSX.Element =
       <HashRouter hashType = "noslash">
         <div>
           <Switch>
-            <Route path = "/registration">
-              <RegistrationForm authorizationLink = "/authorization"/>
+            <Route path = {this.props.registrationLink}>
+              <RegistrationForm
+                authorizationLink = {this.props.authorizationLink}
+              />
             </Route>
-            <Route path = "/authorization">
-              <AuthorizationForm registrationLink = "/registration"/>
+            <Route path = {this.props.authorizationLink}>
+              <AuthorizationForm
+                registrationLink = {this.props.registrationLink}
+              />
             </Route>
           </Switch>
         </div>

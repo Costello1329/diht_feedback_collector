@@ -1,11 +1,27 @@
 class LocalizationService {
     // Validation:
-    readonly thisFieldIsNecessaryToFill = () =>
+    readonly emptyString = () =>
         "Это поле обязательно для заполнения.";
+    readonly tooShort = () =>
+        "Слишком мало символов.";
+    readonly notValidToken = () =>
+        "Неверный формат.";
+    readonly notValidLogin = () =>
+        "Разрешены английские буквы, цифры, _ и -.";
+    readonly notValidPasswordFirstType = () =>
+        "Разрешены английские буквы, цифры и символы: _-!@#$%^&*().";
+    readonly notValidPasswordSecondType = () =>
+        "Нужна хотя бы одна строчная буква.";
+    readonly notValidPasswordThirdType = () =>
+        "Нужна хотя бы одна прописная буква.";
+    readonly notValidPasswordFourthType = () =>
+        "Нужна хотя бы одна цифра.";
+    readonly notValidPasswordFifthType = () =>
+        "Нужен хотя бы один символ из _-!@#$%^&*().";
+    readonly confirmationDoesNotMatchPassword = () =>
+        "Пароли не совпадают.";
     readonly unforseenValidationError = () =>
         "Непредвиденная форматная ошибка.";
-    readonly passwordsDoesNotMatch = () =>
-        "Пароли не совпадают.";
 
     // AuthLayout:
     readonly authorizationHeader = () => "Авторизация";

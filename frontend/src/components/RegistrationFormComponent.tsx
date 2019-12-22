@@ -21,9 +21,10 @@ export interface RegistrationFormState {
   login: string;
   password: string;
   confirmation: string;
-  tokenValidationError: ValidationError;
-  loginValidationError: ValidationError;
-  passwordAndConfirmationValidationError: ValidationError;
+  tokenValidationErrors: ValidationError[];
+  loginValidationErrors: ValidationError[];
+  passwordValidationErrors: ValidationError[];
+  confirmationValidationErrors: ValidationError[];
 }
 
 export class RegistrationForm
@@ -39,9 +40,10 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
       login: "",
       password: "",
       confirmation: "",
-      tokenValidationError: ValidationError.ok,
-      loginValidationError: ValidationError.ok,
-      passwordAndConfirmationValidationError: ValidationError.ok
+      tokenValidationErrors: [],
+      loginValidationErrors: [],
+      passwordValidationErrors: [],
+      confirmationValidationErrors: []
     };
   }
 
@@ -54,47 +56,56 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
     
     this.setState({
       token: token,
-      tokenValidationError:
+      tokenValidationErrors:
         validationService.validateRegistrationToken(token)
     });
   }
-  
+
   private readonly handleLoginChange = (
     event: React.FormEvent<HTMLInputElement>
   ) => {
     const login: string = event.currentTarget.value;
-    
+
     this.setState({
       login: login,
-      loginValidationError:
+      loginValidationErrors:
         validationService.validateRegistrationLogin(login)
     });
   }
-  
+
   private readonly handlePasswordChange = (
     event: React.FormEvent<HTMLInputElement>
   ) => {
     const password: string = event.currentTarget.value;
-    
+
     this.setState({
       password: password,
-      passwordAndConfirmationValidationError:
-        validationService.validateRegistrationPasswordAndConfirmation(
+      passwordValidationErrors:
+        validationService.validateRegistrationPassword(password),
+      confirmationValidationErrors:
+        validationService.validateRegistrationConfirmation(
           password,
           this.state.confirmation
         )
+        /* We ignore empty confirmation at this step, because it's
+         * more important to show our client that confirmation doesn't
+         * match the entered password.
+         */
+        .filter((validationError: ValidationError) =>
+          validationError != ValidationError.emptyString
+        )
     });
   }
-  
+
   private readonly handleConfirmationChange = (
     event: React.FormEvent<HTMLInputElement>
   ) => {
     const confirmation: string = event.currentTarget.value;
-    
+
     this.setState({
       confirmation: confirmation,
-      passwordAndConfirmationValidationError:
-        validationService.validateRegistrationPasswordAndConfirmation(
+      confirmationValidationErrors:
+        validationService.validateRegistrationConfirmation(
           this.state.password,
           confirmation
         )
@@ -112,12 +123,12 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
   private readonly handleTokenSubmit = (
     event: React.FormEvent<HTMLFormElement>
   ) => {
-    const tokenValidationError: ValidationError =
+    const tokenValidationErrors: ValidationError[] =
       validationService.validateRegistrationToken(this.state.token);
 
     this.setState({
-      slide: tokenValidationError === ValidationError.ok ? 1 : 0,
-      tokenValidationError: tokenValidationError
+      slide: tokenValidationErrors.length === 0 ? 1 : 0,
+      tokenValidationErrors: tokenValidationErrors
     });
 
     event.preventDefault();
@@ -126,20 +137,23 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
   private readonly handleRegistrationSubmit = (
     event: React.FormEvent<HTMLFormElement>
   ) => {
-    const tokenValidationError =
+    const tokenValidationErrors: ValidationError[]=
       validationService.validateRegistrationToken(this.state.token);
-    const loginValidationError =
+    const loginValidationErrors: ValidationError[]=
       validationService.validateRegistrationLogin(this.state.login);
-    const passwordAndConfirmationValidationError =
-      validationService.validateRegistrationPasswordAndConfirmation(
+    const passwordValidationErrors: ValidationError[]=
+      validationService.validateRegistrationLogin(this.state.password);
+    const confirmationValidationErrors: ValidationError[] =
+      validationService.validateRegistrationConfirmation(
         this.state.password,
         this.state.confirmation
       );
 
     if (
-      tokenValidationError == ValidationError.ok &&
-      loginValidationError == ValidationError.ok &&
-      passwordAndConfirmationValidationError == ValidationError.ok
+      tokenValidationErrors.length === 0 &&
+      loginValidationErrors.length === 0 &&
+      passwordValidationErrors.length === 0 &&
+      confirmationValidationErrors.length === 0
     ) {
       const data: RegistrationData = {
         token: this.state.token,
@@ -158,10 +172,10 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
     }
 
     this.setState({
-      tokenValidationError: tokenValidationError,
-      loginValidationError: loginValidationError,
-      passwordAndConfirmationValidationError:
-        passwordAndConfirmationValidationError
+      tokenValidationErrors: tokenValidationErrors,
+      loginValidationErrors: loginValidationErrors,
+      passwordValidationErrors: passwordValidationErrors,
+      confirmationValidationErrors: confirmationValidationErrors
     });
 
     event.preventDefault();
@@ -186,24 +200,30 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
       </div>
 
     const tokenInputClassName: string = 
-      this.state.tokenValidationError !== ValidationError.ok
+      this.state.tokenValidationErrors.length !== 0
       ? "authLayoutCommonFormInputError"
       : "";
 
     const tokenValidationErrorText: string =
       validationService
-        .getErrorTextByValidationError(this.state.tokenValidationError);
+        .getErrorTextByValidationError(this.state.tokenValidationErrors[0]);
 
     const tokenInputErrorText: JSX.Element = 
-      this.state.tokenValidationError !== ValidationError.ok
-      ? <span className = {"authLayoutCommonFormInputErrorText"}>
+      this.state.tokenValidationErrors.length !== 0
+      ? <span
+          className = {"authLayoutCommonFormInputErrorText"}
+          key = "1"
+        >
           {tokenValidationErrorText}
         </span>
       : <></>;
 
     const registrationByTokenFormControls: JSX.Element[] = [
-      <div className = "authLayoutCommonFormControl">
-        <span>
+      <div
+        className = "authLayoutCommonFormControl"
+        key = "0"
+      >
+        <span key = "0">
           {localization.token()}
         </span>
         <label>
@@ -225,41 +245,63 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
       </button>;
 
     const loginInputClassName: string = 
-      this.state.loginValidationError !== ValidationError.ok
+      this.state.loginValidationErrors.length !== 0
       ? "authLayoutCommonFormInputError"
       : "";
-    
-    const passwordAndConfirmationInputClassName: string = 
-      this.state.passwordAndConfirmationValidationError !== ValidationError.ok
+
+    const passwordInputClassName: string = 
+      this.state.passwordValidationErrors.length !== 0
+      ? "authLayoutCommonFormInputError"
+      : "";
+
+    const confirmationInputClassName: string = 
+      this.state.confirmationValidationErrors.length !== 0
       ? "authLayoutCommonFormInputError"
       : "";
 
     const loginValidationErrorText: string =
       validationService
-        .getErrorTextByValidationError(this.state.loginValidationError);
+        .getErrorTextByValidationError(this.state.loginValidationErrors[0]);
 
-    const passwordAndConfirmationValidationErrorText: string =
+    const passwordValidationErrorText: string =
       validationService
         .getErrorTextByValidationError(
-          this.state.passwordAndConfirmationValidationError
+          this.state.passwordValidationErrors[0]
+        );
+
+    const confirmationValidationErrorText: string =
+      validationService
+        .getErrorTextByValidationError(
+          this.state.confirmationValidationErrors[0]
         );
 
     const loginInputErrorText: JSX.Element = 
-      this.state.loginValidationError !== ValidationError.ok
-      ? <span className = {"authLayoutCommonFormInputErrorText"}>
+      this.state.loginValidationErrors.length !== 0
+      ? <span
+      className = {"authLayoutCommonFormInputErrorText"}>
           {loginValidationErrorText}
         </span>
       : <></>;
 
-    const passwordAndConfirmationInputErrorText: JSX.Element = 
-      this.state.passwordAndConfirmationValidationError !== ValidationError.ok
+    const passwordInputErrorText: JSX.Element = 
+      this.state.passwordValidationErrors.length !== 0
       ? <span className = {"authLayoutCommonFormInputErrorText"}>
-          {passwordAndConfirmationValidationErrorText}
+          {passwordValidationErrorText}
+        </span>
+      : <></>;
+
+    const confirmationInputErrorText: JSX.Element = 
+      this.state.confirmationValidationErrors.length !== 0
+      ? <span className = {"authLayoutCommonFormInputErrorText"}>
+          {confirmationValidationErrorText}
         </span>
       : <></>;
 
     const registrationMainFormControls: JSX.Element[] = [
-      <div className = "authLayoutCommonFormControl">
+      <div
+        className = "authLayoutCommonFormControl"
+        key = "0"
+      >
         <span>
           {localization.login()}
         </span>
@@ -274,37 +316,43 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
         </label>
         {loginInputErrorText}
       </div>,
-      
-      <div className = "authLayoutCommonFormControl">
+
+      <div
+        className = "authLayoutCommonFormControl"
+        key = "1"
+      >
         <span>
           {localization.password()}
         </span>
         <label>
           <input
-            className = {passwordAndConfirmationInputClassName}
+            className = {passwordInputClassName}
             type = "password"
             placeholder = {localization.passwordPlaceholder()}
             value = {this.state.password}
             onChange = {this.handlePasswordChange}
           />
         </label>
-        {passwordAndConfirmationInputErrorText}
+        {passwordInputErrorText}
       </div>,
 
-      <div className = "authLayoutCommonFormControl">
+      <div
+        className = "authLayoutCommonFormControl"
+        key = "2"
+      >
         <span>
           {localization.confirmation()}
         </span>
         <label>
           <input
-            className = {passwordAndConfirmationInputClassName}
+            className = {confirmationInputClassName}
             type = "password"
             placeholder = {localization.confirmationPlaceholder()}
             value = {this.state.confirmation}
             onChange = {this.handleConfirmationChange}
           />
         </label>
-        {passwordAndConfirmationInputErrorText}
+        {confirmationInputErrorText}
       </div>
     ];
 

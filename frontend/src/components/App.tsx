@@ -4,7 +4,10 @@ import {AuthLayout} from "../layouts/authLayout";
 const App: React.FC = () => {
   return (
     <div className = "App">
-      <AuthLayout />
+      <AuthLayout
+        registrationLink = "/registration"
+        authorizationLink = "/authorization"
+      />
     </div>
   );
 }
