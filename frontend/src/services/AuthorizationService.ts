@@ -35,7 +35,9 @@ class AuthorizationService {
       .then(response => alert(JSON.stringify(response)));
   }
 
-  private encryptAuthorizationData (data: AuthorizationData) {
+  private encryptAuthorizationData (
+    data: AuthorizationData
+  ): AuthorizationData {
     return {
       login: data.login,
       password: encryptionService.encrypt(data.password),
@@ -43,4 +45,5 @@ class AuthorizationService {
   }
 }
 
-export const authorizationService = new AuthorizationService();
+export const authorizationService: AuthorizationService =
+  new AuthorizationService();

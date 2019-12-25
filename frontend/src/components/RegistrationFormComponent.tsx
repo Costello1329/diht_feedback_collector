@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React from "react";
 import {Link} from 'react-router-dom';
 import {localization} from "../services/LocalizationService";
 import {
@@ -9,6 +9,12 @@ import {
   validationService,
   ValidationError
 } from "../services/ValidationService";
+import {
+  notificationService,
+  NotificationType,
+  Notification
+} from "../services/NotificationService";
+import { truncate } from "fs";
 
 
 export interface RegistrationFormProps {
@@ -27,8 +33,8 @@ export interface RegistrationFormState {
   confirmationValidationErrors: ValidationError[];
 }
 
-export class RegistrationForm
-extends Component<RegistrationFormProps, RegistrationFormState> {
+export class RegistrationForm extends
+React.Component<RegistrationFormProps, RegistrationFormState> {
   state: RegistrationFormState;
 
   constructor (props: RegistrationFormProps) {
@@ -51,7 +57,7 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
 
   private readonly handleTokenChange = (
     event: React.FormEvent<HTMLInputElement>
-  ) => {
+  ): void => {
     const token: string = event.currentTarget.value;
     
     this.setState({
@@ -63,7 +69,7 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
 
   private readonly handleLoginChange = (
     event: React.FormEvent<HTMLInputElement>
-  ) => {
+  ): void => {
     const login: string = event.currentTarget.value;
 
     this.setState({
@@ -75,7 +81,7 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
 
   private readonly handlePasswordChange = (
     event: React.FormEvent<HTMLInputElement>
-  ) => {
+  ): void => {
     const password: string = event.currentTarget.value;
 
     this.setState({
@@ -99,7 +105,7 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
 
   private readonly handleConfirmationChange = (
     event: React.FormEvent<HTMLInputElement>
-  ) => {
+  ): void => {
     const confirmation: string = event.currentTarget.value;
 
     this.setState({
@@ -114,7 +120,7 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
 
   // Submit handlers:
 
-  private readonly handleGoBackClick = () => {
+  private readonly handleGoBackClick = (): void => {
     this.setState({
       slide: this.state.slide - 1
     });
@@ -122,7 +128,37 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
 
   private readonly handleTokenSubmit = (
     event: React.FormEvent<HTMLFormElement>
-  ) => {
+  ): void => {
+    notificationService.notify(
+      [
+        new Notification(
+          NotificationType.message,
+          "Привет, мир!",
+          "Просто хотел поздоваться."
+        ),
+        new Notification(
+          NotificationType.success,
+          "Аккаунт взломан!",
+          "Банковский аккаунт взломан. Выведено "
+          + Math.round(Math.random() * 10000)
+          + "$ США."
+        ),
+        new Notification(
+          NotificationType.warning,
+          "Аккаунт взломан, остались следы!",
+          "Банковский аккаунт взломан. Выведено "
+          + Math.round(Math.random() * 10000)
+          + "$ США. Но были оставлены следы..."
+        ),
+        new Notification(
+          NotificationType.error,
+          "Аккаунт не взломан!",
+          "Банковский аккаунт не был взломан."
+        )
+      ][Math.floor(Math.random() * 4)],
+      5000
+    );
+
     const tokenValidationErrors: ValidationError[] =
       validationService.validateRegistrationToken(this.state.token);
 
@@ -136,7 +172,7 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
 
   private readonly handleRegistrationSubmit = (
     event: React.FormEvent<HTMLFormElement>
-  ) => {
+  ): void => {
     const tokenValidationErrors: ValidationError[]=
       validationService.validateRegistrationToken(this.state.token);
     const loginValidationErrors: ValidationError[]=
@@ -183,7 +219,7 @@ extends Component<RegistrationFormProps, RegistrationFormState> {
 
   // Rendering:
 
-  render () {
+  render (): JSX.Element {
     const registrationFormHeader: JSX.Element = 
       <div className = "authLayoutCommonFormHeader">
         <h1>

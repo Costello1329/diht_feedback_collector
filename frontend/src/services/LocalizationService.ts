@@ -1,47 +1,66 @@
 class LocalizationService {
     // Validation:
-    readonly emptyString = () =>
+    readonly emptyString = (): string =>
         "Это поле обязательно для заполнения.";
-    readonly tooShort = () =>
+    readonly tooShort = (): string =>
         "Слишком мало символов.";
-    readonly notValidToken = () =>
+    readonly notValidToken = (): string =>
         "Неверный формат.";
-    readonly notValidLogin = () =>
+    readonly notValidLogin = (): string =>
         "Разрешены английские буквы, цифры, _ и -.";
-    readonly notValidPasswordFirstType = () =>
+    readonly notValidPasswordFirstType = (): string =>
         "Разрешены английские буквы, цифры и символы: _-!@#$%^&*().";
-    readonly notValidPasswordSecondType = () =>
+    readonly notValidPasswordSecondType = (): string =>
         "Нужна хотя бы одна строчная буква.";
-    readonly notValidPasswordThirdType = () =>
+    readonly notValidPasswordThirdType = (): string =>
         "Нужна хотя бы одна прописная буква.";
-    readonly notValidPasswordFourthType = () =>
+    readonly notValidPasswordFourthType = (): string =>
         "Нужна хотя бы одна цифра.";
-    readonly notValidPasswordFifthType = () =>
+    readonly notValidPasswordFifthType = (): string =>
         "Нужен хотя бы один символ из _-!@#$%^&*().";
     readonly confirmationDoesNotMatchPassword = () =>
         "Пароли не совпадают.";
-    readonly unforseenValidationError = () =>
+    readonly unforseenValidationError = (): string =>
         "Непредвиденная форматная ошибка.";
 
     // AuthLayout:
-    readonly authorizationHeader = () => "Авторизация";
-    readonly authorizationButton = () => "Войти";
-    readonly yetNoAccount = () => "Нет аккаунта?";
-    readonly alreadyHaveAnAccount = () => "Уже есть аккаунт?";
-    readonly register = () => "Зарегистрируйтесь.";
-    readonly authorize = () => "Авторизируйтесь.";
-    readonly login = () => "Логин";
-    readonly password = () => "Пароль";
-    readonly confirmation = () => "Подтверждение пароля";
-    readonly token = () => "Токен";
-    readonly registrationHeader = () => "Регистрация";
-    readonly tokenPlaceholder = () => "22345200-abe8-4f60-90c8-0d43c5f6c0f6";
-    readonly loginPlaceholder = () => "Costello1329";
-    readonly passwordPlaceholder = () => "**********";
-    readonly confirmationPlaceholder = () => "**********";
-    readonly registrate = () => "Зарегистрироваться";
-    readonly continue = () => "Продолжить";
-    readonly goBack = () => "Назад";
+    readonly authorizationHeader = (): string =>
+        "Авторизация";
+    readonly authorizationButton = (): string =>
+        "Войти";
+    readonly yetNoAccount = (): string =>
+        "Нет аккаунта?";
+    readonly alreadyHaveAnAccount = (): string =>
+        "Уже есть аккаунт?";
+    readonly register = (): string =>
+        "Зарегистрируйтесь.";
+    readonly authorize = (): string =>
+        "Авторизируйтесь.";
+    readonly login = (): string =>
+        "Логин";
+    readonly password = (): string =>
+        "Пароль";
+    readonly confirmation = (): string =>
+        "Подтверждение пароля";
+    readonly token = (): string =>
+        "Токен";
+    readonly registrationHeader = (): string =>
+        "Регистрация";
+    readonly tokenPlaceholder = (): string =>
+        "22345200-abe8-4f60-90c8-0d43c5f6c0f6";
+    readonly loginPlaceholder = (): string =>
+        "Costello1329";
+    readonly passwordPlaceholder = (): string =>
+        "**********";
+    readonly confirmationPlaceholder = (): string =>
+        "**********";
+    readonly registrate = (): string =>
+        "Зарегистрироваться";
+    readonly continue = (): string =>
+        "Продолжить";
+    readonly goBack = (): string =>
+        "Назад";
 }
 
-export const localization = new LocalizationService();
+export const localization: LocalizationService =
+    new LocalizationService();

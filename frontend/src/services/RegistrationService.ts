@@ -60,7 +60,9 @@ class RegistrationService {
       });
   }
 
-  private encryptRegistrationData (data: RegistrationData) {
+  private encryptRegistrationData (
+    data: RegistrationData
+  ): RegistrationData {
     return {
       token: data.token,
       login: data.login,
@@ -69,7 +71,7 @@ class RegistrationService {
     };
   }
 
-  private checkResponseData (data: any) {
+  private checkResponseData (data: any): boolean {
     try {
       if (
         Object.keys(data).length
@@ -90,7 +92,7 @@ class RegistrationService {
     }
   }
 
-  private getErrorType (data: any) {
+  private getErrorType (data: any): RegistrationErrorType {
     try {
       if (
         Object.keys(data).length

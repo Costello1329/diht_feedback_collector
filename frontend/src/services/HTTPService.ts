@@ -21,8 +21,8 @@ class HTTPService {
     resource: string,
     headers: any,
     body: string,
-    addDefaultHeaders: boolean = true) {
-
+    addDefaultHeaders: boolean = true
+  ) {
     return await axios.post(
       this.serverHostPort + resource,
       body,
@@ -36,7 +36,8 @@ class HTTPService {
   }
 }
 
-export const httpService = new HTTPService(
-  "http://localhost:3000",
-  "http://127.0.0.1:5000"
-);
+export const httpService: HTTPService =
+  new HTTPService(
+    "http://localhost:3000",
+    "http://127.0.0.1:5000"
+  );

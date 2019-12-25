@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React from "react";
 import {Link} from 'react-router-dom';
 import {localization} from "../services/LocalizationService";
 import {
@@ -22,8 +22,8 @@ export interface AuthorizationFormState {
   passwordValidationErrors: ValidationError[];
 }
 
-export class AuthorizationForm
-extends Component<AuthorizationFormProps, AuthorizationFormState> {
+export class AuthorizationForm extends
+React.Component<AuthorizationFormProps, AuthorizationFormState> {
   constructor (props: AuthorizationFormProps) {
     super(props);
 
@@ -39,7 +39,7 @@ extends Component<AuthorizationFormProps, AuthorizationFormState> {
   
   private readonly handleLoginChange = (
     event: React.FormEvent<HTMLInputElement>
-  ) => {
+  ): void => {
     const login: string = event.currentTarget.value;
     
     this.setState({
@@ -51,7 +51,7 @@ extends Component<AuthorizationFormProps, AuthorizationFormState> {
   
   private readonly handlePasswordChange = (
     event: React.FormEvent<HTMLInputElement>
-  ) => {
+  ): void => {
     const password: string = event.currentTarget.value;
     
     this.setState({
@@ -65,7 +65,7 @@ extends Component<AuthorizationFormProps, AuthorizationFormState> {
 
   private readonly handleAuthorizationSubmit = (
     event: React.FormEvent<HTMLFormElement>
-  ) => {
+  ):void => {
     const loginValidationErrors: ValidationError[] = 
       validationService.validateAuthorizationLogin(this.state.login);
     
@@ -102,7 +102,7 @@ extends Component<AuthorizationFormProps, AuthorizationFormState> {
 
   // Rendering:
 
-  render () {  
+  render (): JSX.Element {  
     const authorizationFormHeader: JSX.Element = 
       <div className = "authLayoutCommonFormHeader">
         <h1>

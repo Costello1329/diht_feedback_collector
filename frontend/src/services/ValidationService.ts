@@ -15,7 +15,9 @@ export enum ValidationError {
 }
 
 class ValidationService {
-  getErrorTextByValidationError = (error: ValidationError) => {
+  getErrorTextByValidationError = (
+    error: ValidationError
+  ): string => {
     switch (error) {
       case ValidationError.emptyString:
         return localization.emptyString();
@@ -52,7 +54,9 @@ class ValidationService {
     }
   }
 
-  readonly validateAuthorizationLogin = (login: string) => {
+  readonly validateAuthorizationLogin = (
+    login: string
+  ): ValidationError[] => {
     let validationErrors: ValidationError[] = [];
 
     if (login === "")
@@ -61,7 +65,9 @@ class ValidationService {
     return validationErrors;
   }
 
-  readonly validateAuthorizationPassword = (password: string) => {
+  readonly validateAuthorizationPassword = (
+    password: string
+  ): ValidationError[] => {
     let validationErrors: ValidationError[] = [];
 
     if (password === "")
@@ -70,7 +76,9 @@ class ValidationService {
     return validationErrors;
   }
 
-  readonly validateRegistrationToken = (token : string) => {
+  readonly validateRegistrationToken = (
+    token : string
+  ): ValidationError[] => {
     let validationErrors: ValidationError[] = [];
 
     if (token === "")
@@ -88,7 +96,9 @@ class ValidationService {
     return validationErrors;
   }
 
-  readonly validateRegistrationLogin = (login : string) => {
+  readonly validateRegistrationLogin = (
+    login : string
+  ): ValidationError[] => {
     let validationErrors: ValidationError[] = [];
 
     if (login === "")
@@ -104,7 +114,9 @@ class ValidationService {
     return validationErrors;
   }
 
-  readonly validateRegistrationPassword = (password: string) => {
+  readonly validateRegistrationPassword = (
+    password: string
+  ): ValidationError[] => {
     let validationErrors: ValidationError[] = [];
 
     if (password === "")
@@ -134,7 +146,7 @@ class ValidationService {
   readonly validateRegistrationConfirmation = (
     password: string,
     confirmation: string
-  ) => {
+  ): ValidationError[] => {
     let validationErrors: ValidationError[] = [];
 
     if (confirmation === "")
@@ -146,7 +158,10 @@ class ValidationService {
     return validationErrors;
   }
 
-  private readonly checkMaskRegex = (value: string, regex: RegExp) => {
+  private readonly checkMaskRegex = (
+    value: string,
+    regex: RegExp
+  ): boolean => {
     const matchArray: RegExpMatchArray | null = value.match(regex);
     return matchArray !== null && value === matchArray[0];
   }

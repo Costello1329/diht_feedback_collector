@@ -1,0 +1,52 @@
+.notifications {
+  position: fixed;
+  right: 8px;
+  bottom: -4px;
+  font-family: PT Sans;
+  color: #333;
+
+  .notification {
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 100;
+    width: 320px;
+    box-sizing: border-box;
+    padding: 4px 16px;
+    border-radius: 4px;
+
+    h3 {
+      margin: 12px 0 8px 0;
+      text-align: center;
+    }
+
+    hr {
+      margin: 0 0 4px 0;
+      margin-bottom: 8px;
+      border: 0.5px solid rgba(0, 0, 0, 0.25);
+    }
+
+    div {
+      margin-bottom: 8px;
+    }
+  }
+
+  .notificationMessage {
+    background-color: rgba(200, 200, 200, 0.9);
+    border: solid 1px rgb(150, 150, 150);
+  }
+
+  .notificationSuccess {
+    background-color: rgba(100, 250, 100, 0.9);
+    border: solid 1px rgb(50, 200, 50);
+  }
+
+  .notificationWarning {
+    background-color: rgba(250, 250, 100, 0.9);
+    border: solid 1px rgb(200, 200, 50);
+  }
+
+  .notificationError {
+    background-color: rgba(250, 100, 100, 0.9);
+    border: solid 1px rgb(200, 50, 50);
+  }
+}
