@@ -8,55 +8,169 @@ import {
 import "../styles/notifications"
 
 
-interface NotificationsProps {
+class NotificationEventAdd {
+  declare readonly notification: Notification;
 
+  constructor (notification: Notification) {
+    this.notification = notification;
+  }
+}
+
+class NotificationEventDelete {
+  declare readonly index: number;
+
+  constructor (index: number) {
+    this.index = index;
+  }
+}
+
+class NotificationEventQueue {
+  declare private eventQueue: (NotificationEventAdd | NotificationEventDelete)[];
+  declare private queueVariable: number;
+  declare private readonly notifications: Notifications;
+
+  constructor (notifications: Notifications) {
+    this.notifications = notifications;
+    this.eventQueue = [];
+    this.queueVariable = 0;
+  }
+
+  readonly getQueueVariable = (): number => {
+    return this.queueVariable;
+  }
+
+  readonly enqueue = (
+    event: NotificationEventAdd | NotificationEventDelete
+  ): void => {
+    this.eventQueue.push(event);
+
+    if (event instanceof NotificationEventAdd)
+      ++ this.queueVariable;
+    
+    else if (event instanceof NotificationEventDelete)
+      -- this.queueVariable;
+  }
+
+  readonly dequeue = (): void => {
+    const event: NotificationEventAdd | NotificationEventDelete | undefined =
+      this.eventQueue.shift();
+
+    if (event === undefined)
+      return;
+
+    if (event instanceof NotificationEventAdd) {
+      this.notifications.handleAdditionEvent(event as NotificationEventAdd);
+      -- this.queueVariable;
+    }
+
+    else if (event instanceof NotificationEventDelete) {
+      this.notifications.handleDeletionEvent(event as NotificationEventDelete);
+      ++ this.queueVariable;
+    }
+  }
+}
+
+interface NotificationsProps {
+  maxShownNotificationsCount: number;
+  maxPendingNotificationsCount: number;
 }
 
 interface NotificationsState {
-  notifications: Notification[];
+  shownNotifications: [Notification, number][];
 }
 
 export class Notifications extends
 React.Component<NotificationsProps, NotificationsState> {
+  declare private readonly eventQueue: NotificationEventQueue;
+  declare private pendingNotifications: Notification[];
+  declare private currentMaxIndex: number;
+
   constructor (props: any) {
     super(props);
 
+    this.eventQueue = new NotificationEventQueue(this);
+    this.pendingNotifications = [];
+    this.currentMaxIndex = 0;
     this.state = {
-      notifications: []
+      shownNotifications: []
     }
   }
 
-  /* This method should only be used by NotificationsService! */
-  pushNotification (notification: Notification): void {
-    let newNotifications = this.state.notifications;
-    newNotifications.push(notification);
+  /* WARNING: do not use this method to send notification.
+   * Use NotificationService instead.
+   */
+  readonly push = (notification: Notification): void => {
+    if (
+      this.eventQueue.getQueueVariable() + this.state.shownNotifications.length <
+      this.props.maxShownNotificationsCount
+    ) {
+      this.eventQueue.enqueue(new NotificationEventAdd(notification));
+    }
+
+    else if (
+      this.pendingNotifications.length < this.props.maxPendingNotificationsCount
+    ) {
+      this.pendingNotifications.push(notification);
+    }
+
+    this.eventQueue.dequeue();
+  }
+
+  private readonly pop = (index: number): void => {
+    this.eventQueue.enqueue(new NotificationEventDelete(index));
+
+    const nextNotification: Notification |undefined =
+      this.pendingNotifications.shift();
+
+    if (nextNotification !== undefined) 
+      this.push(nextNotification);
+
+    this.eventQueue.dequeue();
+  }
+
+  /* WARNING: do not use this method. This method is used by NotificationQueue */
+  readonly handleAdditionEvent = (
+    additionEvent: NotificationEventAdd
+  ): void => {
+    const shownNotifications: [Notification, number][] =
+      this.state.shownNotifications;
+
+    const index: number = this.currentMaxIndex ++;
+    
+    shownNotifications.push(
+      [additionEvent.notification, index]
+    );
+
+    setTimeout((): void => this.pop(index), additionEvent.notification.showTime);
 
     this.setState({
-      notifications: newNotifications
+      shownNotifications: shownNotifications
     });
   }
 
-  /* This method should only be used by NotificationsService! */
-  popNotification (): void {
-    let newNotifications = this.state.notifications;
-    newNotifications.shift();
-
+  /* WARNING: do not use this method. This method is used by NotificationQueue */
+  readonly handleDeletionEvent = (
+    deletionEvent: NotificationEventDelete
+  ): void => {
     this.setState({
-      notifications: newNotifications
+      shownNotifications:
+        this.state.shownNotifications.filter(
+          (notification: [Notification, number]): boolean => {
+            return notification[1] !== deletionEvent.index
+          }
+        )
     });
-  }
-
-  /* This method should only be used by NotificationsService! */
-  notificationsCount (): number {
-    return this.state.notifications.length;
   }
 
   private getNotification (
     notification: Notification,
+    // show: boolean,
     key: string
   ): JSX.Element {
     const classes: string = classNames({
       "notification": true,
+      "notificationVisible": true, //show,
+      //"notificationInvisible": !show,
       "notificationMessage": notification.type === NotificationType.message,
       "notificationSuccess": notification.type === NotificationType.success,
       "notificationWarning": notification.type === NotificationType.warning,
@@ -74,10 +188,17 @@ React.Component<NotificationsProps, NotificationsState> {
 
   render (): JSX.Element {
     const notifications: JSX.Element[] = 
-      this.state.notifications.map(
-        (notification: Notification, index: number): JSX.Element => {
+      this.state.shownNotifications.map(
+        (
+          notification: [Notification, number],
+          index: number
+        ): JSX.Element => {
           const notificationElement: JSX.Element =
-            this.getNotification(notification, index.toString());
+            this.getNotification(
+              notification[0],
+              //notification[1] === NotificationAnimaitonState.visible,
+              index.toString()
+            );
           return notificationElement;
         }
       ).reverse();

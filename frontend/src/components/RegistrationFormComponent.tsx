@@ -14,7 +14,6 @@ import {
   NotificationType,
   Notification
 } from "../services/NotificationService";
-import { truncate } from "fs";
 
 
 export interface RegistrationFormProps {
@@ -134,29 +133,32 @@ React.Component<RegistrationFormProps, RegistrationFormState> {
         new Notification(
           NotificationType.message,
           "Привет, мир!",
-          "Просто хотел поздоваться."
+          "Просто хотел поздоваться.",
+          5000
         ),
         new Notification(
           NotificationType.success,
           "Аккаунт взломан!",
           "Банковский аккаунт взломан. Выведено "
           + Math.round(Math.random() * 10000)
-          + "$ США."
+          + "$ США.",
+          5000
         ),
         new Notification(
           NotificationType.warning,
           "Аккаунт взломан, остались следы!",
           "Банковский аккаунт взломан. Выведено "
           + Math.round(Math.random() * 10000)
-          + "$ США. Но были оставлены следы..."
+          + "$ США. Но были оставлены следы...",
+          5000
         ),
         new Notification(
           NotificationType.error,
           "Аккаунт не взломан!",
-          "Банковский аккаунт не был взломан."
+          "Банковский аккаунт не был взломан.",
+          5000
         )
       ][Math.floor(Math.random() * 4)],
-      5000
     );
 
     const tokenValidationErrors: ValidationError[] =

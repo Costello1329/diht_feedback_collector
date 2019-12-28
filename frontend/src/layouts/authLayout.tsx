@@ -35,7 +35,12 @@ export class AuthLayout extends React.Component<AuthLayoutProps> {
             </Route>
           </Switch>
       </HashRouter>,
-      <Notifications ref = {notificationService.getRef()} key = "1"/>
+      <Notifications
+        ref = {notificationService.getRef()}
+        maxShownNotificationsCount = {3}
+        maxPendingNotificationsCount = {10}
+        key = "1"
+      />
     ];
     
     return layout;
