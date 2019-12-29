@@ -4,12 +4,10 @@ import {
   Switch,
   Route
 } from 'react-router-dom';
-import {Notifications} from "../components/NotificationsComponent";
 import {RegistrationForm} from "../components/RegistrationFormComponent";
 import {AuthorizationForm} from "../components/AuthorizationFormComponent";
-import {notificationService} from "../services/NotificationService";
 
-import "../styles/authLayout"
+import "../styles/authLayout";
 
 
 export interface AuthLayoutProps {
@@ -18,10 +16,9 @@ export interface AuthLayoutProps {
 }
 
 export class AuthLayout extends React.Component<AuthLayoutProps> {
-  render (): JSX.Element[] {
-    const layout: JSX.Element[] =
-    [
-      <HashRouter hashType = "noslash" key = "0">
+  render (): JSX.Element {
+    const layout: JSX.Element =
+      <HashRouter hashType = "noslash">
           <Switch>
             <Route path = {this.props.registrationLink}>
               <RegistrationForm
@@ -34,14 +31,7 @@ export class AuthLayout extends React.Component<AuthLayoutProps> {
               />
             </Route>
           </Switch>
-      </HashRouter>,
-      <Notifications
-        ref = {notificationService.getRef()}
-        maxShownNotificationsCount = {3}
-        maxPendingNotificationsCount = {10}
-        key = "1"
-      />
-    ];
+      </HashRouter>;
     
     return layout;
   }

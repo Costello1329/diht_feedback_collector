@@ -22,8 +22,8 @@ export interface AuthorizationFormState {
   passwordValidationErrors: ValidationError[];
 }
 
-export class AuthorizationForm extends
-React.Component<AuthorizationFormProps, AuthorizationFormState> {
+export class AuthorizationForm
+extends React.Component<AuthorizationFormProps, AuthorizationFormState> {
   constructor (props: AuthorizationFormProps) {
     super(props);
 

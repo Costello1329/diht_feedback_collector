@@ -5,8 +5,12 @@ import {
   Notification
 } from "../services/NotificationService";
 
-import "../styles/notifications"
+import "../styles/notifications";
 
+
+/* WARNING: this component should only be used globally.
+ * For example, you can instance this component on AppComponent.
+ */
 
 class NotificationEventAdd {
   declare readonly notification: Notification;
@@ -113,7 +117,6 @@ class NotificationEventQueue {
   }
 }
 
-
 interface NotificationsProps {
   maxShownNotificationsCount: number;
   maxPendingNotificationsCount: number;
@@ -136,20 +139,23 @@ React.Component<NotificationsProps, NotificationsState> {
   declare private readonly eventQueue: NotificationEventQueue;
   declare private pendingNotifications: Notification[];
   declare private currentMaxTicket: number;
+  declare private preliminarilyPoppedNotificationsTickets: number[];
   private readonly kOpacityTransitionTime: number = 400;
-  private readonly kNotificationPopingAdditionalTime: number = 100;
+  private readonly kTransitionPushingAdditionalTime: number = 25;
+  private readonly kTransitionPopingAdditionalTime: number = 100;
 
-  constructor (props: any) {
+  constructor (props: NotificationsProps) {
     super(props);
 
     this.eventQueue =
       new NotificationEventQueue(
         this,
         this.kOpacityTransitionTime,
-        this.kOpacityTransitionTime + this.kNotificationPopingAdditionalTime
+        this.kOpacityTransitionTime + this.kTransitionPopingAdditionalTime
       );
     this.pendingNotifications = [];
     this.currentMaxTicket = 0;
+    this.preliminarilyPoppedNotificationsTickets = [];
     this.state = {
       shownNotifications: [],
       transitionState: TransitionState.none,
@@ -188,7 +194,9 @@ React.Component<NotificationsProps, NotificationsState> {
     this.eventQueue.dequeue();
   }
 
-  /* WARNING: do not use this method. This method is used by NotificationQueue */
+  /* WARNING: do not use this method.
+   * This method should ONLY used by NotificationQueue.
+   */
   readonly handleAdditionEvent = (
     additionEvent: NotificationEventAdd
   ): void => {
@@ -202,7 +210,26 @@ React.Component<NotificationsProps, NotificationsState> {
     );
 
     setTimeout(
-      (): void => this.pop(ticket),
+      (): void => {
+        const currentNotificationWasPreliminarilyPopped: boolean =
+          this.preliminarilyPoppedNotificationsTickets.find(
+            (currentTicket: number) => {
+              if (ticket === currentTicket)
+                return true;
+            }
+          ) !== undefined;
+
+        if (!currentNotificationWasPreliminarilyPopped)
+          this.pop(ticket);
+
+        else {
+          const preliminarilyPoppedNotificationIndex: number =
+            this.preliminarilyPoppedNotificationsTickets.indexOf(ticket);
+          this
+            .preliminarilyPoppedNotificationsTickets
+            .splice(preliminarilyPoppedNotificationIndex, 1);
+        }
+      },
       additionEvent.notification.showTime
     );
 
@@ -213,7 +240,9 @@ React.Component<NotificationsProps, NotificationsState> {
     });
   }
 
-  /* WARNING: do not use this method. This method is used by NotificationQueue */
+  /* WARNING: do not use this method.
+   * This method should ONLY be used by NotificationQueue.
+   */
   readonly handleDeletionEvent = (
     deletionEvent: NotificationEventDelete
   ): void => {
@@ -238,6 +267,11 @@ React.Component<NotificationsProps, NotificationsState> {
     });
   }
 
+  private readonly handleNotificationClick = (ticket: number): void => {
+    this.preliminarilyPoppedNotificationsTickets.push(ticket);
+    this.pop(ticket);
+  }
+
   componentDidUpdate (
     _: NotificationsProps,
     nextState: NotificationsState
@@ -255,26 +289,29 @@ React.Component<NotificationsProps, NotificationsState> {
     if (transitioningNotification === undefined)
       return;
 
-    const transitioningNotificationIndex: number =
-      this.state.shownNotifications.indexOf(transitioningNotification);
-
     switch (this.state.transitionState) {
       case TransitionState.showing:
         setTimeout(
           (): void => {
+            const transitioningNotificationIndex: number =
+              this.state.shownNotifications.indexOf(transitioningNotification);
+            
             nextState.shownNotifications[transitioningNotificationIndex][2] =
               true;
             nextState.transitionState = TransitionState.none;
             nextState.transitioningNotificationTicket = undefined;
             this.setState(nextState);
           },
-          0
+          this.kTransitionPushingAdditionalTime
         );
         break;
 
       case TransitionState.hiding:
         setTimeout(
           (): void => {
+            const transitioningNotificationIndex: number =
+              this.state.shownNotifications.indexOf(transitioningNotification);
+            
             nextState
               .shownNotifications
               .splice(transitioningNotificationIndex, 1);
@@ -282,7 +319,7 @@ React.Component<NotificationsProps, NotificationsState> {
             nextState.transitioningNotificationTicket = undefined;
             this.setState(nextState);
           },
-          this.kOpacityTransitionTime + this.kNotificationPopingAdditionalTime
+          this.kOpacityTransitionTime + this.kTransitionPopingAdditionalTime
         );
         break;
       
@@ -306,7 +343,8 @@ React.Component<NotificationsProps, NotificationsState> {
     return (
       <div
         className = {classes}
-        key = {"notification_with_index_" + notification[1]}
+        key = {"notification_ticket_" + notification[1]}
+        onClick = {() => this.handleNotificationClick(notification[1])}
       >
         <h3>{notification[0].title}</h3>
         <hr/>

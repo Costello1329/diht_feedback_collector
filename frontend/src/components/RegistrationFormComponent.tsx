@@ -32,8 +32,8 @@ export interface RegistrationFormState {
   confirmationValidationErrors: ValidationError[];
 }
 
-export class RegistrationForm extends
-React.Component<RegistrationFormProps, RegistrationFormState> {
+export class RegistrationForm
+extends React.Component<RegistrationFormProps, RegistrationFormState> {
   state: RegistrationFormState;
 
   constructor (props: RegistrationFormProps) {
@@ -128,39 +128,6 @@ React.Component<RegistrationFormProps, RegistrationFormState> {
   private readonly handleTokenSubmit = (
     event: React.FormEvent<HTMLFormElement>
   ): void => {
-    notificationService.notify(
-      [
-        new Notification(
-          NotificationType.message,
-          "Привет, мир!",
-          "Просто хотел поздоваться.",
-          3000
-        ),
-        new Notification(
-          NotificationType.success,
-          "Аккаунт взломан!",
-          "Банковский аккаунт взломан. Выведено "
-          + Math.round(Math.random() * 10000)
-          + "$ США.",
-          3000
-        ),
-        new Notification(
-          NotificationType.warning,
-          "Аккаунт взломан, остались следы!",
-          "Банковский аккаунт взломан. Выведено "
-          + Math.round(Math.random() * 10000)
-          + "$ США. Но были оставлены следы...",
-          3000
-        ),
-        new Notification(
-          NotificationType.error,
-          "Аккаунт не взломан!",
-          "Банковский аккаунт не был взломан.",
-          3000
-        )
-      ][Math.floor(Math.random() * 4)],
-    );
-
     const tokenValidationErrors: ValidationError[] =
       validationService.validateRegistrationToken(this.state.token);
 
