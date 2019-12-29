@@ -27,6 +27,17 @@ const commonRules = [
         }
       }
     ]
+  },
+  {
+    test: /\.ttf$/,
+    use: [
+      {
+        loader: "file-loader",
+        options: {
+            outputPath: "assets"
+        }
+      }
+    ]
   }
 ];
 

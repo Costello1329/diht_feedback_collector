@@ -14,6 +14,7 @@ import {
   NotificationType,
   Notification
 } from "../services/NotificationService";
+import {isMobile} from "../utils/isMobile";
 
 
 export interface RegistrationFormProps {
@@ -371,6 +372,7 @@ extends React.Component<RegistrationFormProps, RegistrationFormState> {
         <span>
           {localization.alreadyHaveAnAccount()}
         </span>
+        {isMobile(window, 700) ? (<br />) : ''}
         <Link to = {this.props.authorizationLink}>
           {localization.authorize()}
         </Link>

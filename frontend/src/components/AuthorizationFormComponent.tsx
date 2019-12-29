@@ -9,6 +9,7 @@ import {
   validationService,
   ValidationError
 } from "../services/ValidationService";
+import {isMobile} from "../utils/isMobile";
 
 
 export interface AuthorizationFormProps {
@@ -194,6 +195,7 @@ extends React.Component<AuthorizationFormProps, AuthorizationFormState> {
         <span>
           {localization.yetNoAccount()}
         </span>
+        {isMobile(window, 700) ? (<br />) : ''}
         <Link to = {this.props.registrationLink}>
           {localization.register()}
         </Link>

@@ -1,10 +1,18 @@
+@import "./fonts";
+
 .authLayoutCommonFormWrapper {
   width: 640px;
+  @media screen and (max-width: 700px) {
+    width: 400px;
+  }
   background-color: #fff;
   border: 1px solid #aaa;
   border-radius: 4px;
+  @media screen and (max-width: 700px) {
+    border: none;
+  }
   display: block;
-  font-family: PT Sans;
+  font-family: 'PT Sans';
   box-shadow: 0 0 32px  rgba(0, 0, 0, 0.025);
   position: fixed;
   top: 50%;
@@ -39,6 +47,9 @@
 
   > .authLayoutCommonForm {
     width: 480px;
+    @media screen and (max-width: 700px) {
+      width: 280px;
+    }
     margin: 16px auto 12px auto;
 
     > .authLayoutCommonFormControl {
@@ -74,6 +85,9 @@
           border: 1px solid #aaa;
           padding-left: 8px;
           font-size: 14px;
+          @media screen and (max-width: 700px) {
+            height: 40px;
+          }
 
           &:focus {
             outline: none;
@@ -89,6 +103,9 @@
 
     > .authLayoutCommonFormButton {
       width: 320px;
+      @media screen and (max-width: 700px) {
+        width: 273px;
+      }
       background-color: #fca23b;
       border: none;
       height: 40px;
@@ -113,6 +130,9 @@
   > .authLayoutCommonFormBottomLinks {
     display: table;
     margin: 0 auto 32px auto;
+    @media screen and (max-width: 700px) {
+      text-align: center;
+    }
 
     > span {
       text-align: center;
@@ -123,6 +143,10 @@
       margin-left: 4px;
       text-decoration: none;
       color: #fca23b;
+
+      @media screen and (max-width: 700px) {
+        margin: 0 auto;
+      }
 
       &:hover {
         color: #eb912a;
