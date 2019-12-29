@@ -134,7 +134,7 @@ React.Component<RegistrationFormProps, RegistrationFormState> {
           NotificationType.message,
           "Привет, мир!",
           "Просто хотел поздоваться.",
-          5000
+          3000
         ),
         new Notification(
           NotificationType.success,
@@ -142,7 +142,7 @@ React.Component<RegistrationFormProps, RegistrationFormState> {
           "Банковский аккаунт взломан. Выведено "
           + Math.round(Math.random() * 10000)
           + "$ США.",
-          5000
+          3000
         ),
         new Notification(
           NotificationType.warning,
@@ -150,13 +150,13 @@ React.Component<RegistrationFormProps, RegistrationFormState> {
           "Банковский аккаунт взломан. Выведено "
           + Math.round(Math.random() * 10000)
           + "$ США. Но были оставлены следы...",
-          5000
+          3000
         ),
         new Notification(
           NotificationType.error,
           "Аккаунт не взломан!",
           "Банковский аккаунт не был взломан.",
-          5000
+          3000
         )
       ][Math.floor(Math.random() * 4)],
     );
