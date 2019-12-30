@@ -16,22 +16,27 @@ interface PollDashboardState {
 
 export class PollDashboard extends
 React.Component<PollDashboardProps, PollDashboardState> {
+  declare private ticket: number;
+
   constructor (props: PollDashboardProps) {
     super(props);
+    this.ticket = 0;
   }
 
   private readonly handleClick = (): void => {
+    ++ this.ticket;
+
     notificationService.notify(
       [
         new Notification(
           NotificationType.message,
-          "Привет, мир!",
+          "Привет, мир!" + this.ticket,
           "Просто хотел поздоваться.",
           3000
         ),
         new Notification(
           NotificationType.success,
-          "Аккаунт взломан!",
+          "Аккаунт взломан!" + this.ticket,
           "Банковский аккаунт взломан. Выведено "
           + Math.round(Math.random() * 10000)
           + "$ США.",
@@ -39,7 +44,7 @@ React.Component<PollDashboardProps, PollDashboardState> {
         ),
         new Notification(
           NotificationType.warning,
-          "Аккаунт взломан, остались следы!",
+          "Аккаунт взломан, остались следы!" + this.ticket,
           "Банковский аккаунт взломан. Выведено "
           + Math.round(Math.random() * 10000)
           + "$ США. Но были оставлены следы...",
@@ -47,7 +52,7 @@ React.Component<PollDashboardProps, PollDashboardState> {
         ),
         new Notification(
           NotificationType.error,
-          "Аккаунт не взломан!",
+          "Аккаунт не взломан!" + this.ticket,
           "Банковский аккаунт не был взломан.",
           3000
         )
