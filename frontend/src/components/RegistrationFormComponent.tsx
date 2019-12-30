@@ -164,16 +164,18 @@ extends React.Component<RegistrationFormProps, RegistrationFormState> {
 
       registrationService
         .sendRegistrationData(data)
-        .then(_ => {
-          notificationService.notify(
-            new Notification(
-              NotificationType.success,
-              localization.registrationErrorLabel(),
-              localization.userWasRegistered(),
-              3000
-            )
-          );
-        })
+        .then(
+          (_): void => {
+            notificationService.notify(
+              new Notification(
+                NotificationType.success,
+                localization.registrationSuccessLabel(),
+                localization.userWasRegistered(),
+                3000
+              )
+            );
+          }
+        )
         .catch(
           (reject: RegistrationErrorType): void => {
             notificationService.notify(

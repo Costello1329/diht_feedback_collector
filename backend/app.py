@@ -57,7 +57,7 @@ def get_registration_response(
         isServerSideValidationValid=is_server_side_validation_valid
     )
 
-    res.headers["Access-Control-Allow-Origin"] = "http://localhost:3000"
+    res.headers["Access-Control-Allow-Origin"] = "http://127.0.0.1:1329"
     res.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,DELETE,OPTIONS"
     res.headers["Access-Control-Allow-Headers"] = \
         "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
@@ -76,7 +76,7 @@ def get_registration_response(
 
 def get_registration_response_error(status_code):
     res = Response()
-    res.headers["Access-Control-Allow-Origin"] = "http://localhost:3000"
+    res.headers["Access-Control-Allow-Origin"] = "http://127.0.0.1:1329"
     res.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,DELETE,OPTIONS"
     res.headers["Access-Control-Allow-Headers"] = \
         "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
@@ -261,7 +261,7 @@ def setup_xhr_request_headers():
 
 def get_headers_for_cors_requests():
     return {
-            "Access-Control-Allow-Origin": "http://localhost:3000",
+            "Access-Control-Allow-Origin": "http://127.0.0.1:1329",
             "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
             "Access-Control-Allow-Headers": "Content-Type, Access-Control-Allow-Headers, Authorization"
         }

@@ -24,7 +24,8 @@ class RegistrationService {
     "isTokenValid": true,
     "isTokenUnactivated": true,
     "isConfirmationValid": true,
-    "isLoginValid": true
+    "isLoginValid": true,
+    "isServerSideValidationValid": true
   }
 
   async sendRegistrationData (data: RegistrationData) {
