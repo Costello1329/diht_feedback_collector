@@ -15,11 +15,12 @@ export enum RegistrationErrorType {
   tokenDoesNotExist,
   tokenAlreadyActivated,
   loginAlreadyTaken,
-  passwordsDoesNotMatch
+  passwordsDoesNotMatch,
+  serverSideValidationError
 }
 
 class RegistrationService {
-  readonly validResponse = {
+  private readonly kValidResponse: any = {
     "isTokenValid": true,
     "isTokenUnactivated": true,
     "isConfirmationValid": true,
@@ -33,9 +34,10 @@ class RegistrationService {
       .sendPost(
         commonRoutes.registration,
         {'Content-Type': 'application/json'},
-        JSON.stringify(encryptedData))
+        JSON.stringify(encryptedData)
+      )
       .then(
-        response => {
+        (response): void => {
           if (
             response.status !== 200 ||
             this.checkResponseData(response.data) === false
@@ -44,25 +46,25 @@ class RegistrationService {
           }
         }
       )
-      .catch(error => {
-        let errorType: RegistrationErrorType =
-          RegistrationErrorType.contractDataError;
+      .catch(
+        (error): void => {
+          let errorType: RegistrationErrorType;
 
-        if (error.response === undefined || error.response.status === 500) {
-          errorType = RegistrationErrorType.internalServerError;
+          if (error.response === undefined || error.response.status === 500)
+            errorType = RegistrationErrorType.internalServerError;
+
+          else if (error.response.status === 400)
+            errorType = this.getErrorType(error.response.data);
+
+          else
+            errorType = RegistrationErrorType.contractDataError;
+
+          throw errorType;
         }
-
-        else if (error.response.status === 400) {
-          errorType = this.getErrorType(error.response.data);
-        }
-
-        throw errorType;
-      });
+      );
   }
 
-  private encryptRegistrationData (
-    data: RegistrationData
-  ): RegistrationData {
+  private encryptRegistrationData (data: RegistrationData): RegistrationData {
     return {
       token: data.token,
       login: data.login,
@@ -75,19 +77,17 @@ class RegistrationService {
     try {
       if (
         Object.keys(data).length
-        !== Object.keys(this.validResponse).length
+        !== Object.keys(this.kValidResponse).length
       ) {
         return false;
       }
 
-      for (let [key, value] of Object.entries(this.validResponse)) {
-        if (data[key] !== value) {
+      for (let [key, value] of Object.entries(this.kValidResponse))
+        if (data[key] !== value)
           return false;
-        }
-      }
 
       return true;
-    } catch (e) {
+    } catch (error) {
       return false;
     }
   }
@@ -96,12 +96,12 @@ class RegistrationService {
     try {
       if (
         Object.keys(data).length
-        !== Object.keys(this.validResponse).length
+        !== Object.keys(this.kValidResponse).length
       ) {
         return RegistrationErrorType.contractDataError;
       }
 
-      for (let [key, value] of Object.entries(this.validResponse)) {
+      for (let [key, value] of Object.entries(this.kValidResponse)) {
         if (data[key] === undefined)
           return RegistrationErrorType.contractDataError;
         

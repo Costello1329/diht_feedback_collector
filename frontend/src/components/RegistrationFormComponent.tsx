@@ -3,7 +3,8 @@ import {Link} from 'react-router-dom';
 import {localization} from "../services/LocalizationService";
 import {
   registrationService,
-  RegistrationData
+  RegistrationData,
+  RegistrationErrorType
 } from "../services/RegistrationService";
 import {
   validationService,
@@ -34,8 +35,6 @@ export interface RegistrationFormState {
 
 export class RegistrationForm
 extends React.Component<RegistrationFormProps, RegistrationFormState> {
-  state: RegistrationFormState;
-
   constructor (props: RegistrationFormProps) {
     super(props);
 
@@ -51,8 +50,6 @@ extends React.Component<RegistrationFormProps, RegistrationFormState> {
       confirmationValidationErrors: []
     };
   }
-
-  // Change handlers:
 
   private readonly handleTokenChange = (
     event: React.FormEvent<HTMLInputElement>
@@ -117,8 +114,6 @@ extends React.Component<RegistrationFormProps, RegistrationFormState> {
     });
   }
 
-  // Submit handlers:
-
   private readonly handleGoBackClick = (): void => {
     this.setState({
       slide: this.state.slide - 1
@@ -167,13 +162,30 @@ extends React.Component<RegistrationFormProps, RegistrationFormState> {
         confirmation: this.state.confirmation
       };
 
-      registrationService.sendRegistrationData(data)
-      .then(_ => {
-        alert("all is ok");
-      })
-      .catch(reject => {
-        alert(reject);
-      });
+      registrationService
+        .sendRegistrationData(data)
+        .then(_ => {
+          notificationService.notify(
+            new Notification(
+              NotificationType.success,
+              localization.registrationErrorLabel(),
+              localization.userWasRegistered(),
+              3000
+            )
+          );
+        })
+        .catch(
+          (reject: RegistrationErrorType): void => {
+            notificationService.notify(
+              new Notification(
+                NotificationType.error,
+                localization.registrationErrorLabel(),
+                this.getErrorMessage(reject),
+                3000
+              )
+            );
+          }
+        );
     }
 
     this.setState({
@@ -186,7 +198,26 @@ extends React.Component<RegistrationFormProps, RegistrationFormState> {
     event.preventDefault();
   }
 
-  // Rendering:
+  private readonly getErrorMessage = (
+    error: RegistrationErrorType
+  ): string => {
+    switch (error) {
+      case RegistrationErrorType.internalServerError:
+        return localization.internalServerError();
+      case RegistrationErrorType.contractDataError:
+        return localization.contractDataError();
+      case RegistrationErrorType.tokenDoesNotExist:
+        return localization.tokenDoesNotExist();
+      case RegistrationErrorType.tokenAlreadyActivated:
+        return localization.tokenAlreadyActivated();
+      case RegistrationErrorType.loginAlreadyTaken:
+        return localization.loginAlreadyTaken();
+      case RegistrationErrorType.passwordsDoesNotMatch:
+        return localization.passwordsDoesNotMatch();
+      case RegistrationErrorType.serverSideValidationError:
+        return localization.serverSideValidationError();
+    }
+  }
 
   render (): JSX.Element {
     const registrationFormHeader: JSX.Element = 

@@ -60,6 +60,28 @@ class LocalizationService {
         "Продолжить";
     readonly goBack = (): string =>
         "Назад";
+
+    readonly registrationErrorLabel = (): string =>
+        "Ошибка регистрации";
+    readonly internalServerError = (): string =>
+        "Произошла внутренняя ошибка со стороны сервера.";
+    readonly contractDataError = (): string =>
+        "Нарушение контракта: недопустимые данные.";
+    readonly tokenDoesNotExist = (): string =>
+        "Токена не существует.";
+    readonly tokenAlreadyActivated = (): string =>
+        "Токен уже был активирован.";
+    readonly loginAlreadyTaken = (): string =>
+        "Выбранный вами логин уже занят.";
+    readonly passwordsDoesNotMatch = (): string =>
+        "Введенные пароли не совпадают.";
+    readonly serverSideValidationError = (): string =>
+        "Нарушение контракта: данные не прошли валидацию.";
+
+    readonly registrationSuccessLabel = (): string =>
+        "Регистрация успешна";
+    readonly userWasRegistered = (): string =>
+        "Пользователь зарегистрирован.";
 }
 
 export const localization: LocalizationService =

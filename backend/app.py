@@ -5,11 +5,11 @@ from flask import abort
 from flask import jsonify
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime, date, time
+from datetime import datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS '] = False
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
@@ -42,22 +42,32 @@ class Guid(db.Model):
 ################################################################################
 
 
-def get_registration_response(is_token_valid, is_token_unactivated, is_confirmation_valid, is_login_valid):
+def get_registration_response(
+        is_token_valid,
+        is_token_unactivated,
+        is_confirmation_valid,
+        is_login_valid,
+        is_server_side_validation_valid
+):
     res = jsonify(
         isTokenValid=is_token_valid,
         isTokenUnactivated=is_token_unactivated,
         isConfirmationValid=is_confirmation_valid,
-        isLoginValid=is_login_valid
+        isLoginValid=is_login_valid,
+        isServerSideValidationValid=is_server_side_validation_valid
     )
+
     res.headers["Access-Control-Allow-Origin"] = "http://localhost:3000"
     res.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,DELETE,OPTIONS"
     res.headers["Access-Control-Allow-Headers"] = \
         "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
+
     is_all_valid = (
         is_token_valid is True and
         is_token_unactivated is True and
         is_confirmation_valid is True and
-        is_login_valid is True
+        is_login_valid is True and
+        is_server_side_validation_valid is True
     )
 
     res.status_code = 200 if is_all_valid else 400
@@ -88,16 +98,16 @@ def reg():
         guid = Guid.query.filter_by(guid=user_data["token"]).first()
 
         if guid is None:
-            return get_registration_response(False, "undefined", "undefined", "undefined")
+            return get_registration_response(False, "undefined", "undefined", "undefined", True)
 
         if guid.active:
-            return get_registration_response(True, False, "undefined", "undefined")
+            return get_registration_response(True, False, "undefined", "undefined", True)
 
         if user_data["password"] != user_data["confirmation"]:
-            return get_registration_response(True, True, False, "undefined")
+            return get_registration_response(True, True, False, "undefined", True)
 
         if Users.query.filter_by(login=user_data['login']).first() is not None:
-            return get_registration_response(True, True, True, False)
+            return get_registration_response(True, True, True, False, True)
 
         user = Users(login=user_data['login'], password=user_data['password'], guid=guid.guid)
         db.session.add(user)
@@ -107,7 +117,7 @@ def reg():
     except():
         return get_registration_response_error(status_code=500)
 
-    return get_registration_response(True, True, True, True)
+    return get_registration_response(True, True, True, True, True)
 
 
 ################################################################################
@@ -232,7 +242,6 @@ def get_user_data():
 
 
 @app.route("/authorize", methods=["OPTIONS"], provide_automatic_options=False)
-
 def handle_options_request_for_authorization():
     return setup_xhr_request_headers()
 
