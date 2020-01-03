@@ -1,5 +1,12 @@
+import {AxiosResponse, AxiosError} from "axios";
 import {httpService, commonRoutes} from "../services/HTTPService";
 import {encryptionService} from "../services/EncryptionService";
+import {localization} from "../services/LocalizationService";
+import {
+  notificationService,
+  NotificationType,
+  Notification
+} from "../services/NotificationService";
 
 
 export interface RegistrationData {
@@ -9,63 +16,29 @@ export interface RegistrationData {
   confirmation: string;
 }
 
-export enum RegistrationErrorType {
-  internalServerError,
-  contractDataError,
+enum RegistrationErrorType {
   tokenDoesNotExist,
   tokenAlreadyActivated,
   loginAlreadyTaken,
-  passwordsDoesNotMatch,
-  serverSideValidationError
+  contractError,
+  validationError,
+  internalServerError,
+}
+
+enum ResponseSuccessKeys {
+  doesTokenExist = "doesTokenExist",
+  isTokenUnactivated = "isTokenUnactivated",
+  isLoginUnique = "isLoginUnique"
+}
+
+enum ResponseErrorKeys {
+  errorType = "errorType"
 }
 
 class RegistrationService {
-  private readonly kValidResponse: any = {
-    "isTokenValid": true,
-    "isTokenUnactivated": true,
-    "isConfirmationValid": true,
-    "isLoginValid": true,
-    "isServerSideValidationValid": true
-  }
-
-  async sendRegistrationData (data: RegistrationData) {
-    const encryptedData = this.encryptRegistrationData(data);
-
-    return await httpService
-      .sendPost(
-        commonRoutes.registration,
-        {'Content-Type': 'application/json'},
-        JSON.stringify(encryptedData)
-      )
-      .then(
-        (response): void => {
-          if (
-            response.status !== 200 ||
-            this.checkResponseData(response.data) === false
-          ) {
-            throw response;
-          }
-        }
-      )
-      .catch(
-        (error): void => {
-          let errorType: RegistrationErrorType;
-
-          if (error.response === undefined || error.response.status === 500)
-            errorType = RegistrationErrorType.internalServerError;
-
-          else if (error.response.status === 400)
-            errorType = this.getErrorType(error.response.data);
-
-          else
-            errorType = RegistrationErrorType.contractDataError;
-
-          throw errorType;
-        }
-      );
-  }
-
-  private encryptRegistrationData (data: RegistrationData): RegistrationData {
+  private readonly encryptRegistrationData = (
+    data: RegistrationData
+  ): RegistrationData => {
     return {
       token: data.token,
       login: data.login,
@@ -74,58 +47,113 @@ class RegistrationService {
     };
   }
 
-  private checkResponseData (data: any): boolean {
-    try {
-      if (
-        Object.keys(data).length
-        !== Object.keys(this.kValidResponse).length
-      ) {
-        return false;
-      }
+  private readonly getServerErrorType = (
+    error: "contract" | "validation" | "internal"
+  ): RegistrationErrorType => {
+    switch (error) {
+      case "contract":
+        return RegistrationErrorType.contractError;
 
-      for (let [key, value] of Object.entries(this.kValidResponse))
-        if (data[key] !== value)
-          return false;
+      case "validation":
+        return RegistrationErrorType.validationError;
 
-      return true;
-    } catch (error) {
-      return false;
+      case "internal":
+        return RegistrationErrorType.internalServerError;
     }
   }
 
-  private getErrorType (data: any): RegistrationErrorType {
-    try {
-      if (
-        Object.keys(data).length
-        !== Object.keys(this.kValidResponse).length
-      ) {
-        return RegistrationErrorType.contractDataError;
-      }
-
-      for (let [key, value] of Object.entries(this.kValidResponse)) {
-        if (data[key] === undefined)
-          return RegistrationErrorType.contractDataError;
-        
-        if (data[key] !== value && data[key] !== "undefined") {
-          switch (key) {
-            case "isTokenValid":
-              return RegistrationErrorType.tokenDoesNotExist;
-            case "isTokenUnactivated":
-              return RegistrationErrorType.tokenAlreadyActivated;
-            case "isConfirmationValid":
-              return RegistrationErrorType.passwordsDoesNotMatch;
-            case "isLoginValid":
-              return RegistrationErrorType.loginAlreadyTaken;
-            default:
-              return RegistrationErrorType.contractDataError;
-          }
-        }
-      }
-
-      return RegistrationErrorType.contractDataError;
-    } catch (e) {
-      return RegistrationErrorType.contractDataError;
+  private readonly getErrorMessage = (
+    error: RegistrationErrorType
+  ): string => {
+    switch (error) {
+      case RegistrationErrorType.tokenDoesNotExist:
+        return localization.tokenDoesNotExist();
+      case RegistrationErrorType.tokenAlreadyActivated:
+        return localization.tokenAlreadyActivated();
+      case RegistrationErrorType.loginAlreadyTaken:
+        return localization.loginAlreadyTaken();
+      case RegistrationErrorType.contractError:
+        return localization.contractError();
+      case RegistrationErrorType.validationError:
+        return localization.validationError();
+      case RegistrationErrorType.internalServerError:
+        return localization.internalServerError();
     }
+  }
+
+  private readonly getSuccessNotification = (): Notification => {
+    return new Notification(
+      NotificationType.success,
+      localization.registrationSuccessLabel(),
+      localization.userRegistrated(),
+      3000
+    )
+  }
+
+  private readonly getErrorNotification = (
+    errorType: RegistrationErrorType
+  ): Notification => {
+    return new Notification(
+      NotificationType.error,
+      localization.registrationErrorLabel(),
+      this.getErrorMessage(errorType),
+      3000
+    );
+  }
+
+  sendRegistrationData (data: RegistrationData): void {
+    const encryptedData = this.encryptRegistrationData(data);
+
+    httpService
+      .sendPost(
+        commonRoutes.registration,
+        {'Content-Type': 'application/json'},
+        JSON.stringify(encryptedData)
+      )
+      .then(
+        (response: AxiosResponse): void => {
+          const doesTokenExist: boolean =
+            response.data[ResponseSuccessKeys.doesTokenExist];
+          const isTokenUnactivated: boolean =
+            response.data[ResponseSuccessKeys.isTokenUnactivated];
+          const isLoginUnique: boolean =
+            response.data[ResponseSuccessKeys.isLoginUnique];
+          
+          if (!doesTokenExist || !isTokenUnactivated || !isLoginUnique) {
+            let errors: RegistrationErrorType[] = [];
+
+            if (!doesTokenExist)
+              errors.push(RegistrationErrorType.tokenDoesNotExist);
+
+            if (!isTokenUnactivated)
+              errors.push(RegistrationErrorType.tokenAlreadyActivated);
+
+            if (!isLoginUnique)
+              errors.push(RegistrationErrorType.loginAlreadyTaken);
+
+            for (const error of errors)
+              notificationService.notify(this.getErrorNotification(error));
+          }
+
+          else
+            notificationService.notify(this.getSuccessNotification());
+        }
+      )
+      .catch(
+        (error: AxiosError): void => {
+          const errorType: RegistrationErrorType =
+            this.getServerErrorType(
+              error.response === undefined ?
+              "validation" :
+              (
+                error.response.data[ResponseErrorKeys.errorType] as
+                "contract" | "validation" | "internal"
+              )
+            );
+
+          notificationService.notify(this.getErrorNotification(errorType));
+        }
+      );
   }
 }
 

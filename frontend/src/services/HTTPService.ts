@@ -1,36 +1,28 @@
-import axios from "axios";
+import axios, {AxiosResponse} from "axios";
 
 
 export const commonRoutes = {
   authorization: "/authorize",
-  registration: "/register"
+  registration: "/registration"
 };
 
 class HTTPService {
-  private readonly clientHostPort: string;
   private readonly serverHostPort: string;
-  private readonly defaultHeaders: any;
 
-  constructor (clientHostPort: string, serverHostPort: string) {
-    this.clientHostPort = clientHostPort;
+  constructor (serverHostPort: string) {
     this.serverHostPort = serverHostPort;
-    this.defaultHeaders = {}
   }
 
   async sendPost (
     resource: string,
     headers: any,
     body: string,
-    addDefaultHeaders: boolean = true
-  ) {
+  ): Promise<AxiosResponse<any>> {
     return await axios.post(
       this.serverHostPort + resource,
       body,
       {
-        headers:
-            addDefaultHeaders ?
-            {...this.defaultHeaders, ...headers}
-            : headers,
+        headers: headers
       }
     );
   }
@@ -38,6 +30,5 @@ class HTTPService {
 
 export const httpService: HTTPService =
   new HTTPService(
-    "http://localhost:3000",
     "http://127.0.0.1:5000"
   );

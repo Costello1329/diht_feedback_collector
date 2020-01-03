@@ -2,7 +2,6 @@ import {httpService, commonRoutes} from "../services/HTTPService";
 import {encryptionService} from "../services/EncryptionService";
 
 
-// An interface for packing unencrypted authorization data:
 export interface AuthorizationData {
   login: string;
   password: string;

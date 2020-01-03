@@ -83,13 +83,7 @@ extends React.Component<AuthorizationFormProps, AuthorizationFormState> {
 
       alert(JSON.stringify(data));
 
-      authorizationService.sendAuthorizationData(data)
-      .then(_ => {
-        alert("all is ok");
-      })
-      .catch(reject => {
-        alert(reject);
-      });
+      authorizationService.sendAuthorizationData(data);
     }
 
     this.setState({
@@ -195,7 +189,7 @@ extends React.Component<AuthorizationFormProps, AuthorizationFormState> {
           {localization.yetNoAccount()}
         </span>
         <Link to = {this.props.registrationLink}>
-          {localization.register()}
+          {localization.performRegistration()}
         </Link>
       </div>;
 

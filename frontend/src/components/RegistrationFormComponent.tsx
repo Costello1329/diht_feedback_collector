@@ -3,18 +3,12 @@ import {Link} from 'react-router-dom';
 import {localization} from "../services/LocalizationService";
 import {
   registrationService,
-  RegistrationData,
-  RegistrationErrorType
+  RegistrationData
 } from "../services/RegistrationService";
 import {
   validationService,
   ValidationError
 } from "../services/ValidationService";
-import {
-  notificationService,
-  NotificationType,
-  Notification
-} from "../services/NotificationService";
 
 
 export interface RegistrationFormProps {
@@ -162,32 +156,7 @@ extends React.Component<RegistrationFormProps, RegistrationFormState> {
         confirmation: this.state.confirmation
       };
 
-      registrationService
-        .sendRegistrationData(data)
-        .then(
-          (_): void => {
-            notificationService.notify(
-              new Notification(
-                NotificationType.success,
-                localization.registrationSuccessLabel(),
-                localization.userWasRegistered(),
-                3000
-              )
-            );
-          }
-        )
-        .catch(
-          (reject: RegistrationErrorType): void => {
-            notificationService.notify(
-              new Notification(
-                NotificationType.error,
-                localization.registrationErrorLabel(),
-                this.getErrorMessage(reject),
-                3000
-              )
-            );
-          }
-        );
+      registrationService.sendRegistrationData(data);
     }
 
     this.setState({
@@ -198,27 +167,6 @@ extends React.Component<RegistrationFormProps, RegistrationFormState> {
     });
 
     event.preventDefault();
-  }
-
-  private readonly getErrorMessage = (
-    error: RegistrationErrorType
-  ): string => {
-    switch (error) {
-      case RegistrationErrorType.internalServerError:
-        return localization.internalServerError();
-      case RegistrationErrorType.contractDataError:
-        return localization.contractDataError();
-      case RegistrationErrorType.tokenDoesNotExist:
-        return localization.tokenDoesNotExist();
-      case RegistrationErrorType.tokenAlreadyActivated:
-        return localization.tokenAlreadyActivated();
-      case RegistrationErrorType.loginAlreadyTaken:
-        return localization.loginAlreadyTaken();
-      case RegistrationErrorType.passwordsDoesNotMatch:
-        return localization.passwordsDoesNotMatch();
-      case RegistrationErrorType.serverSideValidationError:
-        return localization.serverSideValidationError();
-    }
   }
 
   render (): JSX.Element {

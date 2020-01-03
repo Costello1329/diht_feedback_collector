@@ -103,13 +103,12 @@ class ValidationService {
 
     if (login === "")
       validationErrors.push(ValidationError.emptyString);
+
+    if (!this.checkMaskRegex(login, /[a-zA-Z0-9_\-]*/))
+      validationErrors.push(ValidationError.notValidLogin);
     
     if (login.length < 8)
       validationErrors.push(ValidationError.tooShort);
-    
-    if (!this.checkMaskRegex(login, /[a-zA-Z0-9_\-]*/)) {
-      validationErrors.push(ValidationError.notValidLogin);
-    }
 
     return validationErrors;
   }
