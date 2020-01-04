@@ -2,6 +2,8 @@ import datetime
 import re
 
 from django.apps import AppConfig
+from rest_framework.response import Response
+from rest_framework.utils import json
 
 from diht_feedback_collector.apps import setup_cors_response_headers, get_response_error_string_by_type
 
@@ -115,4 +117,4 @@ def get_authorization_response_error(error_type, status_code):
         "errorType": get_response_error_string_by_type(error_type)
     }
 
-    return setup_cors_response_headers(Response(json.dumps(body), status=status_code, mimetype="application/json")
+    return setup_cors_response_headers(Response(json.dumps(body), status=status_code, mimetype="application/json"))

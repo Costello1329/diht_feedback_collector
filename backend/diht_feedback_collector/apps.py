@@ -30,8 +30,8 @@ def get_response_error_string_by_type(error_type):
 
 
 def setup_cors_response_headers(res):
-    res.headers["Access-Control-Allow-Origin"] = "http://127.0.0.1:1329"
-    res.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,DELETE,OPTIONS"
-    res.headers["Access-Control-Allow-Headers"] = \
+    res["Access-Control-Allow-Origin"] = "http://127.0.0.1:1329"
+    res["Access-Control-Allow-Methods"] = "GET,POST,PUT,DELETE,OPTIONS"
+    res["Access-Control-Allow-Headers"] = \
         "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
     return res
