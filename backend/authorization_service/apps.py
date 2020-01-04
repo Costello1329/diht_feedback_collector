@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import re
 
 from django.apps import AppConfig
@@ -64,11 +64,13 @@ sessions_storage = SessionsStorage()
 
 def validate_authorization_contract(req):
     try:
-        user_data = req.get_json()
+        user_data = req.data
 
         if re.match("application/json", req.headers["Content-Type"]) is None:
             return False
 
+        if len(user_data.keys()) != 2:
+            return False
         all_needed_keys_exist = \
             "login" in user_data.keys() \
             and "password" in user_data.keys()
@@ -101,7 +103,7 @@ def get_authorization_response_success(does_login_exist, is_password_valid, sess
         "is_password_valid": is_password_valid
     }
 
-    res = setup_cors_response_headers(Response(json.dumps(body), status=status, mimetype="application/json"))
+    res = setup_cors_response_headers(Response(json.dumps(body), status=status, content_type="application/json"))
 
     if session_guid is not None:
         res.set_cookie("session", value=session_guid, max_age=k_cookie_expiration_time)
@@ -117,4 +119,4 @@ def get_authorization_response_error(error_type, status_code):
         "errorType": get_response_error_string_by_type(error_type)
     }
 
-    return setup_cors_response_headers(Response(json.dumps(body), status=status_code, mimetype="application/json"))
+    return setup_cors_response_headers(Response(json.dumps(body), status=status_code, content_type="application/json"))

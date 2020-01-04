@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 
 from authorization_service.apps import validate_authorization_data, get_authorization_response_error, \
     get_authorization_response_success, SessionsStorage
-from diht_feedback_collector.apps import ResponseErrorType
+from diht_feedback_collector.apps import ResponseErrorType, setup_cors_response_headers
 from .apps import validate_registration_contract, get_registration_response_success, get_registration_response_error, \
     validate_registration_data
 from .models import Guid, People
@@ -45,7 +45,7 @@ class UserView(APIView):
                     guid = Guid.objects.filter(guid=user_data["token"])
                     # Check check availability in the database
                     if guid:
-                        guid = Guid.objects.get(guid=user_data["token"])
+                        guid = guid[0]
                         does_token_exist = True
                     else:
                         does_token_exist = False
@@ -74,3 +74,6 @@ class UserView(APIView):
 
         except Exception:
             return get_registration_response_error(ResponseErrorType.Internal, 500)
+
+    def options(self, request, *args, **kwargs):
+        return setup_cors_response_headers(Response())

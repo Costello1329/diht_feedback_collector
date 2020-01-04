@@ -16,6 +16,8 @@ def validate_registration_contract(req):
 
         if re.match("application/json", req.headers["Content-Type"]) is None:
             return False
+        if len(user_data.keys()) != 4:
+            return False
 
         all_needed_keys_exist = \
             "token" in user_data.keys() \

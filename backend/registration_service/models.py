@@ -4,7 +4,7 @@ from django.db import models
 # Create your models here.
 
 class Guid(models.Model):
-    guid = models.CharField(max_length=36,unique=True)
+    guid = models.CharField(max_length=36, unique=True)
     group = models.CharField(max_length=30)
     active = models.BooleanField(default=False)
 
@@ -16,7 +16,7 @@ class Guid(models.Model):
 class People(models.Model):
     guid = models.ForeignKey('Guid', related_name='users_to_guid', on_delete=models.CASCADE)
     role = models.CharField(max_length=20, default='student')
-    login = models.CharField(max_length=30, null=False)
+    login = models.CharField(max_length=30, null=False, unique=True)
     password = models.CharField(max_length=16)
 
     def check_password(self, password):
