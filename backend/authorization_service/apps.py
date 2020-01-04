@@ -3,7 +3,7 @@ import re
 
 from django.apps import AppConfig
 from rest_framework.response import Response
-from rest_framework.utils import json
+import json
 
 from diht_feedback_collector.apps import setup_cors_response_headers, get_response_error_string_by_type
 

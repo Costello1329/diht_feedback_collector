@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'diht_feedback_collector',
     'registration_service',
-    'authorization_service'
+    'authorization_service',
+    'user_service'
 ]
 
 MIDDLEWARE = [
