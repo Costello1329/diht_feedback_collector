@@ -64,7 +64,8 @@ def setup_cors_response_headers(res):
     res.headers["Access-Control-Allow-Origin"] = "http://127.0.0.1:1329"
     res.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,DELETE,OPTIONS"
     res.headers["Access-Control-Allow-Headers"] = \
-        "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
+        "Content-Type, Access-Control-Allow-Headers"
+    res.headers["Access-Control-Allow-Credentials"] = "true"
     return res
 
 
@@ -284,8 +285,8 @@ def get_authorization_response_success(does_login_exist, is_password_valid, sess
     status = 200 if session_guid is not None else 401
 
     body = {
-        "does_login_exist": does_login_exist,
-        "is_password_valid": is_password_valid
+        "doesLoginExist": does_login_exist,
+        "isPasswordCorrect": is_password_valid
     }
 
     res = setup_cors_response_headers(Response(json.dumps(body), status=status, mimetype="application/json"))
@@ -294,7 +295,7 @@ def get_authorization_response_success(does_login_exist, is_password_valid, sess
         res.set_cookie("session", value=session_guid, max_age=k_cookie_expiration_time)
 
     else:
-        res.set_cookie("session", expires=0)
+        res.set_cookie("session", max_age=0)
 
     return res
 
@@ -351,7 +352,7 @@ def handle_authorization():
                     session_guid)
 
     except Exception:
-        return get_registration_response_error(ResponseErrorType.Internal, 500)
+        return get_authorization_response_error(ResponseErrorType.Internal, 500)
 
 
 @app.route("/authorization", methods=["OPTIONS"], provide_automatic_options=False)
@@ -366,8 +367,8 @@ def handle_options_authorization():
 
 def get_user_response_success(login, role, session_guid):
     body = {
-        "login": login,
-        "role": role
+        "role": role,
+        "login": login
     }
 
     res = setup_cors_response_headers(Response(json.dumps(body), status=200, mimetype="application/json"))
@@ -382,7 +383,7 @@ def get_user_response_reject(session_guid):
     res = setup_cors_response_headers(Response(status=401, mimetype="application/json"))
 
     if session_guid is not None:
-        res.set_cookie("session", value="", expires=0)
+        res.set_cookie("session", value="", max_age=0)
 
     return res
 
@@ -419,13 +420,57 @@ def handle_user():
             session_guid)
 
     except Exception:
-        return get_registration_response_error(ResponseErrorType.Internal, 500)
+        return get_user_response_error(ResponseErrorType.Internal, 500)
 
 
 @app.route("/user", methods=["OPTIONS"], provide_automatic_options=False)
 def handle_options_user():
     return setup_cors_response_headers(Response())
 
+
+################################################################################
+# Logout service:                                                              #
+################################################################################
+
+
+def get_logout_response_success(session_guid):
+    res = setup_cors_response_headers(Response("", status=200))
+
+    if session_guid is not None:
+        res.set_cookie("session", value=session_guid, max_age=0)
+
+    return res
+
+
+def get_logout_response_error(error_type, status_code):
+    body = {
+        "errorType": get_response_error_string_by_type(error_type)
+    }
+
+    return setup_cors_response_headers(Response(json.dumps(body), status=status_code, mimetype="application/json"))
+
+
+@app.route("/logout", methods=["GET"], provide_automatic_options=False)
+def handle_logout():
+    try:
+        # Database-side validations:
+        session_guid = request.cookies.get("session", None)
+
+        if session_guid is not None:
+            session = session_guid
+            global sessions_storage
+            if sessions_storage.get_session is not None:
+                sessions_storage.delete_session(session_guid)
+
+        return get_logout_response_success(session_guid)
+
+    except Exception:
+        return get_user_response_error(ResponseErrorType.Internal, 500)
+
+
+@app.route("/logout", methods=["OPTIONS"], provide_automatic_options=False)
+def handle_options_logout():
+    return setup_cors_response_headers(Response())
 
 ################################################################################
 # main:                                                                        #

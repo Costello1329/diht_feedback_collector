@@ -2,7 +2,8 @@ import React from "react";
 import classNames from "classnames";
 import {
   NotificationType,
-  Notification
+  Notification,
+  notificationService
 } from "../services/NotificationService";
 
 import "../styles/notifications";
@@ -161,12 +162,15 @@ React.Component<NotificationsProps, NotificationsState> {
       transitionState: TransitionState.none,
       transitioningNotificationTicket: undefined
     }
+    
+    notificationService.subscribe(
+      (notification: Notification): void => {
+        this.push(notification);
+      }
+    );
   }
 
-  /* WARNING: do not use this method to send notification.
-   * Use NotificationService instead.
-   */
-  readonly push = (notification: Notification): void => {
+  private readonly push = (notification: Notification): void => {
     if (
       this.eventQueue.getQueueVariable() + this.state.shownNotifications.length <
       this.props.maxShownNotificationsCount
@@ -270,6 +274,14 @@ React.Component<NotificationsProps, NotificationsState> {
   private readonly handleNotificationClick = (ticket: number): void => {
     this.preliminarilyPoppedNotificationsTickets.push(ticket);
     this.pop(ticket);
+  }
+
+  componentDidMount () {
+    notificationService.greet();
+  }
+
+  componentWillUnmount () {
+    notificationService.unsubscribe();
   }
 
   componentDidUpdate (

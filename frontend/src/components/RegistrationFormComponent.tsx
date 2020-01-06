@@ -4,7 +4,7 @@ import {localization} from "../services/LocalizationService";
 import {
   registrationService,
   RegistrationData
-} from "../services/RegistrationService";
+} from "../services/api/RegistrationService";
 import {
   validationService,
   ValidationError
@@ -196,10 +196,7 @@ extends React.Component<RegistrationFormProps, RegistrationFormState> {
 
     const tokenInputErrorText: JSX.Element = 
       this.state.tokenValidationErrors.length !== 0
-      ? <span
-          className = {"authLayoutCommonFormInputErrorText"}
-          key = "1"
-        >
+      ? <span className = {"authLayoutCommonFormInputErrorText"}>
           {tokenValidationErrorText}
         </span>
       : <></>;
@@ -207,9 +204,9 @@ extends React.Component<RegistrationFormProps, RegistrationFormState> {
     const registrationByTokenFormControls: JSX.Element[] = [
       <div
         className = "authLayoutCommonFormControl"
-        key = "0"
+        key = "registration_by_token_form_controls_token"
       >
-        <span key = "0">
+        <span>
           {localization.token()}
         </span>
         <label>
@@ -263,8 +260,7 @@ extends React.Component<RegistrationFormProps, RegistrationFormState> {
 
     const loginInputErrorText: JSX.Element = 
       this.state.loginValidationErrors.length !== 0
-      ? <span
-      className = {"authLayoutCommonFormInputErrorText"}>
+      ? <span className = {"authLayoutCommonFormInputErrorText"}>
           {loginValidationErrorText}
         </span>
       : <></>;
@@ -286,7 +282,7 @@ extends React.Component<RegistrationFormProps, RegistrationFormState> {
     const registrationMainFormControls: JSX.Element[] = [
       <div
         className = "authLayoutCommonFormControl"
-        key = "0"
+        key = "registration_main_form_controls_login"
       >
         <span>
           {localization.login()}
@@ -305,7 +301,7 @@ extends React.Component<RegistrationFormProps, RegistrationFormState> {
 
       <div
         className = "authLayoutCommonFormControl"
-        key = "1"
+        key = "registration_main_form_controls_password"
       >
         <span>
           {localization.password()}
@@ -324,7 +320,7 @@ extends React.Component<RegistrationFormProps, RegistrationFormState> {
 
       <div
         className = "authLayoutCommonFormControl"
-        key = "2"
+        key = "registration_main_form_controls_confirmation"
       >
         <span>
           {localization.confirmation()}

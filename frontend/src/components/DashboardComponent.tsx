@@ -1,4 +1,5 @@
 import React from "react";
+import {logoutService} from "../services/api/LogoutService";
 import {
   NotificationType,
   Notification,
@@ -6,19 +7,19 @@ import {
 } from "../services/NotificationService";
 
 
-interface PollDashboardProps {
+interface DashboardProps {
 
 }
 
-interface PollDashboardState {
+interface DashboardState {
 
 }
 
-export class PollDashboard extends
-React.Component<PollDashboardProps, PollDashboardState> {
+export class Dashboard extends
+React.Component<DashboardProps, DashboardState> {
   declare private ticket: number;
 
-  constructor (props: PollDashboardProps) {
+  constructor (props: DashboardProps) {
     super(props);
     this.ticket = 0;
   }
@@ -65,6 +66,9 @@ React.Component<PollDashboardProps, PollDashboardState> {
       <div>
         <button onClick = {this.handleClick}>
           Press me!
+        </button>
+        <button onClick = {() => logoutService.logout()}>
+          Logout
         </button>
       </div>
     );

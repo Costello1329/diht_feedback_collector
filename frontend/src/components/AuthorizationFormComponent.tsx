@@ -4,7 +4,7 @@ import {localization} from "../services/LocalizationService";
 import {
   authorizationService,
   AuthorizationData
-} from "../services/AuthorizationService";
+} from "../services/api/AuthorizationService";
 import {
   validationService,
   ValidationError
@@ -81,8 +81,6 @@ extends React.Component<AuthorizationFormProps, AuthorizationFormState> {
         password: this.state.password,
       };
 
-      alert(JSON.stringify(data));
-
       authorizationService.sendAuthorizationData(data);
     }
 
@@ -141,7 +139,7 @@ extends React.Component<AuthorizationFormProps, AuthorizationFormState> {
     const authorizationFormControls: JSX.Element[] = [
       <div
         className = "authLayoutCommonFormControl"
-        key = "0"
+        key = "authorization_form_controls_login"
       >
         <span>
           {localization.login()}
@@ -160,7 +158,7 @@ extends React.Component<AuthorizationFormProps, AuthorizationFormState> {
         
       <div
         className = "authLayoutCommonFormControl"
-        key = "1"
+        key = "authorization_form_controls_password"
       >
         <span>
           {localization.password()}

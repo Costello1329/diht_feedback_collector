@@ -1,9 +1,11 @@
 import axios, {AxiosResponse} from "axios";
 
 
-export const commonRoutes = {
-  authorization: "/authorize",
-  registration: "/registration"
+export const apiRoutes = {
+  authorization: "/authorization",
+  registration: "/registration",
+  user: "/user",
+  logout: "/logout"
 };
 
 class HTTPService {
@@ -11,6 +13,19 @@ class HTTPService {
 
   constructor (serverHostPort: string) {
     this.serverHostPort = serverHostPort;
+  }
+  
+  async sendGet (
+    resource: string,
+    headers: any
+  ): Promise<AxiosResponse<any>> {
+    return await axios.get(
+      this.serverHostPort + resource,
+      {
+        headers: headers,
+        withCredentials: true
+      }
+    );
   }
 
   async sendPost (
@@ -22,7 +37,8 @@ class HTTPService {
       this.serverHostPort + resource,
       body,
       {
-        headers: headers
+        headers: headers,
+        withCredentials: true
       }
     );
   }
