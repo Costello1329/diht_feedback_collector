@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'diht_feedback_collector',
     'registration_service',
     'authorization_service',
-    'user_service'
+    'user_service',
+    'logout_service'
 ]
 
 MIDDLEWARE = [

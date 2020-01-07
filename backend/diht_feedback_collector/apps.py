@@ -34,4 +34,5 @@ def setup_cors_response_headers(res):
     res["Access-Control-Allow-Methods"] = "GET,POST,PUT,DELETE,OPTIONS"
     res["Access-Control-Allow-Headers"] = \
         "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
+    res["Access-Control-Allow-Credentials"] = "true"
     return res

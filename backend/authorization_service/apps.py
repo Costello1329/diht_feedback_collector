@@ -99,8 +99,8 @@ def get_authorization_response_success(does_login_exist, is_password_valid, sess
     status = 200 if session_guid is not None else 401
 
     body = {
-        "does_login_exist": does_login_exist,
-        "is_password_valid": is_password_valid
+        "doesLoginExist": does_login_exist,
+        "isPasswordCorrect": is_password_valid
     }
 
     res = setup_cors_response_headers(Response(json.dumps(body), status=status, content_type="application/json"))
@@ -109,7 +109,7 @@ def get_authorization_response_success(does_login_exist, is_password_valid, sess
         res.set_cookie("session", value=session_guid, max_age=k_cookie_expiration_time)
 
     else:
-        res.set_cookie("session", expires=0)
+        res.set_cookie("session", max_age=0)
 
     return res
 

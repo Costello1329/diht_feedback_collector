@@ -3,5 +3,5 @@ from .views import UserView
 app_name = "register_service"
 # app_name will help us do a reverse look-up latter.
 urlpatterns = [
-    path('/', UserView.as_view()),
+    path('', UserView.as_view()),
     ]
