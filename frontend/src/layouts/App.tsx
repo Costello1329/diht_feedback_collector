@@ -4,6 +4,7 @@ import {RegistrationLayout} from "./publicSection/RegistrationLayout";
 import {AuthorizationLayout} from "./publicSection/AuthorizationLayout";
 import {DashboardLayout} from "./studentSection/DashboardLayout";
 import {ForbiddenLayout} from "./errorLayouts/ForbiddenLayout";
+import {NotFoundLayout} from "./errorLayouts/NotFoundLayout";
 import {userService, User, UserRole} from "../services/api/UserService";
 import {Notifications} from "../components/NotificationsComponent";
 
@@ -17,6 +18,7 @@ interface AppProps {
 interface AppState {
   user: User | undefined;
   gotUserAtLeastOnce: boolean;
+  logoutHappened: boolean;
 }
 
 export class App
@@ -25,7 +27,8 @@ extends React.Component<AppProps, AppState> {
     super(props);
     this.state = {
       user: undefined,
-      gotUserAtLeastOnce: false
+      gotUserAtLeastOnce: false,
+      logoutHappened: false
     };
     userService.subscribe(this.setupUser);
   }
@@ -33,6 +36,8 @@ extends React.Component<AppProps, AppState> {
   private readonly setupUser = (user: User | undefined): void => {
     this.setState({
       user: user,
+      logoutHappened:
+        this.state.user !== undefined && user === undefined,
       gotUserAtLeastOnce: true
     });
   }
@@ -60,16 +65,18 @@ extends React.Component<AppProps, AppState> {
         authorizationLink = {this.props.authorizationLink}
       />;
 
+    const notFound: JSX.Element = 
+      <NotFoundLayout
+        registrationLink = {this.props.registrationLink}
+        authorizationLink = {this.props.authorizationLink}
+      />;
+
     // Guest section:
     const authorization: JSX.Element =
       <AuthorizationLayout registrationLink = {this.props.registrationLink}/>;
     
     const registration: JSX.Element =
       <RegistrationLayout authorizationLink = {this.props.authorizationLink}/>
-
-    // Student section:
-    const dashboard: JSX.Element =
-      <DashboardLayout/>;
     
     const homepageLink: string = (() => {
       if (this.state.user === undefined)
@@ -82,6 +89,10 @@ extends React.Component<AppProps, AppState> {
     })();
 
     const redirectHomepage: JSX.Element = <Redirect to = {homepageLink}/>;
+
+    // Student section:
+    const dashboard: JSX.Element =
+      <DashboardLayout/>;
 
     const app: JSX.Element =
       <div className = "App">
@@ -97,7 +108,18 @@ extends React.Component<AppProps, AppState> {
               {this.checkUserRole(undefined) ? authorization : redirectHomepage}
             </Route>
             <Route exact path = {this.props.dashboardLink}>
-              {this.checkUserRole(UserRole.student) ? dashboard : forbidden}
+              {
+                this.checkUserRole(UserRole.student) ?
+                dashboard :
+                (
+                  this.state.logoutHappened ?
+                  redirectHomepage :
+                  forbidden
+                )
+              }
+            </Route>
+            <Route>
+              {notFound}
             </Route>
           </Switch>
         </HashRouter>
@@ -106,6 +128,17 @@ extends React.Component<AppProps, AppState> {
           maxPendingNotificationsCount = {10}
         />
       </div>;
+    
+    if (this.state.logoutHappened) {
+      setTimeout(
+        (): void => {
+          this.setState({
+            logoutHappened: false
+          });
+        },
+        0
+      );
+    }
 
     return app;
   }
