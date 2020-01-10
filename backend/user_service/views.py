@@ -4,11 +4,11 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from diht_feedback_collector.apps import setup_cors_response_headers, ResponseErrorType
-from registration_service.apps import get_registration_response_error
+from diht_feedback_collector.apps import setup_cors_response_headers, ResponseErrorType, check_permission
 from registration_service.models import People
 from user_service.apps import get_user_response_success, get_user_response_reject, get_user_response_error
-from  authorization_service.views import sessions_storage
+from authorization_service.apps import sessions_storage
+
 
 class UserView(APIView):
     def post(self, request):
@@ -22,8 +22,10 @@ class UserView(APIView):
             if session_guid is None:
                 return get_user_response_reject(session_guid)
 
-            sessions_storage
             session = sessions_storage.get_session(session_guid)
+
+            if check_permission(session_guid, "user_service_post"):
+                get_user_response_error(ResponseErrorType.Validation, 403)
 
             if session is None:
                 return get_user_response_reject(session_guid)

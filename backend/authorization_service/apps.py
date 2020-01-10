@@ -54,6 +54,9 @@ class Session:
     user_guid: str
     last_activity: datetime
 
+    def get_user_guid(self):
+        return self.user_guid
+
     def __init__(self, user_guid):
         self.user_guid = user_guid
         self.last_activity = datetime.now(tz=None)

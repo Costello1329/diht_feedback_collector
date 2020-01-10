@@ -1,9 +1,6 @@
 from django.db import models
 
 
-
-
-
 class Student(models.Model):
     email = models.EmailField()
     first_name = models.CharField(max_length=40)

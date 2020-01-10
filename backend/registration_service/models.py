@@ -21,3 +21,6 @@ class People(models.Model):
 
     def check_password(self, password):
         return self.password == password
+
+    def get_role(self):
+        return self.role
