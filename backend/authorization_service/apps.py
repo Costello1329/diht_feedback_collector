@@ -6,6 +6,7 @@ from rest_framework.response import Response
 import json
 
 from diht_feedback_collector.apps import setup_cors_response_headers, get_response_error_string_by_type
+from registration_service.models import People
 
 
 class AuthorizationServiceConfig(AppConfig):
@@ -123,3 +124,32 @@ def get_authorization_response_error(error_type, status_code):
     }
 
     return setup_cors_response_headers(Response(json.dumps(body), status=status_code, content_type="application/json"))
+
+
+permission = {
+    "user_service_post": "student",
+    "dashboard_service_post": "student",
+    "poll_service_post": "student",
+    "poll_service_get": "student"
+}
+
+
+def check_permission(token, service):
+    session = sessions_storage.get_session(token)
+    if not isinstance(session, Session):
+        return False
+    else:
+        user_guid = session.get_user_guid()
+        # Database-side validations:
+        user = People.objects.filter(guid=user_guid)
+        # Check check availability in the database
+        if user:
+            return False
+        else:
+            role = user.get_role()
+            eligible_role = permission.get(service, None)
+            if eligible_role is None:
+                return False
+            else:
+                if eligible_role == role:
+                    return True

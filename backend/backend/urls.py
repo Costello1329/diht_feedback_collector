@@ -21,5 +21,7 @@ urlpatterns = [
     path('registration/', include('registration_service.urls')),
     path('authorization/', include('authorization_service.urls')),
     path('user/', include('user_service.urls')),
-    path('logout/', include('logout_service.urls'))
+    path('logout/', include('logout_service.urls')),
+    path('poll/', include('poll_service.urls')),
+    path('dashboard/',include('dashboard_service.urls'))
 ]

@@ -13,14 +13,16 @@ class Teacher(models.Model):
     full_name = models.CharField(max_length=100)
 
 
-class GroupCurse:
-    course = models.ForeignKey('Course', related_name='group_to_course', on_delete=models.DO_NOTHING)
+class GroupCourse:
+    id = models.AutoField()
+    course = models.ForeignKey('Course', related_name='group_to_course', on_delete=models.CASCADE)
     group = models.CharField(max_length=30)
 
 
 # TeacherRole(Group)
 class TeacherRole:
-    teacher = models.ForeignKey('Course', related_name='group_to_course', on_delete=models.DO_NOTHING)
+    id = models.AutoField()
+    teacher = models.ForeignKey('Course', related_name='teacher_to_course', on_delete=models.CASCADE)
     role = models.CharField(max_length=30)
     group = models.CharField(max_length=30)
 

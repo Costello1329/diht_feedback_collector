@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     'registration_service',
     'authorization_service',
     'user_service',
-    'logout_service'
+    'logout_service',
+    'poll_service',
+    'dashboard_service'
 ]
 
 MIDDLEWARE = [
