@@ -6,7 +6,7 @@ from rest_framework.response import Response
 import json
 
 from diht_feedback_collector.apps import setup_cors_response_headers, get_response_error_string_by_type
-from registration_service.models import People
+from registration_services.models import People
 
 
 class AuthorizationServiceConfig(AppConfig):

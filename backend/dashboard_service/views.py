@@ -6,7 +6,7 @@ from authorization_service.apps import sessions_storage, check_permission
 from dashboard_service.apps import get_dashboard_response_success, get_dashboard_response_error, \
     get_dashboard_response_reject
 from diht_feedback_collector.apps import ResponseErrorType, setup_cors_response_headers
-from registration_service.models import People
+from registration_services.models import People
 
 
 class GroupCurce(object):

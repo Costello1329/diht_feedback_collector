@@ -7,7 +7,7 @@ from diht_feedback_collector.apps import setup_cors_response_headers, get_respon
 
 
 class RegistrationServiceConfig(AppConfig):
-    name = 'registration_service'
+    name = 'registration_services'
 
 
 def validate_registration_contract(req):

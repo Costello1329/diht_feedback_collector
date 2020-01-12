@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from authorization_service.apps import SessionsStorage, validate_authorization_contract, \
     get_authorization_response_error, validate_authorization_data, get_authorization_response_success
 from diht_feedback_collector.apps import ResponseErrorType, setup_cors_response_headers
-from registration_service.models import People
+from registration_services.models import People
 
 sessions_storage = SessionsStorage()
 

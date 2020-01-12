@@ -11,7 +11,7 @@ from diht_feedback_collector.apps import ResponseErrorType, setup_cors_response_
 from poll_service.apps import get_pool_response_reject, get_pool_response_error, validate_pool_contract, \
     get_pool_response_success, validate_pool_query_params
 from poll_service.models import Questionnaire
-from registration_service.models import People
+from registration_services.models import People
 import uuid
 
 

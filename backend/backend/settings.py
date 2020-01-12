@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'diht_feedback_collector',
-    'registration_service',
+    'registration_services',
     'authorization_service',
     'user_service',
     'logout_service',

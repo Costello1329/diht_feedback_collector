@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from diht_feedback_collector.apps import setup_cors_response_headers, ResponseErrorType
-from registration_service.models import People
+from registration_services.models import People
 from user_service.apps import get_user_response_success, get_user_response_reject, get_user_response_error
 from authorization_service.apps import sessions_storage, check_permission
 
