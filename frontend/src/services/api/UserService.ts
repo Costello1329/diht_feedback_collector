@@ -125,7 +125,7 @@ class UserService {
                 response.data[ResponseSuccessKeys.login]
               );
 
-              resolve(user)
+              resolve(user);
             }
           )
           .catch(

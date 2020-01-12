@@ -1,10 +1,22 @@
 import React from "react";
 import {logoutService} from "../services/api/LogoutService";
+import {Button, ButtonType, ButtonSize} from "./interface/button/Button";
+import {InputType} from "./interface/input/Input";
 import {
   NotificationType,
   Notification,
   notificationService
 } from "../services/NotificationService";
+import {Form} from "./interface/form/Form";
+import {
+  ruleNotEmpty,
+  ruleNotShort,
+  ruleIsGUID,
+  ValidationErrorEmpty,
+  ValidationErrorShort,
+  ValidationErrorNotGUID
+} from "../services/Validation/CommonRules";
+import {Validator, ValidationError} from "../services/Validation/Validator";
 
 
 interface DashboardProps {
@@ -62,15 +74,56 @@ React.Component<DashboardProps, DashboardState> {
   }
 
   render (): JSX.Element {
+    const loginValidator: Validator =
+      new Validator(
+        [ruleNotEmpty, ruleNotShort, ruleIsGUID],
+        (error: ValidationError): string => {
+          if (error instanceof ValidationErrorEmpty)
+            return "empty";
+          else if (error instanceof ValidationErrorShort)
+            return "short";
+          else if (error instanceof ValidationErrorNotGUID)
+            return "not GUID!";
+        }
+      );
+
     return (
       <div>
-        <button onClick = {this.handleClick}>
-          Press me!
-        </button>
-        <button onClick = {() => logoutService.logout()}>
-          Logout
-        </button>
+        <Button 
+          text = {"Press me!"}
+          type = {ButtonType.orange}
+          size = {ButtonSize.medium}
+          handler = {this.handleClick}
+        />
+        <Button 
+          text = {"logout"}
+          type = {ButtonType.gray}
+          size = {ButtonSize.big}
+          handler = {logoutService.logout}
+        />
+
+        <Form
+          header = "Hello World!"
+          controls = {
+            [
+              {
+                type: InputType.text,
+                label: "login",
+                placeholder: "Costello1329",
+                validator: loginValidator
+              }
+            ]
+          }
+          submitButton = {
+            {
+              type: ButtonType.orange,
+              size: ButtonSize.big,
+              text: "submit"
+            }
+          }
+        />
       </div>
     );
   }
 }
+ 

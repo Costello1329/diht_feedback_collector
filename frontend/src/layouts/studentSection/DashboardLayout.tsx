@@ -1,8 +1,6 @@
 import React from "react";
 import {Dashboard} from "../../components/DashboardComponent";
 
-import "../../styles/dashboard";
-
 
 export interface DashboardLayoutProps {}
 

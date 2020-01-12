@@ -37,12 +37,14 @@ class NotificationService {
     this.pendingQueue = [];
   }
 
-  private readonly tryReduceQueue = (): void => {
+  private readonly relaxQueue = (): void => {
     while (true) {
       const notification: Notification | undefined = this.pendingQueue.shift();
 
-      if (notification === undefined || this.subscriber === undefined)
+      if (notification === undefined || this.subscriber === undefined) {
+        this.pendingQueue = [];
         return;
+      }
       
       this.subscriber(notification);
     }
@@ -53,7 +55,7 @@ class NotificationService {
   }
 
   readonly greet = (): void => {
-    this.tryReduceQueue();
+    this.relaxQueue();
   }
 
   readonly notify = (notification: Notification): void => {
