@@ -124,4 +124,4 @@ class UserView(APIView):
             return get_pool_response_error(ResponseErrorType.Internal, 500)
 
     def options(self, request, *args, **kwargs):
-        return setup_cors_response_headers(Response())
+        return setup_cors_response_headers(Response(status=204))

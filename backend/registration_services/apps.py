@@ -66,7 +66,7 @@ def get_registration_response_success(
         "isLoginUnique": is_login_unique
     }
 
-    return setup_cors_response_headers(Response(json.dumps(body), status=200, content_type="application/json"))
+    return setup_cors_response_headers(Response(body, status=200, content_type="application/json"))
 
 
 def get_registration_response_error(error_type, status_code):
@@ -74,4 +74,4 @@ def get_registration_response_error(error_type, status_code):
         "errorType": get_response_error_string_by_type(error_type)
     }
 
-    return setup_cors_response_headers(Response(json.dumps(body), status=status_code, content_type="application/json"))
+    return setup_cors_response_headers(Response(body, status=status_code, content_type="application/json"))
