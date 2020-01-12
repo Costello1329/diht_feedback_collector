@@ -107,10 +107,9 @@ class UserView(APIView):
                     list_teacher = dict()
                     for teachers in teacher_role:
                         list_teacher.update({teachers.teacher.full_name: teachers.role})
-                    ##to do улучшить
-                    for i in range(0, 10):
+                    while True:
                         guid = uuid.uuid4().hex
-                        try:
+                        if not Questionnaire.objects.filter(guid=guid):
                             questionnaire = Questionnaire.objects.create(guid=guid, course=course, user=user)
                             body = {
                                 "guid": questionnaire.guid,
@@ -118,9 +117,7 @@ class UserView(APIView):
                                 "teacher": list_teacher
                             }
                             return get_pool_response_success(body, session_guid)
-                        except Exception:
-                            continue
-                    return get_pool_response_error(ResponseErrorType.Internal, 500)
+
             else:
                 return get_pool_response_error(ResponseErrorType.Validation, 400)
         except Exception:
