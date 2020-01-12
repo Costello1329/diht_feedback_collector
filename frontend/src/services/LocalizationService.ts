@@ -94,6 +94,36 @@ class LocalizationService {
 
     readonly logoutErrorLabel = (): string =>
         "Ошибка выхода.";
+
+    //PollboardLayout
+    readonly myAnswer = (): string =>
+        "Мой ответ";
+    readonly answerEdition = (): string =>
+        "Редактирование ответа";
+    readonly lectures = (): string =>
+        "Лекции";
+    readonly attendedLectures = (): string =>
+        "Посещали лекции?";
+    readonly evaluateQualityOfLectures = (): string =>
+        "Оцените качество лекций";
+    readonly goodAboutLectures = (): string =>
+        "Что было хорошо в лекциях?";
+    readonly badAboutLectures = (): string =>
+        "Что было плохо в лекциях?";
+    readonly suggestionAboutLectures = (): string =>
+        "Предложения по ведению лекций";
+    readonly seminars = (): string =>
+        "Семинары";
+    readonly yourTeacherAndAssist = (): string =>
+        "Ваш семинарист и ассистент";
+    readonly evaluateQualityOfSeminars = (): string =>
+      "Оцените качество семинаров";
+    readonly goodAboutSeminars = (): string =>
+      "Что было хорошо в семинарах?";
+    readonly badAboutSeminars = (): string =>
+      "Что было плохо в семинарах?";
+    readonly suggestionAboutSeminars = (): string =>
+      "Предложения по ведению семинаров";
 }
 
 export const localization: LocalizationService =

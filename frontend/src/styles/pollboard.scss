@@ -1,0 +1,98 @@
+@import "./fonts";
+
+body {
+  font-family: "PT Sans";
+}
+
+select {
+  border: 1px solid #E0E0E0;
+  border-radius: 5px;
+  height: 33px;
+  background-color: white;
+  width: 300px;
+}
+
+input[type=text] {
+  width: 295px;
+  height: 30px;
+  border: 1px solid #E0E0E0;
+  border-radius: 5px;
+  padding-left: 10px;
+}
+
+.sliderBox {
+  text-align: center;
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 80%;
+    height: 8px;
+    border-radius: 5px;
+    background: #ccc;
+    outline: none;
+    margin-bottom: 0;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #fca23b;
+    cursor: pointer;
+  }
+  input[type=range]::-moz-range-thumb {
+    border: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fca23b;
+    cursor: pointer;
+  }
+  p {
+    margin-top: 0;
+  }
+}
+
+fieldset {
+  border: none;
+  text-align: left;
+  label {
+    margin-left: 10px;
+  }
+  input[type=radio] {
+    border-color: red;
+  }
+}
+
+.answerEditor {
+  text-align: center;
+  flex-grow: 5;
+
+  .polls {
+    padding: 10px 30px 20px;
+    margin: 0 50px;
+    border: 1px solid #E0E0E0;
+    border-radius: 2px;
+    display: flex;
+    justify-content: space-around;
+
+    .poll {
+      text-align: left;
+    }
+  }
+}
+
+.answerInfo {
+  text-align: center;
+  flex-grow: 2;
+}
+
+.pollboard {
+  display: flex;
+  h2 {
+    text-align: center;
+    font-weight: normal;
+    margin: 5px;
+  }
+}

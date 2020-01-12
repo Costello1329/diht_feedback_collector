@@ -8,6 +8,7 @@ const appInstance: JSX.Element =
     registrationLink = "/registration"
     authorizationLink = "/authorization"
     dashboardLink = "/dashboard"
+    pollboardLink = "/pollboard"
   />
 
 ReactDOM.render(appInstance, document.getElementById('root'));

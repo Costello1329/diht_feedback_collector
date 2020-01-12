@@ -7,12 +7,14 @@ import {ForbiddenLayout} from "./errorLayouts/ForbiddenLayout";
 import {NotFoundLayout} from "./errorLayouts/NotFoundLayout";
 import {userService, User, UserRole} from "../services/api/UserService";
 import {Notifications} from "../components/NotificationsComponent";
+import {PollboardLayout} from "./studentSection/PollboardLayout";
 
 
 interface AppProps {
   registrationLink: string;
   authorizationLink: string;
   dashboardLink: string;
+  pollboardLink: string;
 }
 
 interface AppState {
@@ -117,6 +119,9 @@ extends React.Component<AppProps, AppState> {
                   forbidden
                 )
               }
+            </Route>
+            <Route exact path = {this.props.pollboardLink}>
+              <PollboardLayout/>
             </Route>
             <Route>
               {notFound}
