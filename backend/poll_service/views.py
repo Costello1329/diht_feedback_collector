@@ -75,6 +75,9 @@ class UserView(APIView):
 
             session = sessions_storage.get_session(session_guid)
 
+            if session is None:
+                return get_pool_response_error(ResponseErrorType.Validation, 401)
+
             if check_permission(session_guid, "poll_service_get"):
                 return get_pool_response_error(ResponseErrorType.Validation, 403)
 
@@ -84,7 +87,7 @@ class UserView(APIView):
             if user:
                 user = user[0]
             else:
-                get_pool_response_error(ResponseErrorType.Validation, 401)
+                return get_pool_response_error(ResponseErrorType.Validation, 401)
 
             course = Course.objects.filter(guid=course_guid)
             if course:
@@ -100,22 +103,24 @@ class UserView(APIView):
                     return get_pool_response_success(body, session_guid)
                 else:
                     group = user.guid.group
-                    teacher_role = TeacherRole.objects.filter(group)
+                    teacher_role = TeacherRole.objects.filter(group=group, course=course)
                     list_teacher = dict()
-                    for teacher in teacher_role:
-                        list_teacher.update({teacher.full_name:teacher_role})
-                    while (True):
+                    for teachers in teacher_role:
+                        list_teacher.update({teachers.teacher.full_name: teachers.role})
+                    ##to do улучшить
+                    for i in range(0, 10):
                         guid = uuid.uuid4().hex
                         try:
-                            questionnaire = Questionnaire.objects.create(guid=guid)
+                            questionnaire = Questionnaire.objects.create(guid=guid, course=course, user=user)
                             body = {
                                 "guid": questionnaire.guid,
                                 "data": questionnaire.data,
-                                "teacher":list_teacher
+                                "teacher": list_teacher
                             }
                             return get_pool_response_success(body, session_guid)
                         except Exception:
                             continue
+                    return get_pool_response_error(ResponseErrorType.Internal, 500)
             else:
                 return get_pool_response_error(ResponseErrorType.Validation, 400)
         except Exception:

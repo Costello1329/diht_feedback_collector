@@ -20,7 +20,8 @@ class GroupCourse(models.Model):
 
 # TeacherRole(Group)
 class TeacherRole(models.Model):
-    teacher = models.ForeignKey('Course', related_name='teacher_to_course', on_delete=models.CASCADE)
+    teacher = models.ForeignKey('Teacher', related_name='role_to_teacher', on_delete=models.CASCADE)
     role = models.CharField(max_length=30)
     group = models.CharField(max_length=30)
+    course = models.ForeignKey('Course', related_name='role_to_course', on_delete=models.CASCADE,null=True)
 
