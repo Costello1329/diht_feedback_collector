@@ -67,7 +67,7 @@ fieldset {
 
 .answerEditor {
   text-align: center;
-  flex-grow: 6;
+  flex-basis: 70%;
 
   > .polls {
     padding: 10px 30px 20px;
@@ -85,7 +85,7 @@ fieldset {
 
 .answerInfo {
   text-align: center;
-  flex-grow: 2;
+  flex-basis: 30%;
 
   > .answerInfoBox {
     margin: 30px;
@@ -94,7 +94,11 @@ fieldset {
     border-radius: 2px;
 
     > img {
-      
+      max-width: 100%;
+    }
+
+    > h2 {
+      margin-bottom: 10px;
     }
   }
 }
