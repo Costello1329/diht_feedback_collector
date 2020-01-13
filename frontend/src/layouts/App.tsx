@@ -122,10 +122,18 @@ extends React.Component<AppProps, AppState> {
       <DashboardLayout user = {this.state.user}/> :
       <></>;
 
-    const poll: JSX.Element =
-      this.state.user !== undefined ?
-      <PollLayout pollGuid = "" user = {this.state.user}/> :
-      <></>;
+    const poll = (): JSX.Element => {
+      var query: string = window.location.href;
+      const start: number = "guid".length + 2 + query.indexOf("?");
+      const delta: number = 32 + 4;
+      const guid: string = query.slice(start, start + delta);
+
+      return (
+        this.state.user !== undefined ?
+        <PollLayout pollGuid = {guid} user = {this.state.user}/> :
+        <></>
+      );
+    }
 
     /**
      * app instance:
@@ -155,10 +163,10 @@ extends React.Component<AppProps, AppState> {
                 )
               }
             </Route>
-            <Route exact path = {this.props.pollLink}>
+            <Route path = {this.props.pollLink}>
               {
                 this.checkUserRole(UserRole.student) ?
-                poll :
+                poll() :
                 (
                   this.state.logoutHappened ?
                   redirectHomepage :

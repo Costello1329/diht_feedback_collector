@@ -6,7 +6,8 @@ export const apiRoutes = {
   registration: "/registration",
   user: "/user",
   logout: "/logout",
-  dashboard: "/dashboard"
+  dashboard: "/dashboard",
+  poll: "/poll"
 };
 
 class HTTPService {

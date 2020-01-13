@@ -18,7 +18,7 @@ export function Dash(props: DashProps) {
       <div className="courseDashBottom">
         <div className="rightBlock">
           <p>
-            <Link to = {"/poll/" + props.pollGuid}>
+            <Link to = {"/poll?guid=" + props.pollGuid}>
               <Button
                 type = {ButtonType.orange}
                 size = {ButtonSize.small}

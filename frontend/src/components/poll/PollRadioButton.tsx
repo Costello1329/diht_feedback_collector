@@ -1,6 +1,7 @@
 import React from "react";
 
 type PollRadioButtonProps = {
+  handler: (event: React.ChangeEvent<HTMLInputElement>) => void;
   options: string[];
   name: string;
 }
@@ -11,7 +12,12 @@ export function PollRadioButton(props: PollRadioButtonProps) {
     props.options.forEach(option =>
       options.push(
         <div>
-          <input name={props.name} type="radio" value={option} id={option}/>
+          <input
+            onChange = {props.handler}
+            name = {props.name}
+            type="radio"
+            value = {option}
+            id = {option}/>
           <label htmlFor={option}>{option}</label>
         </div>
       ));

@@ -7,19 +7,61 @@ import {localization} from "../services/LocalizationService";
 // @ts-ignore
 import courseImage from "../../assets/images/courseImage.png";
 import "../styles/pollboard.scss";
-import {Button, ButtonType, ButtonSize} from "./interface/button/Button";
+import {
+  Button,
+  ButtonType,
+  ButtonSize
+} from "../components/interface/button/Button";
 
 
 interface PollComponentProps {
-
+  guid: string;
 }
+
+type Data = string;
 
 interface PollComponentState {
-
+  data: Data[];
 }
+
+type HandlerForInput = (event: React.ChangeEvent<HTMLInputElement>) => void;
 
 export class PollComponent extends
 React.Component<PollComponentProps, PollComponentState> {
+  constructor (props: PollComponentProps) {
+    super(props);
+
+    this.state = {
+      data: ((): string[] => {
+        let val: string[] = [];
+        for (let i = 0; i < 9; i ++) {
+          val.push("");
+        }
+        return val;
+      })()
+    };
+  }
+
+  getHandlerForInput (i: number): HandlerForInput {
+    return (event: React.ChangeEvent<HTMLInputElement>): void => {
+      const data: Data[] = this.state.data;
+      data[i] = event.currentTarget.value;
+
+      this.setState({
+        data: data
+      });
+    };
+  }
+
+  shouldComponentUpdate = () => {
+    return false;
+  }
+
+  saveQuestion () {
+    // send this body as-is to the server.
+    alert(JSON.stringify(this.state.data));
+  }
+
   render(): JSX.Element {
     return (
       <div className="pollboard">
@@ -29,28 +71,30 @@ React.Component<PollComponentProps, PollComponentState> {
             <div className="poll">
               <h2>{localization.lectures()}</h2>
               <p>{localization.attendedLectures()}</p>
-              <PollRadioButton options={["Да, от Яковлева", "Да, от Кондакова", "Нет"]} name="lections"/>
+              <PollRadioButton
+                handler = {this.getHandlerForInput(0)}
+                options={["Да", "Нет"]}
+                name="lections"
+              />
               <p>{localization.evaluateQualityOfLectures()}</p>
-              <PollSlider/>
+              <PollSlider handler = {this.getHandlerForInput(1)}/>
               <p>{localization.goodAboutLectures()}</p>
-              <PollInput/>
+              <PollInput handler = {this.getHandlerForInput(2)}/>
               <p>{localization.badAboutLectures()}</p>
-              <PollInput/>
+              <PollInput handler = {this.getHandlerForInput(3)}/>
               <p>{localization.suggestionAboutLectures()}</p>
-              <PollInput/>
+              <PollInput handler = {this.getHandlerForInput(4)}/>
             </div>
             <div className="poll">
               <h2>{localization.seminars()}</h2>
-              <p>{localization.yourTeacherAndAssist()}</p>
-              <PollSelect options={["Кочуков и Леладзе", "Самелюк и Харитонов", "Биба и Боба"]}/>
               <p>{localization.evaluateQualityOfSeminars()}</p>
-              <PollSlider/>
+              <PollSlider handler = {this.getHandlerForInput(5)}/>
               <p>{localization.goodAboutSeminars()}</p>
-              <PollInput/>
+              <PollInput handler = {this.getHandlerForInput(6)}/>
               <p>{localization.badAboutSeminars()}</p>
-              <PollInput/>
+              <PollInput handler = {this.getHandlerForInput(7)}/>
               <p>{localization.suggestionAboutSeminars()}</p>
-              <PollInput/>
+              <PollInput handler = {this.getHandlerForInput(8)}/>
             </div>
           </div>
         </div>
@@ -65,7 +109,7 @@ React.Component<PollComponentProps, PollComponentState> {
                 size = {ButtonSize.medium}
                 text = {"Сохранить ответ"}
                 handler = {
-                  (): void => {alert("hi");}
+                  (): void => {this.saveQuestion()}
                 }
               />
             </div>
