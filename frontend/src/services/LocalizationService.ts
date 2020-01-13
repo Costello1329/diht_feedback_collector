@@ -1,4 +1,15 @@
 class LocalizationService {
+    // Main:
+    readonly mainTitle = (): string =>
+        "DIHT Feedback Collector";
+    readonly development = (): string =>
+        "Разработка";
+    readonly developers = (): string[] => [
+        "Константин Леладзе",
+        "Кирилл Семенников",
+        "Александр Харитонов"
+    ]
+
     // Validation:
     readonly emptyString = (): string =>
         "Это поле обязательно для заполнения.";

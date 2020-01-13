@@ -1,0 +1,26 @@
+@import "../../../styles/app.scss";
+
+
+.appFooterBar {
+  @include clearfix;
+
+  font-family: "PT Sans";
+  width: 100%;
+  background-color: #eee;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.25);
+  border: 1px solid #ddd;
+  position: fixed;
+  bottom: 0;
+  box-sizing: border-box;
+
+  > .appFooterDevelopers {
+    float: left;
+    margin-left: 32px;
+  }
+
+  > .appFooterCopyright {
+    float: right;
+    margin-right: 32px;
+  }
+}

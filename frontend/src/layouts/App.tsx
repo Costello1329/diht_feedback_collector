@@ -3,18 +3,20 @@ import {HashRouter, Switch, Route, Redirect} from "react-router-dom"
 import {RegistrationLayout} from "./publicSection/RegistrationLayout";
 import {AuthorizationLayout} from "./publicSection/AuthorizationLayout";
 import {DashboardLayout} from "./studentSection/DashboardLayout";
+import {PollLayout} from "./studentSection/PollLayout";
 import {ForbiddenLayout} from "./errorLayouts/ForbiddenLayout";
 import {NotFoundLayout} from "./errorLayouts/NotFoundLayout";
 import {userService, User, UserRole} from "../services/api/UserService";
 import {Notifications} from "../components/NotificationsComponent";
-import {PollboardLayout} from "./studentSection/PollboardLayout";
+
+import "../styles/app.scss";
 
 
 interface AppProps {
   registrationLink: string;
   authorizationLink: string;
   dashboardLink: string;
-  pollboardLink: string;
+  pollLink: string;
 }
 
 interface AppState {
@@ -118,6 +120,11 @@ extends React.Component<AppProps, AppState> {
     const dashboard: JSX.Element =
       <DashboardLayout/>;
 
+    const poll: JSX.Element =
+      this.state.user !== undefined ?
+      <PollLayout pollGuid = "" user = {this.state.user}/> :
+      <></>;
+
     /**
      * app instance:
      */
@@ -146,8 +153,16 @@ extends React.Component<AppProps, AppState> {
                 )
               }
             </Route>
-            <Route exact path = {this.props.pollboardLink}>
-              <PollboardLayout/>
+            <Route exact path = {this.props.pollLink}>
+              {
+                this.checkUserRole(UserRole.student) ?
+                poll :
+                (
+                  this.state.logoutHappened ?
+                  redirectHomepage :
+                  forbidden
+                )
+              }
             </Route>
             <Route>
               {notFound}

@@ -1,23 +1,25 @@
 import React from "react";
-import {PollRadioButton} from "./pollboard/PollRadioButton";
-import {PollSlider} from "./pollboard/PollSlider";
-import {PollInput} from "./pollboard/PollInput";
-import {PollSelect} from "./pollboard/PollSelect";
+import {PollRadioButton} from "./poll/PollRadioButton";
+import {PollSlider} from "./poll/PollSlider";
+import {PollInput} from "./poll/PollInput";
+import {PollSelect} from "./poll/PollSelect";
 import {localization} from "../services/LocalizationService";
 // @ts-ignore
 import courseImage from "../../assets/images/courseImage.png";
+import "../styles/pollboard.scss";
+import {Button, ButtonType, ButtonSize} from "./interface/button/Button";
 
-interface PollboardProps {
+
+interface PollComponentProps {
 
 }
 
-interface PollboardState {
+interface PollComponentState {
 
 }
 
-export class Pollboard extends
-React.Component<PollboardProps, PollboardState> {
-
+export class PollComponent extends
+React.Component<PollComponentProps, PollComponentState> {
   render(): JSX.Element {
     return (
       <div className="pollboard">
@@ -55,8 +57,18 @@ React.Component<PollboardProps, PollboardState> {
         <div className="answerInfo">
           <h2>Информация об ответе</h2>
           <div className="answerInfoBox">
-              <h2>АКОС ФИВТ 2019-2020</h2>
-              <img src={courseImage} />
+            <h2>АКОС ФИВТ 2019-2020</h2>
+            <img src={courseImage} />
+            <div className = "answerInfoBoxButton">
+              <Button
+                type = {ButtonType.orange}
+                size = {ButtonSize.medium}
+                text = {"Сохранить ответ"}
+                handler = {
+                  (): void => {alert("hi");}
+                }
+              />
+            </div>
           </div>
         </div>
       </div>
