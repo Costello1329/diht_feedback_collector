@@ -118,7 +118,9 @@ extends React.Component<AppProps, AppState> {
      */
 
     const dashboard: JSX.Element =
-      <DashboardLayout/>;
+      this.state.user !== undefined ?
+      <DashboardLayout user = {this.state.user}/> :
+      <></>;
 
     const poll: JSX.Element =
       this.state.user !== undefined ?
