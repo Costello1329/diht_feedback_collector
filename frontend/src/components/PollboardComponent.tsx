@@ -5,7 +5,7 @@ import {PollInput} from "./pollboard/PollInput";
 import {PollSelect} from "./pollboard/PollSelect";
 import {localization} from "../services/LocalizationService";
 // @ts-ignore
-import courseImage from "../../assets/courseImage.png";
+import courseImage from "../../assets/images/courseImage.png";
 
 interface PollboardProps {
 
