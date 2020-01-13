@@ -8,7 +8,6 @@ import "../../styles/dashboard.scss";
 
 export interface DashboardLayoutProps {
   user: User;
-  handler: () => void;
 }
 
 export class DashboardLayout
@@ -21,10 +20,10 @@ extends React.Component<DashboardLayoutProps> {
     const layout: JSX.Element =
       <div>
         <Header userName = {this.props.user.login}/>
-        <Dashboard handler = {this.props.handler}/>
+        <Dashboard/>
         <Footer/>
       </div>;
-    
+
     return layout;
   }
 }

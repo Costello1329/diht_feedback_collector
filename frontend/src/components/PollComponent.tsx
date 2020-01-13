@@ -22,7 +22,7 @@ interface PollComponentProps {
 type Data = string;
 
 interface PollComponentState {
-  questionaryGuid: string;
+  questionaryGuid: any;
   data: Data[];
   renderedAtLeastOnce: boolean;
 }
@@ -58,7 +58,7 @@ React.Component<PollComponentProps, PollComponentState> {
     };
   }
 
-  getAnswers = (data: string): void => {
+  getAnswers = (data: any): void => {
     this.setState({
       questionaryGuid: data["guid"],
       renderedAtLeastOnce: true
@@ -71,7 +71,7 @@ React.Component<PollComponentProps, PollComponentState> {
 
   saveAnswers () {
     const body = {
-      "questionnaire_id": guid(),
+      "questionnaire_id": this.state.questionaryGuid,
       "data": JSON.stringify(this.state.data)
     };
     

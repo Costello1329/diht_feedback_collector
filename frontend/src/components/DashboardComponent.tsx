@@ -5,9 +5,7 @@ import {Dash} from "./dashboard/Dash";
 import {dashboardService} from "../services/api/DashboardService";
 
 
-interface DashboardProps {
-  handler: () => void;
-}
+interface DashboardProps {}
 
 interface DashboardState {
   renderedAtLeastOnce: boolean;
@@ -58,7 +56,6 @@ export class Dashboard extends React.Component<DashboardProps, DashboardState> {
           <Dash
             courseName={this.state.names[i]}
             pollGuid = {this.state.guids[i]}
-            handler = {this.props.handler}
           />
         </div>
       );
