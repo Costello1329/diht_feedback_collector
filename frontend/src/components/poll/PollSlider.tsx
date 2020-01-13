@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 
 type PollSliderProps = {
+  initial: number;
   handler: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -18,7 +19,7 @@ const getMarkText = (mark: number): string => {
 }
 
 export function PollSlider(props: PollSliderProps) {
-  const [mark, setMark] = useState(0);
+  const [mark, setMark] = useState<number>(props.initial);
   const handleChange = (event: any) => {
     setMark(event.target.value);
     props.handler(event);
@@ -31,8 +32,8 @@ export function PollSlider(props: PollSliderProps) {
         max="10"
         value={mark}
         onChange={handleChange}
-        />
-        <p>Оценка: {getMarkText(mark)}</p>
+      />
+      <p>Оценка: {getMarkText(mark)}</p>
     </div>
   );
 }

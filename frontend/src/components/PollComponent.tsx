@@ -11,7 +11,6 @@ import {
   ButtonType,
   ButtonSize
 } from "../components/interface/button/Button";
-import {guid} from "../services/utils";
 import {pollService} from "../services/api/PollService";
 
 
@@ -19,11 +18,9 @@ interface PollComponentProps {
   guid: string;
 }
 
-type Data = string;
-
 interface PollComponentState {
   questionaryGuid: any;
-  data: Data[];
+  data: string[];
   renderedAtLeastOnce: boolean;
 }
 
@@ -49,7 +46,7 @@ React.Component<PollComponentProps, PollComponentState> {
 
   getHandlerForInput (i: number): HandlerForInput {
     return (event: React.ChangeEvent<HTMLInputElement>): void => {
-      const data: Data[] = this.state.data;
+      const data: string[] = this.state.data;
       data[i] = event.currentTarget.value;
 
       this.setState({
@@ -61,6 +58,7 @@ React.Component<PollComponentProps, PollComponentState> {
   getAnswers = (data: any): void => {
     this.setState({
       questionaryGuid: data["guid"],
+      data: JSON.parse(data["data"]),
       renderedAtLeastOnce: true
     });
   }
@@ -84,7 +82,6 @@ React.Component<PollComponentProps, PollComponentState> {
 
     return (
       <div className="pollboard">
-        {this.state.questionaryGuid}
         <div className="answerEditor">
           <h2>{localization.answerEdition()}</h2>
           <div className="polls">
@@ -95,26 +92,59 @@ React.Component<PollComponentProps, PollComponentState> {
                 handler = {this.getHandlerForInput(0)}
                 options={["Да", "Нет"]}
                 name="lections"
+                initial = {this.state.data === null ? "Нет" : "Да"}
               />
               <p>{localization.evaluateQualityOfLectures()}</p>
-              <PollSlider handler = {this.getHandlerForInput(1)}/>
+              <PollSlider
+                initial = {
+                  this.state.data === null ?
+                  0 :
+                  parseInt(this.state.data[1], 10)
+                }
+                handler = {this.getHandlerForInput(1)}
+              />
               <p>{localization.goodAboutLectures()}</p>
-              <PollInput handler = {this.getHandlerForInput(2)}/>
+              <PollInput
+                initial = {this.state.data === null ? "" : "123"}
+                handler = {this.getHandlerForInput(2)}
+              />
               <p>{localization.badAboutLectures()}</p>
-              <PollInput handler = {this.getHandlerForInput(3)}/>
+              <PollInput
+                initial = {this.state.data === null ? "" : "123"}
+                handler = {this.getHandlerForInput(3)}
+              />
               <p>{localization.suggestionAboutLectures()}</p>
-              <PollInput handler = {this.getHandlerForInput(4)}/>
+              <PollInput
+                initial = {this.state.data === null ? "" : "123"}
+                handler = {this.getHandlerForInput(4)}
+              />
             </div>
             <div className="poll">
               <h2>{localization.seminars()}</h2>
               <p>{localization.evaluateQualityOfSeminars()}</p>
-              <PollSlider handler = {this.getHandlerForInput(5)}/>
+              <PollSlider
+                initial = {
+                  this.state.data === null ?
+                  0 :
+                  parseInt(this.state.data[5], 10)
+                }
+                handler = {this.getHandlerForInput(5)}
+              />
               <p>{localization.goodAboutSeminars()}</p>
-              <PollInput handler = {this.getHandlerForInput(6)}/>
+              <PollInput
+                initial = {this.state.data === null ? "" : "123"}
+                handler = {this.getHandlerForInput(6)}
+              />
               <p>{localization.badAboutSeminars()}</p>
-              <PollInput handler = {this.getHandlerForInput(7)}/>
+              <PollInput
+                initial = {this.state.data === null ? "" : "123"}
+                handler = {this.getHandlerForInput(7)}
+              />
               <p>{localization.suggestionAboutSeminars()}</p>
-              <PollInput handler = {this.getHandlerForInput(8)}/>
+              <PollInput
+                initial = {this.state.data === null ? "" : "123"}
+                handler = {this.getHandlerForInput(8)}
+              />
             </div>
           </div>
         </div>

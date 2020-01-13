@@ -64,7 +64,6 @@ class PollService {
   }
   
   get (guid: string, callback: (data: any) => void): void {
-    // alert(apiRoutes.poll + "?course_guid=" + guid);
     httpService
       .sendGet(
         apiRoutes.poll + "?course_guid=" + guid,
