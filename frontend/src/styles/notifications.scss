@@ -1,8 +1,8 @@
-$alert: #FC633B;
-$base: #fca23b;
-$cool: #2AB466;
-$simple: #5EAACF;
-$notification-text: #eee;
+@import "../styles/colorScheme.scss";
+
+$notification-text: #f9f9f9;
+
+
 
 .notifications {
   position: fixed;
@@ -47,22 +47,22 @@ $notification-text: #eee;
   }
 
   .notificationMessage {
-    background-color: $simple;
+    background-color: $blueLight;
     color: $notification-text;
   }
 
   .notificationSuccess {
-    background-color: $cool;
+    background-color: $green;
     color: $notification-text;
   }
 
   .notificationWarning {
-    background-color: $base;
+    background-color: $orange;
     color: $notification-text;
   }
 
   .notificationError {
     color: $notification-text;
-    background-color: $alert;
+    background-color: $redLight;
   }
 }

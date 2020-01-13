@@ -1,12 +1,12 @@
 import {AxiosResponse, AxiosError} from "axios";
-import {httpService, commonRoutes} from "../services/HTTPService";
-import {encryptionService} from "../services/EncryptionService";
-import {localization} from "../services/LocalizationService";
+import {httpService, apiRoutes} from "../HTTPService";
+import {encryptionService} from "../EncryptionService";
+import {localization} from "../LocalizationService";
 import {
   notificationService,
   NotificationType,
   Notification
-} from "../services/NotificationService";
+} from "../NotificationService";
 
 
 export interface RegistrationData {
@@ -106,8 +106,8 @@ class RegistrationService {
 
     httpService
       .sendPost(
-        commonRoutes.registration,
-        {'Content-Type': 'application/json'},
+        apiRoutes.registration,
+        {"Content-Type": "application/json"},
         JSON.stringify(encryptedData)
       )
       .then(
@@ -144,7 +144,7 @@ class RegistrationService {
           const errorType: RegistrationErrorType =
             this.getServerErrorType(
               error.response === undefined ?
-              "validation" :
+              "contract" :
               (
                 error.response.data[ResponseErrorKeys.errorType] as
                 "contract" | "validation" | "internal"

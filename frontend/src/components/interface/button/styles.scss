@@ -1,0 +1,123 @@
+@import "../../../styles/colorScheme.scss";
+
+$orangeButtonBackground: $orange;
+$orangeButtonText: $blackLight;
+$orangeButtonTextHover: $white;
+$orangeButtonBackgroundActive: $orangeDark;
+
+$grayButtonBackground: $grayLight;
+$grayButtonText: $blackLight;
+$grayButtonTextHover: $white;
+$grayButtonBackgroundActive: $gray;
+
+$transparentButtonText: $orange;
+$transparentButtonTextHover: $orangeDark;
+
+
+.commonButton {
+  cursor: default;
+  text-align: center;
+  box-sizing: border-box;
+  padding: 0px;
+  display: block;
+  outline: none;
+  border: none;
+  transition: color 0.1s;
+  font-family: 'PT Sans';
+
+  &.commonButtonOrange {
+    background-color: $orangeButtonBackground;
+    color: $orangeButtonText;
+
+    &.commonButtonSmall {
+      width: 160px;
+      height: 24px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    &.commonButtonMedium {
+      width: 240px;
+      height: 32px;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    &.commonButtonBig {
+      width: 320px;
+      height: 40px;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    &:hover {
+      color: $orangeButtonTextHover;
+      cursor: pointer;
+    }
+
+    &:active {
+      background-color: $orangeButtonBackgroundActive;
+    }
+  }
+
+  &.commonButtonGray {
+    background-color: $grayButtonBackground;
+    color: $grayButtonText;
+
+    &.commonButtonSmall {
+      width: 160px;
+      height: 24px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    &.commonButtonMedium {
+      width: 240px;
+      height: 32px;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    &.commonButtonBig {
+      width: 320px;
+      height: 40px;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    &:hover {
+      color: $grayButtonTextHover;
+      cursor: pointer;
+    }
+
+    &:active {
+      background-color: $grayButtonBackgroundActive;
+    }
+  }
+
+  &.commonButtonTransparent {
+    display: block;
+    background: none;
+    color: $transparentButtonText;
+
+    &.commonButtonSmall {
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    &.commonButtonMedium {
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    &.commonButtonBig {
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    &:hover {
+      color: $transparentButtonTextHover;
+      cursor: pointer;
+    }
+  }
+}

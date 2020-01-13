@@ -1,6 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './components/App';
+import {App} from './layouts/App';
 
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const appInstance: JSX.Element =
+  <App
+    registrationLink = "/registration"
+    authorizationLink = "/authorization"
+    dashboardLink = "/dashboard"
+  />
+
+ReactDOM.render(appInstance, document.getElementById('root'));

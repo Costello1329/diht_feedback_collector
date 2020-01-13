@@ -1,7 +1,3 @@
-import React from "react";
-import {Notifications} from "../components/NotificationsComponent";
-
-
 export enum NotificationType {
   message,
   success,
@@ -28,23 +24,50 @@ export class Notification {
   }
 }
 
+type Subscriber = (notification: Notification) => void;
+
 class NotificationService {
-  private readonly notificationsComponentReference:
-    React.RefObject<Notifications>;
+  declare private subscriber: Subscriber | undefined;
+  // If user tried to send some notifications before attaching
+  // ref to Notifications, we should push these notifcations in queue.
+  declare private pendingQueue: Notification[];
 
   constructor () {
-    this.notificationsComponentReference = React.createRef();
+    this.subscriber = undefined;
+    this.pendingQueue = [];
   }
 
-  readonly getRef = (): React.RefObject<Notifications> => {
-    return this.notificationsComponentReference;
+  private readonly relaxQueue = (): void => {
+    while (true) {
+      const notification: Notification | undefined = this.pendingQueue.shift();
+
+      if (notification === undefined || this.subscriber === undefined) {
+        this.pendingQueue = [];
+        return;
+      }
+      
+      this.subscriber(notification);
+    }
+  }
+
+  readonly subscribe = (subscriber: Subscriber): void => {
+    this.subscriber = subscriber;
+  }
+
+  readonly greet = (): void => {
+    this.relaxQueue();
   }
 
   readonly notify = (notification: Notification): void => {
-    if (this.notificationsComponentReference.current === null)
-      return;
+    if (this.subscriber === undefined)
+      this.pendingQueue.push(notification);
 
-    this.notificationsComponentReference.current.push(notification);
+    else
+      this.subscriber(notification);
+  }
+
+  readonly unsubscribe = (): void => {
+    this.subscriber = undefined;
   }
 }
 

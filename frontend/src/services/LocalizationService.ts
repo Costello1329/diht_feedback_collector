@@ -68,8 +68,15 @@ class LocalizationService {
     readonly userRegistrated = (): string =>
         "Пользователь зарегистрирован.";
 
+    readonly authorizationErrorLabel = (): string =>
+        "Ошибка авторизации";
+
     readonly tokenDoesNotExist = (): string =>
         "Токена не существует.";
+    readonly loginDoesNotExist = (): string =>
+        "Логина не существует.";
+    readonly passwordIsIncorrect = (): string =>
+        "Неверный пароль.";
     readonly tokenAlreadyActivated = (): string =>
         "Токен уже был активирован.";
     readonly loginAlreadyTaken = (): string =>
@@ -80,6 +87,13 @@ class LocalizationService {
         "Недопустимые данные: данные не прошли валидацию на сервере.";
     readonly internalServerError = (): string =>
         "Произошла внутренняя ошибка со стороны сервера.";
+    readonly userErrorLabel = (): string =>
+        "Ошибка получения пользователя";
+    readonly userWasNotAuthorized = (): string =>
+        "Пользователь не был авторизован. Скорее всего сессия устарела.";
+
+    readonly logoutErrorLabel = (): string =>
+        "Ошибка выхода.";
 }
 
 export const localization: LocalizationService =
