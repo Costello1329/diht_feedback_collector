@@ -38,6 +38,17 @@ const commonRules = [
         }
       }
     ]
+  },
+  {
+    test: /\.png$/,
+    use: [
+      {
+        loader: "file-loader",
+        options: {
+          outputPath: "assets"
+        }
+      }
+    ]
   }
 ];
 

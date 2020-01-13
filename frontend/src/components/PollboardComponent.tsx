@@ -4,6 +4,8 @@ import {PollSlider} from "./pollboard/PollSlider";
 import {PollInput} from "./pollboard/PollInput";
 import {PollSelect} from "./pollboard/PollSelect";
 import {localization} from "../services/LocalizationService";
+// @ts-ignore
+import courseImage from "../../assets/courseImage.png";
 
 interface PollboardProps {
 
@@ -52,6 +54,10 @@ React.Component<PollboardProps, PollboardState> {
         </div>
         <div className="answerInfo">
           <h2>Информация об ответе</h2>
+          <div className="answerInfoBox">
+              <h2>АКОС ФИВТ 2019-2020</h2>
+              <img src={courseImage} />
+          </div>
         </div>
       </div>
     );
