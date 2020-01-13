@@ -44,7 +44,7 @@ class UserView(APIView):
             user = People.objects.filter(guid=session.user_guid)
             data = request.data["data"]
 
-            questionnaire = Questionnaire.objects.filter(guid=questionnaire_id, user=user)
+            questionnaire = Questionnaire.objects.filter(guid=questionnaire_id)
 
             if questionnaire:
                 questionnaire = questionnaire[0]
@@ -52,9 +52,9 @@ class UserView(APIView):
                 body = {
                     "questionnaireSuccess": "True"
                 }
-                get_pool_response_success(body, 200)
+                return get_pool_response_success(body, 200)
             else:
-                get_pool_response_error(ResponseErrorType.Validation, 400)
+                return get_pool_response_error(ResponseErrorType.Validation, 400)
         except Exception:
             return get_pool_response_error(ResponseErrorType.Internal, 500)
 
