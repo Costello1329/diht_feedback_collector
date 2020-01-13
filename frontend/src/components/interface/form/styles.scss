@@ -1,0 +1,97 @@
+@import "../../../styles/colorScheme.scss";
+
+$alert: #FC633B;
+$base: #fca23b;
+$base-hover: #eb912a;
+$border: #aaa;
+
+.commonForm {
+  width: 640px;
+  background-color: #fff;
+  border: 1px solid $border;
+  border-radius: 4px;
+  display: block;
+  font-family: 'PT Sans';
+  box-shadow: 0 0 32px  rgba(0, 0, 0, 0.025);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  @media screen and (max-width: 700px) {
+    width: 400px;
+    border: none;
+  }
+
+  > .authLayoutCommonFormGoBackButton {
+    position: absolute;
+    top: 12px;
+    left: 16px;
+    color: $base;
+
+    &:hover {
+      color: $base-hover;
+      cursor: pointer;
+    }
+  }
+
+  > .commonFormHeader {
+    margin: 40px auto 0 auto;
+    width: 100%;
+
+    > h1 {
+      font-style: normal;
+      font-size: 42px;
+      color: #333;
+      width: 100%;
+      text-align: center;
+      margin: 0;
+    }
+  }
+
+  > .commonFormBody {
+    width: 480px;
+    @media screen and (max-width: 700px) {
+      width: 280px;
+    }
+    margin: 16px auto 12px auto;
+  
+    > .commonFormControl {
+      margin: 8px 0;
+    }
+  
+    > button {
+      margin: 24px auto 0 auto;
+    }
+  }
+
+  > .commonFormFooter {
+    display: table;
+    margin: 0 auto 32px auto;
+
+    @media screen and (max-width: 700px) {
+      text-align: center;
+    }
+
+    > span {
+      text-align: center;
+      margin: 0 auto;
+    }
+
+    > button {
+      display: inline-block;
+      margin-left: 4px;
+      text-decoration: none;
+      color: $base;
+
+      @media screen and (max-width: 700px) {
+        margin: 0 auto;
+        display: block;
+      }
+
+      &:hover {
+        color: $base-hover;
+      }
+    }
+  }
+}

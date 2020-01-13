@@ -2,7 +2,7 @@ import React from "react";
 import {
   ValidationError,
   Validator
-} from "../../../services/Validation/Validator";
+} from "../../../services/validation/Validator";
 import classNames from "classnames";
 
 import "./styles";
@@ -30,12 +30,20 @@ interface InputState {
 }
 
 export class Input extends React.Component<InputProps, InputState> {
+  declare private renderedAtLeastOnce: boolean;
+
   constructor (props: InputProps) {
     super(props);
 
+    const errors: ValidationError[] = this.validate("");
+    this.renderedAtLeastOnce = false;
+
+    if (this.props.handler !== undefined)
+      this.props.handler("", errors);
+
     this.state = {
       value: "",
-      validationErrors: []
+      validationErrors: errors
     };
   }
 
@@ -43,10 +51,7 @@ export class Input extends React.Component<InputProps, InputState> {
     event: React.FormEvent<HTMLInputElement>
   ): void => {
     const value: string = event.currentTarget.value;
-    const validationErrors: ValidationError[] =
-      this.props.validator === undefined ?
-      [] :
-      this.props.validator.validate(value);
+    const validationErrors: ValidationError[] = this.validate(value);
     
     this.setState({
       value: value,
@@ -57,8 +62,16 @@ export class Input extends React.Component<InputProps, InputState> {
     });
   }
 
+  private readonly validate = (value: string): ValidationError[] => {
+    return (
+      this.props.validator === undefined ?
+      [] :
+      this.props.validator.validate(value)
+    );
+  }
+
   private readonly getErrorClassName = (): string => {
-    if (this.state.validationErrors.length !== 0)
+    if (this.state.validationErrors.length !== 0 && this.renderedAtLeastOnce)
       return classNames("commonInputHasError");
     
     else
@@ -68,7 +81,8 @@ export class Input extends React.Component<InputProps, InputState> {
   private readonly getValidationErrorText = (): JSX.Element => {
     if (
       this.props.validator === undefined ||
-      this.state.validationErrors[0] === undefined
+      this.state.validationErrors[0] === undefined ||
+      !this.renderedAtLeastOnce
     ) {
       return <></>;
     }
@@ -87,6 +101,8 @@ export class Input extends React.Component<InputProps, InputState> {
   }
 
   render (): JSX.Element {
+    setTimeout((): void => {this.renderedAtLeastOnce = true;}, 0);
+
     return (
       <div className = "commonInput">
         <span className = "commonInputLabel">
