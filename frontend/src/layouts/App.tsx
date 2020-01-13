@@ -71,10 +71,6 @@ extends React.Component<AppProps, AppState> {
     return false;
   }
 
-  greet() {
-    alert("hi");
-  }
-
   render (): JSX.Element {
     if (!this.state.gotUserAtLeastOnce)
       return <></>;

@@ -153,6 +153,10 @@ class LocalizationService {
       "Редактировать ответ";
     readonly viewPoll = (): string =>
       "Просмотреть ответ";
+    readonly pollSuccessLabel = (): string =>
+      "Опрос сохранен.";
+    readonly pollSaved = (): string =>
+      "Данные получены базой данных.";
 }
 
 export const localization: LocalizationService =
