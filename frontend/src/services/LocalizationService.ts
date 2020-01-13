@@ -135,6 +135,20 @@ class LocalizationService {
       "Что было плохо в семинарах?";
     readonly suggestionAboutSeminars = (): string =>
       "Предложения по ведению семинаров";
+
+    //dashboard
+    readonly pollNotStarted = (): string =>
+      "Опрос пока что не был пройден";
+    readonly pollStarted = (): string =>
+      "Ответ заполнен частично";
+    readonly pollFinished = (): string =>
+      "Ответ заполнен полностью";
+    readonly startPoll = (): string =>
+      "Начать заполнение";
+    readonly editPoll = (): string =>
+      "Редактировать ответ";
+    readonly viewPoll = (): string =>
+      "Просмотреть ответ";
 }
 
 export const localization: LocalizationService =
