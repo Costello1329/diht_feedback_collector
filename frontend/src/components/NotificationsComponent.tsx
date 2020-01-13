@@ -177,6 +177,8 @@ React.Component<NotificationsProps, NotificationsState> {
     ) {
       this.eventQueue.enqueue(new NotificationEventAdd(notification));
       this.eventQueue.dequeue();
+      const index = this.pendingNotifications.indexOf(notification);
+      this.pendingNotifications.splice(index, 1);
     }
 
     else if (
@@ -190,7 +192,7 @@ React.Component<NotificationsProps, NotificationsState> {
     this.eventQueue.enqueue(new NotificationEventDelete(ticket));
 
     const nextNotification: Notification |undefined =
-      this.pendingNotifications.shift();
+      this.pendingNotifications[0];
 
     if (nextNotification !== undefined) 
       this.push(nextNotification);
