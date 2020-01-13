@@ -71,6 +71,10 @@ extends React.Component<AppProps, AppState> {
     return false;
   }
 
+  greet() {
+    alert("hi");
+  }
+
   render (): JSX.Element {
     if (!this.state.gotUserAtLeastOnce)
       return <></>;
@@ -119,7 +123,9 @@ extends React.Component<AppProps, AppState> {
 
     const dashboard: JSX.Element =
       this.state.user !== undefined ?
-      <DashboardLayout user = {this.state.user}/> :
+      <DashboardLayout
+        user = {this.state.user}
+        handler = {() => setTimeout(() => this.forceUpdate(), 0)}/> :
       <></>;
 
     const poll = (): JSX.Element => {

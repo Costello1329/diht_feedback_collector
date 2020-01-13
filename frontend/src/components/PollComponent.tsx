@@ -2,7 +2,6 @@ import React from "react";
 import {PollRadioButton} from "./poll/PollRadioButton";
 import {PollSlider} from "./poll/PollSlider";
 import {PollInput} from "./poll/PollInput";
-import {PollSelect} from "./poll/PollSelect";
 import {localization} from "../services/LocalizationService";
 // @ts-ignore
 import courseImage from "../../assets/images/courseImage.png";
@@ -12,6 +11,8 @@ import {
   ButtonType,
   ButtonSize
 } from "../components/interface/button/Button";
+import {guid} from "../services/utils";
+import {pollService} from "../services/api/PollService";
 
 
 interface PollComponentProps {
@@ -21,7 +22,9 @@ interface PollComponentProps {
 type Data = string;
 
 interface PollComponentState {
+  questionaryGuid: string;
   data: Data[];
+  renderedAtLeastOnce: boolean;
 }
 
 type HandlerForInput = (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -32,13 +35,15 @@ React.Component<PollComponentProps, PollComponentState> {
     super(props);
 
     this.state = {
+      questionaryGuid: "",
       data: ((): string[] => {
         let val: string[] = [];
         for (let i = 0; i < 9; i ++) {
           val.push("");
         }
         return val;
-      })()
+      })(),
+      renderedAtLeastOnce: false
     };
   }
 
@@ -53,18 +58,33 @@ React.Component<PollComponentProps, PollComponentState> {
     };
   }
 
-  shouldComponentUpdate = () => {
-    return false;
+  getAnswers = (data: string): void => {
+    this.setState({
+      questionaryGuid: data["guid"],
+      renderedAtLeastOnce: true
+    });
   }
 
-  saveQuestion () {
-    // send this body as-is to the server.
-    alert(JSON.stringify(this.state.data));
+  componentDidMount () {
+    pollService.get(this.props.guid, this.getAnswers);
+  }
+
+  saveAnswers () {
+    const body = {
+      "questionnaire_id": guid(),
+      "data": JSON.stringify(this.state.data)
+    };
+    
+    pollService.send(JSON.stringify(body));
   }
 
   render(): JSX.Element {
+    if (!this.state.renderedAtLeastOnce)
+      return <></>;
+
     return (
       <div className="pollboard">
+        {this.state.questionaryGuid}
         <div className="answerEditor">
           <h2>{localization.answerEdition()}</h2>
           <div className="polls">
@@ -109,7 +129,7 @@ React.Component<PollComponentProps, PollComponentState> {
                 size = {ButtonSize.medium}
                 text = {"Сохранить ответ"}
                 handler = {
-                  (): void => {this.saveQuestion()}
+                  (): void => {this.saveAnswers()}
                 }
               />
             </div>

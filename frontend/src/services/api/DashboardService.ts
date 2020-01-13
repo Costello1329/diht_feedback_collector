@@ -33,15 +33,6 @@ enum ResponseErrorKeys {
 class DashboardService {
   declare subscriber: (data: any) => void;
 
-  private readonly encryptDashboardData = (
-    data: DashboardData
-  ): DashboardData => {
-    return {
-      login: data.login,
-      password: encryptionService.encrypt(data.password),
-    };
-  }
-
   readonly register = (callback: (data: any) => void) => {
     this.subscriber = callback;
   }

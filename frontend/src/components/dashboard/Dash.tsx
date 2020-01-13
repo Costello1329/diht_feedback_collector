@@ -8,6 +8,7 @@ import courseImage from "../../../assets/images/courseImage.png";
 interface DashProps {
   courseName: string;
   pollGuid: string;
+  handler: () => void;
 }
 
 export function Dash(props: DashProps) {
@@ -23,6 +24,7 @@ export function Dash(props: DashProps) {
                 type = {ButtonType.orange}
                 size = {ButtonSize.small}
                 text = {localization.editPoll()}
+                handler = {props.handler}
               />
             </Link>
           </p>

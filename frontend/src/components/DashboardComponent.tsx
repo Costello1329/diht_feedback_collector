@@ -5,13 +5,17 @@ import {Dash} from "./dashboard/Dash";
 import {dashboardService} from "../services/api/DashboardService";
 
 
+interface DashboardProps {
+  handler: () => void;
+}
+
 interface DashboardState {
   renderedAtLeastOnce: boolean;
   names: string[];
   guids: string[];
 }
 
-export class Dashboard extends React.Component<any, DashboardState> {
+export class Dashboard extends React.Component<DashboardProps, DashboardState> {
   constructor(props: any) {
     super(props);
     this.state = {
@@ -54,6 +58,7 @@ export class Dashboard extends React.Component<any, DashboardState> {
           <Dash
             courseName={this.state.names[i]}
             pollGuid = {this.state.guids[i]}
+            handler = {this.props.handler}
           />
         </div>
       );
