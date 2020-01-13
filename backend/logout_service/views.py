@@ -11,7 +11,7 @@ from user_service.apps import get_user_response_error
 
 
 class UserView(APIView):
-    def post(self, request):
+    def get(self, request):
         try:
             # Database-side validations:
             session_guid = request.COOKIES["session"]

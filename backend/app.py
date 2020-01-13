@@ -127,7 +127,7 @@ def get_registration_response_success(
         "isLoginUnique": is_login_unique
     }
 
-    return setup_cors_response_headers(Response(json.dumps(body), status=200, mimetype="application/json"))
+    return setup_cors_response_headers(Response(body, status=200, mimetype="application/json"))
 
 
 def get_registration_response_error(error_type, status_code):
@@ -135,7 +135,7 @@ def get_registration_response_error(error_type, status_code):
         "errorType": get_response_error_string_by_type(error_type)
     }
 
-    return setup_cors_response_headers(Response(json.dumps(body), status=status_code, mimetype="application/json"))
+    return setup_cors_response_headers(Response(body, status=status_code, mimetype="application/json"))
 
 
 @app.route("/registration", methods=["POST"], provide_automatic_options=False)
@@ -289,7 +289,7 @@ def get_authorization_response_success(does_login_exist, is_password_valid, sess
         "isPasswordCorrect": is_password_valid
     }
 
-    res = setup_cors_response_headers(Response(json.dumps(body), status=status, mimetype="application/json"))
+    res = setup_cors_response_headers(Response(body, status=status, mimetype="application/json"))
 
     if session_guid is not None:
         res.set_cookie("session", value=session_guid, max_age=k_cookie_expiration_time)
@@ -305,7 +305,7 @@ def get_authorization_response_error(error_type, status_code):
         "errorType": get_response_error_string_by_type(error_type)
     }
 
-    return setup_cors_response_headers(Response(json.dumps(body), status=status_code, mimetype="application/json"))
+    return setup_cors_response_headers(Response(body, status=status_code, mimetype="application/json"))
 
 
 @app.route("/authorization", methods=["POST"], provide_automatic_options=False)
@@ -371,7 +371,7 @@ def get_user_response_success(login, role, session_guid):
         "login": login
     }
 
-    res = setup_cors_response_headers(Response(json.dumps(body), status=200, mimetype="application/json"))
+    res = setup_cors_response_headers(Response(body, status=200, mimetype="application/json"))
 
     if session_guid is not None:
         res.set_cookie("session", value=session_guid, max_age=k_cookie_expiration_time)
@@ -393,7 +393,7 @@ def get_user_response_error(error_type, status_code):
         "errorType": get_response_error_string_by_type(error_type)
     }
 
-    return setup_cors_response_headers(Response(json.dumps(body), status=status_code, mimetype="application/json"))
+    return setup_cors_response_headers(Response(body, status=status_code, mimetype="application/json"))
 
 
 @app.route("/user", methods=["GET"], provide_automatic_options=False)
@@ -447,7 +447,7 @@ def get_logout_response_error(error_type, status_code):
         "errorType": get_response_error_string_by_type(error_type)
     }
 
-    return setup_cors_response_headers(Response(json.dumps(body), status=status_code, mimetype="application/json"))
+    return setup_cors_response_headers(Response(body, status=status_code, mimetype="application/json"))
 
 
 @app.route("/logout", methods=["GET"], provide_automatic_options=False)

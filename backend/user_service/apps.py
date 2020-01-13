@@ -16,7 +16,7 @@ def get_user_response_success(login, role, session_guid):
         "role": role
     }
 
-    res = setup_cors_response_headers(Response(json.dumps(body), status=200, content_type="application/json"))
+    res = setup_cors_response_headers(Response(body, status=200, content_type="application/json"))
 
     if session_guid is not None:
         res.set_cookie("session", value=session_guid, max_age=k_cookie_expiration_time)

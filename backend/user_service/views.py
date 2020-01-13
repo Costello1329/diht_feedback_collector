@@ -11,7 +11,7 @@ from authorization_service.apps import sessions_storage, check_permission
 
 
 class UserView(APIView):
-    def post(self, request):
+    def get(self, request):
         try:
             # Database-side validations:
             try:
