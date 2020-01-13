@@ -137,6 +137,8 @@ class LocalizationService {
       "Предложения по ведению семинаров";
 
     //dashboard
+    readonly dashboardErrorLabel = (): string =>
+        "Ошибка получения опросов";
     readonly pollNotStarted = (): string =>
       "Опрос пока что не был пройден";
     readonly pollStarted = (): string =>
