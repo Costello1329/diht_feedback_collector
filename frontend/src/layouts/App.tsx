@@ -48,7 +48,9 @@ extends React.Component<AppProps, AppState> {
     userService.getUser();
   }
 
-  private readonly checkUserRole = (role: UserRole | undefined): boolean => {
+  private readonly checkUserRole = (
+    role: undefined | UserRole
+  ): boolean => {
     if (role === undefined)
       return this.state.user === undefined;
     
@@ -56,11 +58,25 @@ extends React.Component<AppProps, AppState> {
       return this.state.user !== undefined && this.state.user.role === role;
   }
 
+  private readonly checkUserRoles = (
+    roles: (undefined | UserRole)[]
+  ): boolean => {
+    roles.forEach((role: undefined | UserRole) => {
+      if (this.checkUserRole(role))
+        return true;
+    });
+
+    return false;
+  }
+
   render (): JSX.Element {
     if (!this.state.gotUserAtLeastOnce)
       return <></>;
 
-    // Error section:
+    /**
+     * Error section:
+     */
+
     const forbidden: JSX.Element = 
       <ForbiddenLayout
         registrationLink = {this.props.registrationLink}
@@ -73,7 +89,10 @@ extends React.Component<AppProps, AppState> {
         authorizationLink = {this.props.authorizationLink}
       />;
 
-    // Guest section:
+    /**
+     * Guest section:
+     */
+
     const authorization: JSX.Element =
       <AuthorizationLayout registrationLink = {this.props.registrationLink}/>;
     
@@ -92,9 +111,16 @@ extends React.Component<AppProps, AppState> {
 
     const redirectHomepage: JSX.Element = <Redirect to = {homepageLink}/>;
 
-    // Student section:
+    /** 
+     * Student section:
+     */
+
     const dashboard: JSX.Element =
       <DashboardLayout/>;
+
+    /**
+     * app instance:
+     */
 
     const app: JSX.Element =
       <div className = "App">

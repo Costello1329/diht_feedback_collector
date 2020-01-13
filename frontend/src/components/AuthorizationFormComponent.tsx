@@ -1,211 +1,102 @@
 import React from "react";
-import {Link} from 'react-router-dom';
+import {Redirect} from "react-router-dom"
+import {ButtonType, ButtonSize} from "./interface/button/Button";
+import {InputType} from "./interface/input/Input";
+import {Form} from "./interface/form/Form";
+import {
+  ruleNotEmpty,
+  ValidationErrorEmpty,
+} from "../services/validation/CommonRules";
+import {Validator, ValidationError} from "../services/validation/Validator";
 import {localization} from "../services/LocalizationService";
 import {
-  authorizationService,
-  AuthorizationData
+  AuthorizationData,
+  authorizationService
 } from "../services/api/AuthorizationService";
-import {
-  validationService,
-  ValidationError
-} from "../services/ValidationService";
 
 
-export interface AuthorizationFormProps {
+interface AuthorizationFormProps {
   registrationLink: string;
 }
 
-export interface AuthorizationFormState {
-  login: string;
-  password: string;
-  loginValidationErrors: ValidationError[];
-  passwordValidationErrors: ValidationError[];
+interface AuthorizationFormState {
+  redirect: boolean;
 }
 
-export class AuthorizationForm
-extends React.Component<AuthorizationFormProps, AuthorizationFormState> {
+export class AuthorizationForm extends
+React.Component<AuthorizationFormProps, AuthorizationFormState> {
   constructor (props: AuthorizationFormProps) {
     super(props);
-
     this.state = {
-      login: "",
-      password: "",
-      loginValidationErrors: [],
-      passwordValidationErrors: []
+      redirect: false
     };
   }
 
-  // Change handlers:
-  
-  private readonly handleLoginChange = (
-    event: React.FormEvent<HTMLInputElement>
-  ): void => {
-    const login: string = event.currentTarget.value;
-    
-    this.setState({
-      login: login,
-      loginValidationErrors:
-        validationService.validateAuthorizationLogin(login)
-    });
-  }
-  
-  private readonly handlePasswordChange = (
-    event: React.FormEvent<HTMLInputElement>
-  ): void => {
-    const password: string = event.currentTarget.value;
-    
-    this.setState({
-      password: password,
-      passwordValidationErrors:
-        validationService.validateAuthorizationPassword(password)
-    });
-  }
+  render (): JSX.Element {
+    if (this.state.redirect)
+      return <Redirect to = {this.props.registrationLink}/>;
 
-  // Submit handlers:
+    const validator: Validator =
+      new Validator(
+        [ruleNotEmpty],
+        (error: ValidationError): string => {
+          if (error instanceof ValidationErrorEmpty)
+            return localization.emptyString();
+          return localization.unforseenValidationError();
+        }
+      );
 
-  private readonly handleAuthorizationSubmit = (
-    event: React.FormEvent<HTMLFormElement>
-  ):void => {
-    const loginValidationErrors: ValidationError[] = 
-      validationService.validateAuthorizationLogin(this.state.login);
-    
-    const passwordValidationErrors: ValidationError[] = 
-        validationService.validateAuthorizationLogin(this.state.password);
-
-    if (
-      loginValidationErrors.length === 0 && 
-      passwordValidationErrors.length === 0
-    ) {
-      const data: AuthorizationData = {
-        login: this.state.login,
-        password: this.state.password,
-      };
-
-      authorizationService.sendAuthorizationData(data);
-    }
-
-    this.setState({
-      loginValidationErrors: loginValidationErrors,
-      passwordValidationErrors: passwordValidationErrors
-    });
-
-    event.preventDefault();
-  }
-
-  // Rendering:
-
-  render (): JSX.Element {  
-    const authorizationFormHeader: JSX.Element = 
-      <div className = "authLayoutCommonFormHeader">
-        <h1>
-          {localization.authorizationHeader()}
-        </h1>
-      </div>;
-
-    const loginInputClassName: string = 
-      this.state.loginValidationErrors.length !== 0
-      ? "authLayoutCommonFormInputError"
-      : "";
-
-    const passwordInputClassName: string = 
-      this.state.passwordValidationErrors.length !== 0
-      ? "authLayoutCommonFormInputError"
-      : "";
-
-    const loginInputErrorText: JSX.Element = 
-      this.state.loginValidationErrors.length !== 0
-      ? <span className = {"authLayoutCommonFormInputErrorText"}>
-          {
-            validationService
-              .getErrorTextByValidationError(
-                this.state.loginValidationErrors[0]
-              )
-          }
-        </span>
-      : <></>;
-
-    const passwordInputErrorText: JSX.Element = 
-      this.state.passwordValidationErrors.length !== 0
-      ? <span className = {"authLayoutCommonFormInputErrorText"}>
-          {
-            validationService
-              .getErrorTextByValidationError(
-                this.state.passwordValidationErrors[0]
-              )
-          }
-        </span>
-      : <></>;
-  
-    const authorizationFormControls: JSX.Element[] = [
-      <div
-        className = "authLayoutCommonFormControl"
-        key = "authorization_form_controls_login"
-      >
-        <span>
-          {localization.login()}
-        </span>
-        <label>
-          <input
-            className = {loginInputClassName}
-            type = "text"
-            placeholder = {localization.loginPlaceholder()}
-            value = {this.state.login}
-            onChange = {this.handleLoginChange}
-          />
-        </label>
-        {loginInputErrorText}
-      </div>,
-        
-      <div
-        className = "authLayoutCommonFormControl"
-        key = "authorization_form_controls_password"
-      >
-        <span>
-          {localization.password()}
-        </span>
-        <label>
-          <input
-            className = {passwordInputClassName}
-            type = "password"
-            placeholder = {localization.passwordPlaceholder()}
-            value = {this.state.password}
-            onChange = {this.handlePasswordChange}
-          />
-        </label>
-        {passwordInputErrorText}
-      </div>
-    ];
-
-    const authorizationFormButton: JSX.Element = 
-      <button className = "authLayoutCommonFormButton">
-        {localization.authorizationButton()}
-      </button>;
-
-    const authorizationFormBottomLinks: JSX.Element = 
-      <div className = "authLayoutCommonFormBottomLinks">
-        <span>
-          {localization.yetNoAccount()}
-        </span>
-        <Link to = {this.props.registrationLink}>
-          {localization.performRegistration()}
-        </Link>
-      </div>;
-
-    const authorizationForm: JSX.Element = 
-      <form
-          onSubmit = {this.handleAuthorizationSubmit}
-          className = "authLayoutCommonForm"
-      >
-        {authorizationFormControls}
-        {authorizationFormButton}
-      </form>
-    
     return (
-      <div className = "authLayoutCommonFormWrapper">
-        {authorizationFormHeader}
-        {authorizationForm}
-        {authorizationFormBottomLinks}
-      </div>
+      <Form
+        header = {localization.authorizationHeader()}
+        controls = {
+          [
+            {
+              type: InputType.text,
+              label: localization.login(),
+              placeholder: localization.loginPlaceholder(),
+              validator: validator
+            },
+            {
+              type: InputType.password,
+              label: localization.password(),
+              placeholder: localization.passwordPlaceholder(),
+              validator: validator
+            }
+          ]
+        }
+        submitButton = {
+          {
+            type: ButtonType.orange,
+            size: ButtonSize.big,
+            text: localization.authorizationButton()
+          }
+        }
+        submitHandler = {
+          (values: string[]) => {
+            const data: AuthorizationData = {
+              login: values[0],
+              password: values[1],
+            };
+
+            authorizationService.sendAuthorizationData(data);
+          }
+        }
+        footer = {
+          {
+            text: localization.yetNoAccount(),
+            button: {
+              type: ButtonType.transparent,
+              size: ButtonSize.big,
+              text: localization.performRegistration(),
+              handler: () => {
+                this.setState({redirect: true});
+              }
+            }
+          }
+        }
+      />
     );
   }
 }
+ 
