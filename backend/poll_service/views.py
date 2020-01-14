@@ -52,7 +52,7 @@ class UserView(APIView):
                 body = {
                     "questionnaireSuccess": "True"
                 }
-                return get_pool_response_success(body, 200)
+                return get_pool_response_success(body, session_guid)
             else:
                 return get_pool_response_error(ResponseErrorType.Validation, 400)
         except Exception:
