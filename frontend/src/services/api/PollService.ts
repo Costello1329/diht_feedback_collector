@@ -106,7 +106,14 @@ class PollService {
       )
       .then(
         (response: AxiosResponse): void => {
-          alert("hi!");
+          notificationService.notify(
+            new Notification(
+              NotificationType.success,
+              localization.pollSuccessLabel(),
+              localization.pollSaved(),
+              3000
+            )
+          );
         }
       )
       .catch(

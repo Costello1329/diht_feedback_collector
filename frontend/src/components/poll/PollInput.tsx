@@ -7,11 +7,19 @@ type PollInputProps = {
 }
 
 export function PollInput(props: PollInputProps) {
+  let [value, setValue] = useState<string>(props.initial);
+
+  const handler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(event.currentTarget.value);
+    props.handler(event);
+  }
+
   return (
     <input
-      onChange = {props.handler}
+      onChange = {handler}
       type = "text"
       placeholder = {localization.myAnswer()}
+      value = {value}
     />
   );
 }

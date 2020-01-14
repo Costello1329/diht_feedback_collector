@@ -4,7 +4,6 @@ type PollRadioButtonProps = {
   handler: (event: React.ChangeEvent<HTMLInputElement>) => void;
   options: string[];
   name: string;
-  initial: string;
 }
 
 export function PollRadioButton(props: PollRadioButtonProps) {

@@ -92,7 +92,6 @@ React.Component<PollComponentProps, PollComponentState> {
                 handler = {this.getHandlerForInput(0)}
                 options={["Да", "Нет"]}
                 name="lections"
-                initial = {this.state.data === null ? "Нет" : "Да"}
               />
               <p>{localization.evaluateQualityOfLectures()}</p>
               <PollSlider
@@ -105,17 +104,17 @@ React.Component<PollComponentProps, PollComponentState> {
               />
               <p>{localization.goodAboutLectures()}</p>
               <PollInput
-                initial = {this.state.data === null ? "" : "123"}
+                initial = {this.state.data === null ? "" : this.state.data[3]}
                 handler = {this.getHandlerForInput(2)}
               />
               <p>{localization.badAboutLectures()}</p>
               <PollInput
-                initial = {this.state.data === null ? "" : "123"}
+                initial = {this.state.data === null ? "" : this.state.data[4]}
                 handler = {this.getHandlerForInput(3)}
               />
               <p>{localization.suggestionAboutLectures()}</p>
               <PollInput
-                initial = {this.state.data === null ? "" : "123"}
+                initial = {this.state.data === null ? "" : this.state.data[5]}
                 handler = {this.getHandlerForInput(4)}
               />
             </div>
@@ -132,17 +131,17 @@ React.Component<PollComponentProps, PollComponentState> {
               />
               <p>{localization.goodAboutSeminars()}</p>
               <PollInput
-                initial = {this.state.data === null ? "" : "123"}
+                initial = {this.state.data === null ? "" : this.state.data[6]}
                 handler = {this.getHandlerForInput(6)}
               />
               <p>{localization.badAboutSeminars()}</p>
               <PollInput
-                initial = {this.state.data === null ? "" : "123"}
+                initial = {this.state.data === null ? "" : this.state.data[7]}
                 handler = {this.getHandlerForInput(7)}
               />
               <p>{localization.suggestionAboutSeminars()}</p>
               <PollInput
-                initial = {this.state.data === null ? "" : "123"}
+                initial = {this.state.data === null ? "" : this.state.data[8]}
                 handler = {this.getHandlerForInput(8)}
               />
             </div>
