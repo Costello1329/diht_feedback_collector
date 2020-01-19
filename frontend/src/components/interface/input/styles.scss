@@ -1,5 +1,6 @@
 @import "../../../styles/colorScheme.scss";
 
+
 .commonInput {
   font-family: 'PT Sans';
   margin-bottom: 4px;
@@ -43,7 +44,7 @@
 
       &.commonInputHasError {
         border: 1px solid $redLight;
-        background-color: #ffeeee;
+        background-color: $redishWhite;
 
         &:focus {
           border: 1px solid $redLight;

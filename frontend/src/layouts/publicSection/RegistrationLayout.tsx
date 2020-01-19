@@ -1,5 +1,7 @@
 import React from "react";
-import {RegistrationForm} from "../../components/RegistrationFormComponent";
+import {
+  RegistrationForm
+} from "../../components/registrationForm/RegistrationForm";
 
 import "../../styles/authLayout";
 

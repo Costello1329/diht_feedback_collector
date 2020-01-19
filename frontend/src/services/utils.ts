@@ -1,13 +1,17 @@
-export const checkMaskRegex = (value: string, regex: RegExp): boolean => {
-  const matchArray: RegExpMatchArray | null = value.match(regex);
+export const checkMaskEquals = (value: string, mask: RegExp): boolean => {
+  const matchArray: RegExpMatchArray | null = value.match(mask);
   return matchArray !== null && value === matchArray[0];
 }
 
-export function guid() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
+export const checkMaskIncluded = (value: string, mask: RegExp): boolean => {
+  return value.search(mask) !== -1;
 }
 
-console.log(guid());
+export const guid4 = (): string => {
+  const replacer = (chart: string): string => { 
+    const randomValue = Math.random() * 16 | 0;
+    return (chart === 'x' ? randomValue : (randomValue & 0x3 | 0x8)).toString(16); 
+  };
+
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, replacer);
+}

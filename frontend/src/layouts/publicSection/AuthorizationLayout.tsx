@@ -1,5 +1,7 @@
 import React from "react";
-import {AuthorizationForm} from "../../components/AuthorizationFormComponent";
+import {
+  AuthorizationForm
+} from "../../components/authorizationForm/AuthorizationForm";
 
 import "../../styles/authLayout";
 

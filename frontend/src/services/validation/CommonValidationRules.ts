@@ -1,5 +1,5 @@
 import {ValidationError} from "./Validator";
-import {checkMaskRegex} from "../utils";
+import {checkMaskEquals} from "../utils";
 
 
 /**
@@ -44,7 +44,7 @@ export const ruleIsGUID = (value: string): ValidationError[] => {
     }
   );
 
-  if (!checkMaskRegex(value, new RegExp(blocks.join(separator))))
+  if (!checkMaskEquals(value, new RegExp(blocks.join(separator))))
     return [new ValidationErrorNotGUID()];
 
   else

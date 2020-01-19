@@ -1,10 +1,10 @@
 export abstract class ValidationError {}
 
-type ValidationRule = (value: string) => ValidationError[];
-type Localizator = (error: ValidationError) => string;
-type Prioritizer = (errors: ValidationError[]) => ValidationError;
+export type ValidationRule = (value: string) => ValidationError[];
+export type Localizator = (error: ValidationError) => string;
+export type Prioritizer = (errors: ValidationError[]) => ValidationError;
 
-const dafaultrioritizer: Prioritizer = (
+const dafaultPrioritizer: Prioritizer = (
   errors: ValidationError[]
 ): ValidationError => {
   return errors[0];
@@ -18,7 +18,7 @@ export class Validator {
   constructor (
     rules: ValidationRule[],
     localizator: Localizator,
-    prioritizer: Prioritizer = dafaultrioritizer
+    prioritizer: Prioritizer = dafaultPrioritizer
   ) {
     this.rules = rules;
     this.localizator = localizator;
