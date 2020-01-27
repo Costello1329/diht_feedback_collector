@@ -10,24 +10,38 @@ import "./styles";
 export type FormHandler = (values: string[]) => void;
 
 export interface FormProps {
-  header: string,
-  controls: InputProps[],
-  submitButton: ButtonProps,
+  header: string;
+  controls: InputProps[];
+  submitButton: ButtonProps;
   footer?: {
     text?: string,
     button?: ButtonProps
-  },
+  };
   submitHandler?: FormHandler;
 }
 
-export class Form extends React.Component<FormProps> {
-  declare values: string[];
-  declare validationPassed: boolean[];
-  declare controlsRefs: React.RefObject<Input>[];
+interface FormState {
+  values: string[];
+  validationPassed: boolean[];
+  commonFormControlGUIDs: string[];
+  showAllValidationErrors: boolean;
+}
 
+/**
+ * Warning: This a static-props component, that was'nt properly designed
+ * to handle props change. Please, don't change props of this
+ * component's instances. Use keys instead.
+ */
+
+export class Form extends React.Component<FormProps, FormState> {
   constructor (props: FormProps) {
     super(props);
-    this.cleanFormData();
+    this.state = {
+      values: props.controls.map((): string => ""),
+      validationPassed: props.controls.map((): boolean => false),
+      commonFormControlGUIDs: props.controls.map((): string => guid4()),
+      showAllValidationErrors: false
+    };
   }
 
   private readonly getControls = (): JSX.Element[] => {
@@ -36,31 +50,37 @@ export class Form extends React.Component<FormProps> {
         (inputProps: InputProps, index: number): JSX.Element => {
           const newInputHandler: InputHandler =
             (value: string, errors: ValidationError[]) => {
-              const values: string[] = this.values;
-              const validationPassed: boolean[] = this.validationPassed;
+              const values: string[] = this.state.values;
+              const validationPassed: boolean[] = this.state.validationPassed;
               values[index] = value;
               validationPassed[index] = (errors.length === 0);
-              this.values = values;
-              this.validationPassed = validationPassed;
 
               if (inputProps.handler !== undefined)
                 inputProps.handler(value, errors);
+
+              this.setState({
+                values: values,
+                validationPassed: validationPassed
+              });
             };
 
           const newInputProps: InputProps = Object.assign({}, inputProps);
           newInputProps.handler = newInputHandler;
 
+          if (this.state.showAllValidationErrors)
+            newInputProps.value = this.state.values[index];
+
           return (
             <div
-              // Here we CAN update guid with random value, because
+              // Here we can update guid with random value, because
               // this code will oly be executed, if props will change:
-              key = {"common-form-control-" + guid4()}
+              key = {
+                "common-form-control-" +
+                this.state.commonFormControlGUIDs[index]
+              }
               className = "commonFormControl"
             >
-              <Input
-                ref = {this.controlsRefs[index]}
-                {...newInputProps}
-              />
+              <Input {...newInputProps} />
             </div>
           );
         }
@@ -71,34 +91,19 @@ export class Form extends React.Component<FormProps> {
   private readonly handleSubmit = (
     event: React.FormEvent<HTMLFormElement>
   ):void => {
-    for (const ref of this.controlsRefs)
-      if (ref.current !== null)
-        ref.current.forceUpdate();
+    if (this.state.validationPassed.indexOf(false) === -1) {
+      if (this.props.submitHandler !== undefined)
+        this.props.submitHandler(this.state.values);
+    }
 
-    if (this.props.submitHandler !== undefined)
-      if (this.validationPassed.indexOf(false) === -1)
-        this.props.submitHandler(this.values);
+    else if (!this.state.showAllValidationErrors)
+      this.setState({showAllValidationErrors: true});
 
     event.preventDefault();
   }
 
-  private readonly cleanFormData = () => {
-    const refs: React.RefObject<Input>[] =
-      this.props.controls.map(
-        (): React.RefObject<Input> => {
-          return React.createRef<Input>();
-        }
-      );
-
-    const controlsLength: number = this.props.controls.length;
-
-    this.values = new Array<string>(controlsLength);
-    this.validationPassed = new Array<boolean>(controlsLength);
-    this.controlsRefs = refs;
-  }
-
-  componentDidUpdate () {
-    this.cleanFormData();
+  shouldComponentUpdate (_: FormProps, nextState: FormState): boolean {
+    return !this.state.showAllValidationErrors && nextState.showAllValidationErrors;
   }
 
   render (): JSX.Element {

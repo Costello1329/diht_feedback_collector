@@ -1,4 +1,8 @@
-import {Validator, ValidationError} from "../../services/validation/Validator";
+import {
+  Validator,
+  CompositeValidator,
+  ValidationError
+} from "../../services/validation/Validator";
 import {
   ruleNotEmpty,
   ValidationErrorEmpty,
@@ -123,4 +127,51 @@ export const passwordValidator: Validator =
       else
         return localization.unforseenValidationError();
     }
+  );
+
+
+/**
+ * Confirmation Validator:
+ */
+
+export class ValidationErrorConfirmationDoesNotMatchPassword
+extends ValidationError {}
+
+export const ruleConfirmationDoesMatchPassword = (
+  value: string,
+  payload: string
+): ValidationError[] => {
+  let errors: ValidationError[] = [];
+
+  if (value !== payload)
+    errors.push(new ValidationErrorConfirmationDoesNotMatchPassword());
+
+  return errors;
+}
+
+export const confirmationValidator: CompositeValidator<string> =
+  new CompositeValidator<string>(
+    [ruleNotEmpty, ruleConfirmationDoesMatchPassword],
+    (error: ValidationError): string => {
+      if (error instanceof ValidationErrorEmpty)
+        return localization.emptyString();
+      else if (error instanceof ValidationErrorConfirmationDoesNotMatchPassword)
+        return localization.confirmationDoesNotMatchPassword();
+      else
+        return localization.unforseenValidationError();
+    },
+    (errors: ValidationError[]): ValidationError => {
+      const filteredErrors: ValidationErrorConfirmationDoesNotMatchPassword[] =
+        errors.filter(
+          (error: ValidationError): boolean => {
+            return error instanceof ValidationErrorConfirmationDoesNotMatchPassword;
+          }
+        );
+
+      if (filteredErrors[0] !== undefined)
+        return filteredErrors[0];
+
+      else
+        return errors[0];
+    } 
   );

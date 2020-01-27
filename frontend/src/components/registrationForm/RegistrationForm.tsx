@@ -4,12 +4,19 @@ import {ButtonType, ButtonSize} from "../interface/button/Button";
 import {InputType} from "../interface/input/Input";
 import {FormProps} from "../interface/form/Form";
 import {MultiformProps, Multiform} from "../interface/multiform/Multiform";
-import {tokenValidator, loginValidator, passwordValidator} from "./Validators";
+import {
+  tokenValidator,
+  loginValidator,
+  passwordValidator,
+  confirmationValidator
+} from "./Validators";
 import {localization} from "../../services/LocalizationService";
 import {
   RegistrationData,
   registrationService
 } from "../../services/api/RegistrationService";
+
+import "./styles";
 
 
 export interface RegistrationFormProps {
@@ -37,7 +44,7 @@ React.Component<RegistrationFormProps, RegistrationFormState> {
           type: InputType.text,
           label: localization.token(),
           placeholder: localization.tokenPlaceholder(),
-          validator: tokenValidator
+          validator: tokenValidator,
         }
       ],
       submitButton: {
@@ -73,12 +80,16 @@ React.Component<RegistrationFormProps, RegistrationFormState> {
           type: InputType.password,
           label: localization.password(),
           placeholder: localization.passwordPlaceholder(),
-          validator: passwordValidator
+          validator: passwordValidator,
+          handler: (value: string) => {
+            confirmationValidator.payload = value;
+          }
         },
         {
           type: InputType.password,
           label: localization.confirmation(),
           placeholder: localization.confirmationPlaceholder(),
+          validator: confirmationValidator
         }
       ],
       submitButton: {
@@ -118,7 +129,10 @@ React.Component<RegistrationFormProps, RegistrationFormState> {
       }
     };
 
-    return <Multiform {...multiform}/>;
+    return (
+      <div className = "registrationForm">
+        <Multiform {...multiform}/>
+      </div>
+    );
   }
 }
- 

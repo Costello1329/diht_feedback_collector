@@ -35,7 +35,7 @@ export const ruleIsGUID = (value: string): ValidationError[] => {
   const sizes: number[] = [8, 4, 4, 4, 12];
 
   const getGUIDBlock = (size: number): string => {
-    return "[a-z0-9]{" + size.toString() + "}";
+    return "[a-zA-Z0-9]{" + size.toString() + "}";
   };
 
   const blocks: string[] = sizes.map(

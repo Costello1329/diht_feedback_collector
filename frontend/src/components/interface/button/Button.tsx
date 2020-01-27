@@ -31,15 +31,15 @@ extends React.Component<ButtonProps> {
     super(props);
   }
 
-  private formalClassNameSuffix (rawClass: string): string {
+  private formatClassNameSuffix (rawClass: string): string {
     return rawClass[0].toUpperCase() + rawClass.slice(1);
   }
 
   private getClassNames (): string {
     return classNames(
       "commonButton",
-      "commonButton" + this.formalClassNameSuffix(this.props.type),
-      "commonButton" + this.formalClassNameSuffix(this.props.size)
+      "commonButton" + this.formatClassNameSuffix(this.props.type),
+      "commonButton" + this.formatClassNameSuffix(this.props.size)
     );
   }
 

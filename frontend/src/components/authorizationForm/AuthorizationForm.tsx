@@ -10,6 +10,8 @@ import {
   authorizationService
 } from "../../services/api/AuthorizationService";
 
+import "./styles";
+
 
 export interface AuthorizationFormProps {
   registrationLink: string;
@@ -76,7 +78,11 @@ React.Component<AuthorizationFormProps, AuthorizationFormState> {
     if (this.state.redirect)
       return <Redirect to = {this.props.registrationLink}/>;
 
-    return <Form {...this.getEnterAuthorizationDataForm()}/>;
+    return (
+      <div className = "authorizationForm">
+        <Form {...this.getEnterAuthorizationDataForm()}/>
+      </div>
+    );
   }
 }
  
