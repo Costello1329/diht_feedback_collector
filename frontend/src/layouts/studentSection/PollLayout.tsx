@@ -1,7 +1,7 @@
 import React from "react";
 import {Header} from "../../components/bars/header/Header";
 import {Footer} from "../../components/bars/footer/Footer";
-import {PollComponent} from "../../components/PollComponent";
+import {PollComponent} from "../../components/poll/PollComponent";
 import {User} from "../../services/api/UserService";
 
 

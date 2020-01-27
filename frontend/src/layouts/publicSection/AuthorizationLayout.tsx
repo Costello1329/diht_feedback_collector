@@ -1,9 +1,7 @@
 import React from "react";
 import {
   AuthorizationForm
-} from "../../components/authorizationForm/AuthorizationForm";
-
-import "../../styles/authLayout";
+} from "../../components/forms/authorizationForm/AuthorizationForm";
 
 
 export interface AuthorizationLayoutProps {

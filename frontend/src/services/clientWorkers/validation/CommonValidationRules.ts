@@ -1,5 +1,5 @@
 import {ValidationError} from "./Validator";
-import {checkMaskEquals} from "../utils";
+import {checkMaskEquals} from "../../utils";
 
 
 /**

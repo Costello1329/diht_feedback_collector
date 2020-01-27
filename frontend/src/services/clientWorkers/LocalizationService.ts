@@ -157,6 +157,8 @@ class LocalizationService {
     "Опрос сохранен.";
   readonly pollSaved = (): string =>
     "Данные получены базой данных.";
+  readonly exit = (): string =>
+    "Выйти";
 }
 
 export const localization: LocalizationService =

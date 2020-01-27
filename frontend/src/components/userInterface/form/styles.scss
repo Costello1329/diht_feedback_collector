@@ -1,13 +1,13 @@
 @import "../../../styles/colorScheme.scss";
 
-$alert: #FC633B;
-$base: #fca23b;
-$base-hover: #eb912a;
-$border: #aaa;
+$alert: $redLight;
+$base: $orange;
+$base-hover: $orangeDark;
+$border: $gray;
 
 .commonForm {
   width: 640px;
-  background-color: #fff;
+  background-color: $white;
   border: 1px solid $border;
   border-radius: 4px;
   display: block;
@@ -38,7 +38,7 @@ $border: #aaa;
     > h1 {
       font-style: normal;
       font-size: 42px;
-      color: #333;
+      color: $blackLight;
       width: 100%;
       text-align: center;
       margin: 0;

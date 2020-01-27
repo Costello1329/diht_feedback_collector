@@ -1,38 +1,32 @@
 import React from "react";
-import {Button, ButtonType, ButtonSize} from "../../interface/button/Button";
+import {Button, ButtonType, ButtonSize} from "../../userInterface/button/Button";
 import {logoutService} from "../../../services/api/LogoutService";
-import {localization} from "../../../services/LocalizationService";
+import {localization} from "../../../services/clientWorkers/LocalizationService";
 
 import "./style.scss";
 
 
-interface HeaderProps {
+export interface HeaderProps {
   userName: string;
 }
 
-export class Header extends React.Component<HeaderProps> {
-  constructor(props: any) {
-    super(props);
-  }
-
-  render (): JSX.Element {
-    return (
-      <header className = "appHeaderBar">
-        <div className = "appHeaderTitle">
-          <h1>
-            {localization.mainTitle()}
-          </h1>
-        </div>
-        <div className = "appHeaderLogout">
-          <h3>{this.props.userName}</h3>
-          <Button
-            type = {ButtonType.gray}
-            size = {ButtonSize.medium}
-            text = {"Выйти"}
-            handler = {(): void => logoutService.logout()}
-          />
-        </div>
-      </header>
-    );
-  }
+export function Header (props: HeaderProps) {
+  return (
+    <header className = "appHeaderBar">
+      <div className = "appHeaderTitle">
+        <h1>
+          {localization.mainTitle()}
+        </h1>
+      </div>
+      <div className = "appHeaderLogout">
+        <h3>{props.userName}</h3>
+        <Button
+          type = {ButtonType.gray}
+          size = {ButtonSize.medium}
+          text = {localization.exit()}
+          handler = {(): void => logoutService.logout()}
+        />
+      </div>
+    </header>
+  );
 }

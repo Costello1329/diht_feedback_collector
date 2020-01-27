@@ -1,17 +1,18 @@
 import React from "react";
-import {PollRadioButton} from "./poll/PollRadioButton";
-import {PollSlider} from "./poll/PollSlider";
-import {PollInput} from "./poll/PollInput";
-import {localization} from "../services/LocalizationService";
+import {PollRadioButton} from "./PollRadioButton";
+import {PollSlider} from "./PollSlider";
+import {PollInput} from "./PollInput";
+import {localization} from "../../services/clientWorkers/LocalizationService";
 // @ts-ignore
-import courseImage from "../../assets/images/courseImage.png";
-import "../styles/pollboard.scss";
+import courseImage from "../../../assets/images/courseImage.png";
 import {
   Button,
   ButtonType,
   ButtonSize
-} from "../components/interface/button/Button";
-import {pollService} from "../services/api/PollService";
+} from "../userInterface/button/Button";
+import {pollService} from "../../services/api/PollService";
+
+import "./styles";
 
 
 interface PollComponentProps {

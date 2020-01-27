@@ -1,13 +1,13 @@
 import {AxiosResponse, AxiosError} from "axios";
-import {httpService, apiRoutes} from "../HTTPService";
-import {encryptionService} from "../EncryptionService";
-import {localization} from "../LocalizationService";
+import {httpService, apiRoutes} from "./HTTPService";
+import {encryptionService} from "../clientWorkers/EncryptionService";
+import {localization} from "../clientWorkers/LocalizationService";
 import {
   notificationService,
   NotificationType,
   Notification
-} from "../NotificationService";
-import { userService } from "./UserService";
+} from "../clientWorkers/NotificationService";
+import {userService} from "./UserService";
 
 
 export interface AuthorizationData {

@@ -1,4 +1,5 @@
 @import "../../../styles/app.scss";
+@import "../../../styles/colorScheme.scss";
 
 
 .appFooterBar {
@@ -6,10 +7,10 @@
 
   font-family: "PT Sans";
   width: 100%;
-  background-color: #eee;
+  background-color: $whiteDark;
   border-radius: 8px 8px 0 0;
   box-shadow: 0 0 16px rgba(0, 0, 0, 0.25);
-  border: 1px solid #ddd;
+  border: 1px solid $grayLight;
   position: fixed;
   bottom: 0;
   box-sizing: border-box;

@@ -3,7 +3,7 @@ import {
   ValidationError,
   IValidator,
   CompositeValidator
-} from "../../../services/validation/Validator";
+} from "../../../services/clientWorkers/validation/Validator";
 import classNames from "classnames";
 
 import "./styles";

@@ -1,11 +1,11 @@
 import React from "react";
-import {FormHandler, FormProps, Form} from "../form/Form";
 import {guid4} from "../../../services/utils";
 import {Button, ButtonType, ButtonSize} from "../button/Button";
-import {localization} from "../../../services/LocalizationService";
+import {InputProps} from "../input/Input";
+import {FormHandler, FormProps, Form} from "../form/Form";
+import {localization} from "../../../services/clientWorkers/LocalizationService";
 
 import "./styles";
-import { Input, InputProps } from "../input/Input";
 
 
 export interface MultiformProps {

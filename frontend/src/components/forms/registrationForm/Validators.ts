@@ -2,7 +2,7 @@ import {
   Validator,
   CompositeValidator,
   ValidationError
-} from "../../services/validation/Validator";
+} from "../../../services/clientWorkers/validation/Validator";
 import {
   ruleNotEmpty,
   ValidationErrorEmpty,
@@ -10,9 +10,9 @@ import {
   ValidationErrorNotGUID,
   ruleNotShort,
   ValidationErrorShort
-} from "../../services/validation/CommonValidationRules";
-import {checkMaskEquals, checkMaskIncluded} from "../../services/utils";
-import {localization} from "../../services/LocalizationService";
+} from "../../../services/clientWorkers/validation/CommonValidationRules";
+import {checkMaskEquals, checkMaskIncluded} from "../../../services/utils";
+import {localization} from "../../../services/clientWorkers/LocalizationService";
 
 
 /**

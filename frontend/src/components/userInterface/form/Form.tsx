@@ -1,7 +1,9 @@
 import React from "react";
 import {Input, InputHandler, InputProps} from "../input/Input";
 import {Button, ButtonProps} from "../button/Button";
-import {ValidationError} from "../../../services/validation/Validator";
+import {
+  ValidationError
+} from "../../../services/clientWorkers/validation/Validator";
 import {guid4} from "../../../services/utils";
 
 import "./styles";

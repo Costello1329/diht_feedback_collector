@@ -1,6 +1,6 @@
 import React from "react";
-import {Button, ButtonType, ButtonSize} from "../interface/button/Button";
-import {localization} from "../../services/LocalizationService";
+import {Button, ButtonType, ButtonSize} from "../userInterface/button/Button";
+import {localization} from "../../services/clientWorkers/LocalizationService";
 import {Link} from 'react-router-dom';
 // @ts-ignore
 import courseImage from "../../../assets/images/courseImage.png";

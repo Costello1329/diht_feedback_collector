@@ -1,14 +1,14 @@
 import React from "react";
 import {Redirect} from "react-router-dom"
-import {ButtonType, ButtonSize} from "../interface/button/Button";
-import {InputType} from "../interface/input/Input";
-import {FormProps, Form} from "../interface/form/Form";
+import {ButtonType, ButtonSize} from "../../userInterface/button/Button";
+import {InputType} from "../../userInterface/input/Input";
+import {FormProps, Form} from "../../userInterface/form/Form";
 import {loginAndPasswordValidator} from "./Validators";
-import {localization} from "../../services/LocalizationService";
+import {localization} from "../../../services/clientWorkers/LocalizationService";
 import {
   AuthorizationData,
   authorizationService
-} from "../../services/api/AuthorizationService";
+} from "../../../services/api/AuthorizationService";
 
 import "./styles";
 

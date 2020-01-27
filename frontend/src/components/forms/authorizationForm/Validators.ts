@@ -1,9 +1,12 @@
-import {Validator, ValidationError} from "../../services/validation/Validator";
+import {
+  Validator,
+  ValidationError
+} from "../../../services/clientWorkers/validation/Validator";
 import {
   ruleNotEmpty,
   ValidationErrorEmpty
-} from "../../services/validation/CommonValidationRules";
-import {localization} from "../../services/LocalizationService";
+} from "../../../services/clientWorkers/validation/CommonValidationRules";
+import {localization} from "../../../services/clientWorkers/LocalizationService";
 
 
 /**

@@ -1,8 +1,10 @@
 import React from "react";
-import {Button, ButtonType, ButtonSize} from "./interface/button/Button";
-import {logoutService} from "../services/api/LogoutService";
-import {Dash} from "./dashboard/Dash";
-import {dashboardService} from "../services/api/DashboardService";
+import {Button, ButtonType, ButtonSize} from "../userInterface/button/Button";
+import {logoutService} from "../../services/api/LogoutService";
+import {Dash} from "./Dash";
+import {dashboardService} from "../../services/api/DashboardService";
+
+import "./styles";
 
 
 interface DashboardProps {}

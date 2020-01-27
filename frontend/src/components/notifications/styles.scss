@@ -1,7 +1,4 @@
-@import "../styles/colorScheme.scss";
-
-$notification-text: #f9f9f9;
-
+@import "../../styles/colorScheme.scss";
 
 
 .notifications {
@@ -48,21 +45,21 @@ $notification-text: #f9f9f9;
 
   .notificationMessage {
     background-color: $blueLight;
-    color: $notification-text;
+    color: $white;
   }
 
   .notificationSuccess {
     background-color: $green;
-    color: $notification-text;
+    color: $white;
   }
 
   .notificationWarning {
     background-color: $orange;
-    color: $notification-text;
+    color: $white;
   }
 
   .notificationError {
-    color: $notification-text;
+    color: $white;
     background-color: $redLight;
   }
 }

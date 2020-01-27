@@ -4,9 +4,9 @@ import {
   NotificationType,
   Notification,
   notificationService
-} from "../services/NotificationService";
+} from "../../services/clientWorkers/NotificationService";
 
-import "../styles/notifications";
+import "./styles";
 
 
 /* WARNING: this component should only be used globally.

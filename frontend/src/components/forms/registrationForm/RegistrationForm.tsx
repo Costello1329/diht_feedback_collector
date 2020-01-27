@@ -1,20 +1,20 @@
 import React from "react";
 import {Redirect} from "react-router-dom"
-import {ButtonType, ButtonSize} from "../interface/button/Button";
-import {InputType} from "../interface/input/Input";
-import {FormProps} from "../interface/form/Form";
-import {MultiformProps, Multiform} from "../interface/multiform/Multiform";
+import {ButtonType, ButtonSize} from "../../userInterface/button/Button";
+import {InputType} from "../../userInterface/input/Input";
+import {FormProps} from "../../userInterface/form/Form";
+import {MultiformProps, Multiform} from "../../userInterface/multiform/Multiform";
 import {
   tokenValidator,
   loginValidator,
   passwordValidator,
   confirmationValidator
 } from "./Validators";
-import {localization} from "../../services/LocalizationService";
+import {localization} from "../../../services/clientWorkers/LocalizationService";
 import {
   RegistrationData,
   registrationService
-} from "../../services/api/RegistrationService";
+} from "../../../services/api/RegistrationService";
 
 import "./styles";
 

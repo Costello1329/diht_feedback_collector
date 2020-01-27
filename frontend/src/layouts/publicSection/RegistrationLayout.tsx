@@ -1,9 +1,7 @@
 import React from "react";
 import {
   RegistrationForm
-} from "../../components/registrationForm/RegistrationForm";
-
-import "../../styles/authLayout";
+} from "../../components/forms/registrationForm/RegistrationForm";
 
 
 export interface RegistrationLayoutProps {

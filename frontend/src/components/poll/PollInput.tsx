@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {localization} from "../../services/LocalizationService";
+import {localization} from "../../services/clientWorkers/LocalizationService";
 
 type PollInputProps = {
   handler: (event: React.ChangeEvent<HTMLInputElement>) => void;

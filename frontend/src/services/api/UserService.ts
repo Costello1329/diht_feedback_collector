@@ -1,12 +1,12 @@
 import {load as LoadCookie} from 'react-cookies';
 import {AxiosResponse, AxiosError} from "axios";
-import {httpService, apiRoutes} from "../HTTPService";
-import {localization} from "../LocalizationService";
+import {httpService, apiRoutes} from "./HTTPService";
+import {localization} from "../clientWorkers/LocalizationService";
 import {
   notificationService,
   NotificationType,
   Notification
-} from "../NotificationService";
+} from "../clientWorkers/NotificationService";
 
 
 enum ResponseSuccessKeys {

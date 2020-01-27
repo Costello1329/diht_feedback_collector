@@ -1,4 +1,4 @@
-import {localization} from "./LocalizationService"
+import {localization} from "../LocalizationService";
 
 
 export enum ValidationError {

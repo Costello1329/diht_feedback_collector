@@ -7,7 +7,7 @@ import {PollLayout} from "./studentSection/PollLayout";
 import {ForbiddenLayout} from "./errorLayouts/ForbiddenLayout";
 import {NotFoundLayout} from "./errorLayouts/NotFoundLayout";
 import {userService, User, UserRole} from "../services/api/UserService";
-import {Notifications} from "../components/NotificationsComponent";
+import {Notifications} from "../components/notifications/NotificationsComponent";
 
 import "../styles/app.scss";
 
