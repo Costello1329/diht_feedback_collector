@@ -2,11 +2,11 @@ import React from "react";
 import {Header} from "../../components/bars/header/Header";
 import {Footer} from "../../components/bars/footer/Footer";
 import {PollComponent} from "../../components/poll/PollComponent";
-import {User} from "../../services/api/UserService";
+import {AuthorizedUser} from "../../services/clientWorkers/sessions/User";
 
 
 interface PollLayoutProps {
-  user: User;
+  user: AuthorizedUser;
   pollGuid: string;
 }
 

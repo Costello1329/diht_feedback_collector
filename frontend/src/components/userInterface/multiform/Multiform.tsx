@@ -94,16 +94,21 @@ export class Multiform extends React.Component<MultiformProps, MultiformState> {
   }
 
   render (): JSX.Element {
+    const goBackButton: JSX.Element = 
+      this.state.shownFormIndex !== 0 ?
+      <div className = "commonMultiformGoBackButtonWrapper">
+        <Button
+          type = {ButtonType.transparent}
+          size = {ButtonSize.medium}
+          text = {localization.goBack()}
+          handler = {this.goBack}
+        />
+      </div> :
+      <></>;
+
     return (
       <div className = "commonMultiform">
-        <div className = "commonMultiformGoBackButtonWrapper">
-          <Button
-            type = {ButtonType.transparent}
-            size = {ButtonSize.medium}
-            text = {localization.goBack()}
-            handler = {this.goBack}
-          />
-        </div>
+        {goBackButton}
         <Form
           {...this.patchForm(this.state.shownFormIndex)}
           key = {this.state.formGUIDs[this.state.shownFormIndex]}

@@ -6,7 +6,8 @@ import {DashboardLayout} from "./studentSection/DashboardLayout";
 import {PollLayout} from "./studentSection/PollLayout";
 import {ForbiddenLayout} from "./errorLayouts/ForbiddenLayout";
 import {NotFoundLayout} from "./errorLayouts/NotFoundLayout";
-import {userService, User, UserRole} from "../services/api/UserService";
+import {userService} from "../services/api/UserService";
+import {User, UnauthorizedUser, StudentUser, AuthorizedUser, LeaderUser} from "../services/clientWorkers/sessions/User";
 import {Notifications} from "../components/notifications/NotificationsComponent";
 
 import "../styles/app.scss";
@@ -20,7 +21,7 @@ interface AppProps {
 }
 
 interface AppState {
-  user: User | undefined;
+  user: User;
   gotUserAtLeastOnce: boolean;
   logoutHappened: boolean;
 }
@@ -30,45 +31,25 @@ extends React.Component<AppProps, AppState> {
   constructor (props: AppProps) {
     super(props);
     this.state = {
-      user: undefined,
+      user: new UnauthorizedUser(),
       gotUserAtLeastOnce: false,
       logoutHappened: false
     };
     userService.subscribe(this.setupUser);
   }
 
-  private readonly setupUser = (user: User | undefined): void => {
+  private readonly setupUser = (user: User): void => {
     this.setState({
       user: user,
       logoutHappened:
-        this.state.user !== undefined && user === undefined,
+        !(this.state.user instanceof UnauthorizedUser) &&
+        (user instanceof UnauthorizedUser),
       gotUserAtLeastOnce: true
     });
   }
 
   componentDidMount (): void {
     userService.getUser();
-  }
-
-  private readonly checkUserRole = (
-    role: undefined | UserRole
-  ): boolean => {
-    if (role === undefined)
-      return this.state.user === undefined;
-    
-    else
-      return this.state.user !== undefined && this.state.user.role === role;
-  }
-
-  private readonly checkUserRoles = (
-    roles: (undefined | UserRole)[]
-  ): boolean => {
-    roles.forEach((role: undefined | UserRole) => {
-      if (this.checkUserRole(role))
-        return true;
-    });
-
-    return false;
   }
 
   render (): JSX.Element {
@@ -101,24 +82,32 @@ extends React.Component<AppProps, AppState> {
     const registration: JSX.Element =
       <RegistrationLayout authorizationLink = {this.props.authorizationLink}/>
     
-    const homepageLink: string = (() => {
-      if (this.state.user === undefined)
-        return this.props.registrationLink;
+    const homepageLink: string | undefined = (
+      (): string | undefined => {
+        if (this.state.user instanceof UnauthorizedUser)
+          return this.props.authorizationLink;
 
-      switch (this.state.user.role) {
-        case UserRole.student:
-          return this.props.dashboardLink;
+        else if (this.state.user instanceof AuthorizedUser) {
+          if (this.state.user instanceof StudentUser) {
+            if (this.state.user instanceof LeaderUser)
+              return this.props.dashboardLink;
+            
+            else
+              return this.props.dashboardLink;
+          }
+        }
       }
-    })();
+    )();
 
-    const redirectHomepage: JSX.Element = <Redirect to = {homepageLink}/>;
+    const redirectHomepage: JSX.Element =
+      <Redirect to = {homepageLink === undefined ? "" : homepageLink}/>;
 
     /** 
      * Student section:
      */
 
     const dashboard: JSX.Element =
-      this.state.user !== undefined ?
+      this.state.user instanceof AuthorizedUser ?
       <DashboardLayout user = {this.state.user}/> :
       <></>;
 
@@ -129,7 +118,7 @@ extends React.Component<AppProps, AppState> {
       const guid: string = query.slice(start, start + delta);
 
       return (
-        this.state.user !== undefined ?
+        this.state.user instanceof AuthorizedUser ?
         <PollLayout pollGuid = {guid} user = {this.state.user}/> :
         <></>
       );
@@ -147,14 +136,22 @@ extends React.Component<AppProps, AppState> {
               {redirectHomepage}
             </Route>
             <Route exact path = {this.props.registrationLink}>
-              {this.checkUserRole(undefined) ? registration : redirectHomepage}
+              {
+                this.state.user instanceof UnauthorizedUser ?
+                registration :
+                redirectHomepage
+              }
             </Route>
             <Route exact path = {this.props.authorizationLink}>
-              {this.checkUserRole(undefined) ? authorization : redirectHomepage}
+              {
+                this.state.user instanceof UnauthorizedUser ?
+                authorization :
+                redirectHomepage
+              }
             </Route>
             <Route exact path = {this.props.dashboardLink}>
               {
-                this.checkUserRole(UserRole.student) ?
+                this.state.user instanceof StudentUser ?
                 dashboard :
                 (
                   this.state.logoutHappened ?
@@ -165,7 +162,7 @@ extends React.Component<AppProps, AppState> {
             </Route>
             <Route path = {this.props.pollLink}>
               {
-                this.checkUserRole(UserRole.student) ?
+                this.state.user instanceof StudentUser ?
                 poll() :
                 (
                   this.state.logoutHappened ?

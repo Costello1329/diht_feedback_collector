@@ -3,6 +3,12 @@ import {AxiosResponse, AxiosError} from "axios";
 import {httpService, apiRoutes} from "./HTTPService";
 import {localization} from "../clientWorkers/LocalizationService";
 import {
+  User,
+  UnauthorizedUser,
+  StudentUser,
+  LeaderUser
+} from "../clientWorkers/sessions/User";
+import {
   notificationService,
   NotificationType,
   Notification
@@ -24,21 +30,7 @@ enum UserErrorType {
   internalServerError
 }
 
-export enum UserRole {
-  student = "student"
-}
-
-export class User {
-  declare readonly role: UserRole;
-  declare readonly login: string;
-
-  constructor (role: UserRole, login: string) {
-    this.role = role;
-    this.login = login;
-  }
-}
-
-type Subscriber = (user: User | undefined) => void;
+type Subscriber = (user: User) => void;
 
 class UserService {
   declare private subscribers: Subscriber[];
@@ -51,17 +43,13 @@ class UserService {
     this.subscribers.push(subscriber);
   }
 
-  private readonly notifyAll = (user: User | undefined): void => {
-    this.subscribers.forEach(
-      (subscriber: Subscriber) => {
-        subscriber(user);
-      }
-    );
+  private readonly notifyAll = (user: User): void => {
+    this.subscribers.forEach((subscriber: Subscriber): void => subscriber(user));
   }
 
   readonly getUser = () => {
     if (LoadCookie("session") === undefined)
-      this.notifyAll(undefined);
+      this.notifyAll(new UnauthorizedUser());
 
     else {
       this
@@ -70,7 +58,7 @@ class UserService {
         this.notifyAll(user);
       })
       .catch((): void => {
-        this.notifyAll(undefined);
+        this.notifyAll(new UnauthorizedUser());
       });
     }
   }
@@ -110,6 +98,17 @@ class UserService {
     );
   }
 
+  private readonly getUserFromResponse = (role: string, login: string): User => {
+    switch (role) {
+      case "student":
+        return new StudentUser(login, ""); // TODO – add group.
+      case "leader":
+        return new LeaderUser(login, ""); // TODO – add group.
+      default:
+        return new UnauthorizedUser();
+    }
+  }
+
   private async sendUserRequest (): Promise<User> {
     return new Promise<User>(
       (
@@ -120,7 +119,7 @@ class UserService {
           .sendGet(apiRoutes.user, {})
           .then(
             (response: AxiosResponse): void => {
-              const user: User = new User(
+              const user: User = this.getUserFromResponse(
                 response.data[ResponseSuccessKeys.role],
                 response.data[ResponseSuccessKeys.login]
               );
