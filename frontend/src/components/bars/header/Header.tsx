@@ -12,13 +12,13 @@ export interface HeaderProps {
 
 export function Header (props: HeaderProps) {
   return (
-    <header className = "appHeaderBar">
-      <div className = "appHeaderTitle">
+    <header className = "headerBar">
+      <div className = "headerTitle">
         <h1>
           {localization.mainTitle()}
         </h1>
       </div>
-      <div className = "appHeaderLogout">
+      <div className = "headerLogout">
         <h3>{props.userName}</h3>
         <Button
           type = {ButtonType.gray}

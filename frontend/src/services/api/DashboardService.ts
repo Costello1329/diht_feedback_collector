@@ -1,13 +1,11 @@
 import {AxiosResponse, AxiosError} from "axios";
 import {httpService, apiRoutes} from "./HTTPService";
-import {encryptionService} from "../clientWorkers/EncryptionService";
 import {localization} from "../clientWorkers/LocalizationService";
 import {
   notificationService,
   NotificationType,
   Notification
 } from "../clientWorkers/NotificationService";
-import { userService } from "./UserService";
 
 
 export interface DashboardData {

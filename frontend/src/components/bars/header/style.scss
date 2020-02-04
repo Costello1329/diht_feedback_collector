@@ -2,27 +2,44 @@
 @import "../../../styles/colorScheme.scss";
 
 
-.appHeaderBar {
+.headerBar {
   @include clearfix;
 
   font-family: "PT Sans";
   width: 100%;
-  background-color: $whiteDark;
+  background-color: $whiteHalfDark;
   border-radius: 0 0 8px 8px;
-  box-shadow: 0 0 16px rgba(0, 0, 0, 0.25);
-  border: 1px solid $grayLight;
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.1);
+  border: 1px solid $whiteExtraDark;
   box-sizing: border-box;
+  height: 80px;
+  position: relative;
 
-  > .appHeaderTitle {
+  > .headerTitle {
     float: left;
-    margin: 0 0 0 32px;
+    margin-left: 32px;
+    height: 100%;
+    text-align: center;
+    display: table;
+
+    > h1 {
+      margin: 0;
+      vertical-align: middle;
+      font-weight: normal;
+      display: table-cell;
+    }
   }
   
-  > .appHeaderLogout {
+  > .headerLogout {
     float: right;
-    margin: 16px 32px;
+    position: absolute;
+    transform: translate(0, -50%);
+    top: 50%;
+    margin: 0 32px;
+    right: 0;
 
     > h3 {
+      font-weight: normal;
       text-align: center;
       margin: 0 0 8px 0;
     }

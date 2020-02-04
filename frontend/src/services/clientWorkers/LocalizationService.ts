@@ -159,6 +159,14 @@ class LocalizationService {
     "Данные получены базой данных.";
   readonly exit = (): string =>
     "Выйти";
+  readonly availableCourses = (): string =>
+    "Доступные опросы по пройденным курсам";
+  readonly pollFillingStatusNotStarted = (): string =>
+    "Опрос не был пройден.";
+  readonly pollFillingStatusInProcess = (): string =>
+    "Опрос заполнен частично.";
+  readonly pollFillingStatusFinished = (): string =>
+    "Опрос пройден.";
 }
 
 export const localization: LocalizationService =

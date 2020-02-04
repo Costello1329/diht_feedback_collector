@@ -8,8 +8,8 @@ from authorization_service.apps import sessions_storage, check_permission
 from dashboard_service.models import Course, TeacherRole
 from diht_feedback_collector.apps import ResponseErrorType, setup_cors_response_headers
 
-from poll_service.apps import get_pool_response_reject, get_pool_response_error, validate_pool_contract, \
-    get_pool_response_success, validate_pool_query_params
+from poll_service.apps import get_poll_response_reject, get_poll_response_error, validate_poll_contract, \
+    get_poll_response_success, validate_poll_query_params
 from poll_service.models import Questionnaire
 from registration_services.models import People
 import uuid
@@ -19,9 +19,9 @@ class UserView(APIView):
     def post(self, request):
         try:
             # Contract validation:
-            contract_validation_passed = validate_pool_contract(request)
+            contract_validation_passed = validate_poll_contract(request)
             if not contract_validation_passed:
-                return get_pool_response_error(ResponseErrorType.Contract, 400)
+                return get_poll_response_error(ResponseErrorType.Contract, 400)
 
             try:
                 session_guid = request.COOKIES["session"]
@@ -29,15 +29,15 @@ class UserView(APIView):
                 session_guid = None
 
             if session_guid is None:
-                return get_pool_response_reject(session_guid)
+                return get_poll_response_reject(session_guid)
 
             session = sessions_storage.get_session(session_guid)
 
             if check_permission(session_guid, "poll_service_post"):
-                get_pool_response_error(ResponseErrorType.Validation, 403)
+                get_poll_response_error(ResponseErrorType.Validation, 403)
 
             if session is None:
-                return get_pool_response_reject(session_guid)
+                return get_poll_response_reject(session_guid)
 
             questionnaire_id = request.data["questionnaire_id"]
 
@@ -52,18 +52,18 @@ class UserView(APIView):
                 body = {
                     "questionnaireSuccess": "True"
                 }
-                return get_pool_response_success(body, session_guid)
+                return get_poll_response_success(body, session_guid)
             else:
-                return get_pool_response_error(ResponseErrorType.Validation, 400)
+                return get_poll_response_error(ResponseErrorType.Validation, 400)
         except Exception:
-            return get_pool_response_error(ResponseErrorType.Internal, 500)
+            return get_poll_response_error(ResponseErrorType.Internal, 500)
 
     def get(self, request):
         try:
             params = request.query_params
 
-            if not validate_pool_query_params(params):
-                return get_pool_response_error(ResponseErrorType.Contract, 400)
+            if not validate_poll_query_params(params):
+                return get_poll_response_error(ResponseErrorType.Contract, 400)
 
             try:
                 session_guid = request.COOKIES["session"]
@@ -71,15 +71,15 @@ class UserView(APIView):
                 session_guid = None
 
             if session_guid is None:
-                return get_pool_response_error(ResponseErrorType.Validation, 401)
+                return get_poll_response_error(ResponseErrorType.Validation, 401)
 
             session = sessions_storage.get_session(session_guid)
 
             if session is None:
-                return get_pool_response_error(ResponseErrorType.Validation, 401)
+                return get_poll_response_error(ResponseErrorType.Validation, 401)
 
             if check_permission(session_guid, "poll_service_get"):
-                return get_pool_response_error(ResponseErrorType.Validation, 403)
+                return get_poll_response_error(ResponseErrorType.Validation, 403)
 
             sessions_storage.update_session(session_guid)
             course_guid = params["course_guid"]
@@ -87,7 +87,7 @@ class UserView(APIView):
             if user:
                 user = user[0]
             else:
-                return get_pool_response_error(ResponseErrorType.Validation, 401)
+                return get_poll_response_error(ResponseErrorType.Validation, 401)
 
             course = Course.objects.filter(guid=course_guid)
             if course:
@@ -100,7 +100,7 @@ class UserView(APIView):
                         "guid": questionnaire.guid,
                         "data": questionnaire.data
                     }
-                    return get_pool_response_success(body, session_guid)
+                    return get_poll_response_success(body, session_guid)
                 else:
                     group = user.guid.group
                     teacher_role = TeacherRole.objects.filter(group=group, course=course)
@@ -114,14 +114,14 @@ class UserView(APIView):
                             body = {
                                 "guid": questionnaire.guid,
                                 "data": questionnaire.data,
-                                "teacher": list_teacher
+                                "teachers": list_teacher
                             }
-                            return get_pool_response_success(body, session_guid)
+                            return get_poll_response_success(body, session_guid)
 
             else:
-                return get_pool_response_error(ResponseErrorType.Validation, 400)
+                return get_poll_response_error(ResponseErrorType.Validation, 400)
         except Exception:
-            return get_pool_response_error(ResponseErrorType.Internal, 500)
+            return get_poll_response_error(ResponseErrorType.Internal, 500)
 
     def options(self, request, *args, **kwargs):
         return setup_cors_response_headers(Response(status=204))

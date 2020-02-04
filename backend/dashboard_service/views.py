@@ -10,8 +10,6 @@ from diht_feedback_collector.apps import ResponseErrorType, setup_cors_response_
 from registration_services.models import People
 
 
-
-
 class UserView(APIView):
     def get(self, request):
         try:
@@ -41,12 +39,12 @@ class UserView(APIView):
                 if courses:
                     dict_courses = dict()
                     for course in courses:
-                        dict_courses.update({course.course.title:course.course.guid})
-                    return get_dashboard_response_success(dict_courses,session_guid)
+                        dict_courses.update({course.course.guid: course.course.title})
+                    return get_dashboard_response_success(dict_courses, session_guid)
                 else:
                     get_dashboard_response_error(ResponseErrorType.Validation, 422)
             else:
-                # to do поговорить про пользольсзователя который удален из бызы но есть в сесиях
+                # to do поговорить про пользольсзователя который удален из бызы но есть в сессиях
                 get_dashboard_response_error(ResponseErrorType.Validation, 400)
         except Exception:
             return get_dashboard_response_error(ResponseErrorType.Internal, 500)

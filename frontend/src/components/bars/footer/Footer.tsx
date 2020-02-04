@@ -6,8 +6,8 @@ import "./style.scss";
 
 export function Footer (props: any) {
   return (
-    <footer className = "appFooterBar">
-      <div className = "appFooterDevelopers">
+    <footer className = "footerBar">
+      <div className = "footerDevelopers">
         <h5>
           {
             localization.development() +
@@ -16,7 +16,7 @@ export function Footer (props: any) {
           }
         </h5>
       </div>
-      <div className = "appFooterCopyright">
+      <div className = "footerCopyright">
         <h5>
           {
             localization.mainTitle() +

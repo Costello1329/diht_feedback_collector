@@ -12,7 +12,7 @@ class PollServiceConfig(AppConfig):
     name = 'poll_service'
 
 
-def get_pool_response_success(body, session_guid):
+def get_poll_response_success(body, session_guid):
     res = setup_cors_response_headers(Response(body, status=200, content_type="application/json"))
 
     if session_guid is not None:
@@ -21,7 +21,7 @@ def get_pool_response_success(body, session_guid):
     return res
 
 
-def get_pool_response_reject(session_guid):
+def get_poll_response_reject(session_guid):
     res = setup_cors_response_headers(Response(status=401, content_type="application/json"))
 
     if session_guid is not None:
@@ -30,7 +30,7 @@ def get_pool_response_reject(session_guid):
     return res
 
 
-def get_pool_response_error(error_type, status_code):
+def get_poll_response_error(error_type, status_code):
     body = {
         "errorType": get_response_error_string_by_type(error_type)
     }
@@ -38,7 +38,7 @@ def get_pool_response_error(error_type, status_code):
     return setup_cors_response_headers(Response(body, status=status_code, content_type="application/json"))
 
 
-def validate_pool_contract(req):
+def validate_poll_contract(req):
     try:
         user_data = req.data
         if re.match("application/json", req.headers["Content-Type"]) is None:
@@ -59,7 +59,7 @@ def validate_pool_contract(req):
         return False
 
 
-def validate_pool_query_params(params):
+def validate_poll_query_params(params):
     try:
         if len(params) != 1:
             return False

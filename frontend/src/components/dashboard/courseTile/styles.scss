@@ -1,0 +1,44 @@
+@import "../../../styles/colorScheme.scss";
+
+
+.courseTile {
+  font-family: "PT Sans";
+  text-align: center;
+  border: 1px solid $grayLight;
+  border-radius: 2px;
+  width: 250px;
+
+  > h3 {
+    font-weight: normal;
+    margin: 8px 0;
+  }
+
+  > img {
+    max-width: 100%;
+  }
+
+  > .courseTileBottomBlock {
+    margin: 4px 0 8px 0;
+
+    > p {
+      width: 100%;
+      margin: 0 0 4px 0;
+
+      &.courseTileStatusGreen {
+        color: $green;
+      }
+
+      &.courseTileStatusYellow {
+        color: $orange;
+      }
+
+      &.courseTileStatusRed {
+        color: $blackLight;
+      }
+    }
+
+    > .courseTileBottomBlockButtonWrapper {
+      display: inline-block;
+    }
+  }
+}
