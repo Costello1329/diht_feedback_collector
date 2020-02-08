@@ -4,7 +4,7 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from authorization_service.apps import sessions_storage, check_permission
+from authorization_service.apps import SessionsStorage, check_permission
 from dashboard_service.models import Course, TeacherRole
 from diht_feedback_collector.apps import ResponseErrorType, setup_cors_response_headers
 
@@ -31,17 +31,16 @@ class UserView(APIView):
             if session_guid is None:
                 return get_poll_response_reject(session_guid)
 
-            session = sessions_storage.get_session(session_guid)
+            sessions_storage = SessionsStorage()
+
+            if not sessions_storage.check_session(session_guid):
+                return get_poll_response_reject(session_guid)
 
             if check_permission(session_guid, "poll_service_post"):
                 get_poll_response_error(ResponseErrorType.Validation, 403)
 
-            if session is None:
-                return get_poll_response_reject(session_guid)
-
             questionnaire_id = request.data["questionnaire_id"]
 
-            user = People.objects.filter(guid=session.user_guid)
             data = request.data["data"]
 
             questionnaire = Questionnaire.objects.filter(guid=questionnaire_id)
@@ -73,17 +72,15 @@ class UserView(APIView):
             if session_guid is None:
                 return get_poll_response_error(ResponseErrorType.Validation, 401)
 
-            session = sessions_storage.get_session(session_guid)
-
-            if session is None:
+            session_storage = SessionsStorage()
+            if not session_storage.check_session(session_guid):
                 return get_poll_response_error(ResponseErrorType.Validation, 401)
 
             if check_permission(session_guid, "poll_service_get"):
                 return get_poll_response_error(ResponseErrorType.Validation, 403)
 
-            sessions_storage.update_session(session_guid)
             course_guid = params["course_guid"]
-            user = People.objects.filter(guid=session.user_guid)
+            user = People.objects.filter(guid=session_storage.get_user_guid(session_guid))
             if user:
                 user = user[0]
             else:
@@ -91,6 +88,11 @@ class UserView(APIView):
 
             course = Course.objects.filter(guid=course_guid)
             if course:
+                group = user.guid.group
+                teacher_role = TeacherRole.objects.filter(group=group, course=course)
+                list_teacher = dict()
+                for teachers in teacher_role:
+                    list_teacher.update({teachers.teacher.full_name: teachers.role})
                 course = course[0]
                 questionnaire = Questionnaire.objects.filter(course=course, user=user)
 
@@ -98,7 +100,8 @@ class UserView(APIView):
                     questionnaire = questionnaire[0]
                     body = {
                         "guid": questionnaire.guid,
-                        "data": questionnaire.data
+                        "data": questionnaire.data,
+                        "teachers": list_teacher
                     }
                     return get_poll_response_success(body, session_guid)
                 else:

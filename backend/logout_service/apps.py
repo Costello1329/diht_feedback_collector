@@ -9,13 +9,14 @@ from diht_feedback_collector.apps import setup_cors_response_headers, get_respon
 class LogoutServiceConfig(AppConfig):
     name = 'logout_service'
 
-def get_logout_response_success(session_guid):
+
+def get_logout_response_success():
     res = setup_cors_response_headers(Response("", status=200))
 
-    if session_guid is not None:
-        res.set_cookie("session", value=session_guid, max_age=0)
+    res.set_cookie("session", value=None, max_age=0)
 
     return res
+
 
 def get_logout_response_error(error_type, status_code):
     body = {

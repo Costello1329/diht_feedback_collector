@@ -4,7 +4,7 @@ import re
 from django.apps import AppConfig
 from rest_framework.response import Response
 import json
-
+import redis
 from diht_feedback_collector.apps import setup_cors_response_headers, get_response_error_string_by_type
 from registration_services.models import People
 
@@ -17,53 +17,49 @@ k_cookie_expiration_time = 2 * 7 * 24 * 60 * 60  # (2 weeks in seconds)
 
 
 class SessionsStorage:
-    sessions: dict()
+    sessions: redis.Redis
 
     def __init__(self):
-        self.sessions = dict()
-
-    @staticmethod
-    def check_session_for_expiration(session):
-        return (datetime.now(tz=None) - session.last_activity).total_seconds() <= k_cookie_expiration_time
+        self.sessions = redis.Redis(host='localhost', port=6379, db=0)
 
     def create_session(self, user_guid, session_guid):
-        self.sessions.update({session_guid: Session(user_guid)})
+        self.sessions.mset({session_guid: user_guid})
 
-    def update_session(self, session_guid):
-        session = self.get_session(session_guid)
-        session.last_activity = datetime.now(tz=None)
-        self.sessions.update({session_guid: session})
+    def check_session(self, session_guid):
+        if self.sessions.exists(session_guid) == 0:
+            return False
+        else:
+            return True
 
     def delete_session(self, session_guid):
-        self.sessions.pop(session_guid, None)
+        self.sessions.delete(session_guid)
 
-    def get_session(self, session_guid):
-        session = self.sessions.get(session_guid, None)
+    def get_user_guid(self, session_guid):
+        user_guid = self.sessions.get(session_guid).decode("utf-8")
+        return user_guid
 
-        if session is None:
-            return None
 
-        elif self.check_session_for_expiration(session) is False:
-            self.delete_session(session_guid)
-            return None
+class UsersStorage:
+    users_storage: redis.Redis
 
+    def __init__(self):
+        self.users_storage = redis.Redis(host='localhost', port=6379, db=1)
+
+    def check_user(self, user_guid):
+        if self.users_storage.exists(user_guid) == 0:
+            return False
         else:
-            return session
+            return True
 
+    def create_user(self, user_guid: str, session_guid: str):
+        self.users_storage.mset({user_guid: session_guid})
 
-class Session:
-    user_guid: str
-    last_activity: datetime
+    def delete_user(self, user_guid: str):
+        self.users_storage.delete(user_guid)
 
-    def get_user_guid(self):
-        return self.user_guid
-
-    def __init__(self, user_guid):
-        self.user_guid = user_guid
-        self.last_activity = datetime.now(tz=None)
-
-
-sessions_storage = SessionsStorage()
+    def get_session_guid(self, user_guid):
+        session_guid = self.sessions.get(user_guid).decode("utf-8")
+        return session_guid
 
 
 def validate_authorization_contract(req):
@@ -135,21 +131,17 @@ permission = {
 
 
 def check_permission(token, service):
-    session = sessions_storage.get_session(token)
-    if not isinstance(session, Session):
+    user_guid = SessionsStorage().get_user_guid(token,)
+    # Database-side validations:
+    user = People.objects.filter(guid=user_guid)
+    # Check check availability in the database
+    if user:
         return False
     else:
-        user_guid = session.get_user_guid()
-        # Database-side validations:
-        user = People.objects.filter(guid=user_guid)
-        # Check check availability in the database
-        if user:
+        role = user.get_role()
+        eligible_role = permission.get(service, None)
+        if eligible_role is None:
             return False
         else:
-            role = user.get_role()
-            eligible_role = permission.get(service, None)
-            if eligible_role is None:
-                return False
-            else:
-                if eligible_role == role:
-                    return True
+            if eligible_role == role:
+                return True
