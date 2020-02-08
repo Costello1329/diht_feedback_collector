@@ -22,20 +22,20 @@ class SessionsStorage:
     def __init__(self):
         self.sessions = redis.Redis(host='localhost', port=6379, db=0)
 
-    def create_session(self, user_guid, session_guid):
-        self.sessions.mset({session_guid: user_guid})
+    def create_session(self, session_guid, user_guid):
+        self.sessions.mset({str(session_guid): str(user_guid)})
 
     def check_session(self, session_guid):
-        if self.sessions.exists(session_guid) == 0:
+        if self.sessions.exists(str(session_guid)) == 0:
             return False
         else:
             return True
 
     def delete_session(self, session_guid):
-        self.sessions.delete(session_guid)
+        self.sessions.delete(str(session_guid))
 
     def get_user_guid(self, session_guid):
-        user_guid = self.sessions.get(session_guid).decode("utf-8")
+        user_guid = self.sessions.get(str(session_guid)).decode("utf-8")
         return user_guid
 
 
@@ -46,19 +46,19 @@ class UsersStorage:
         self.users_storage = redis.Redis(host='localhost', port=6379, db=1)
 
     def check_user(self, user_guid):
-        if self.users_storage.exists(user_guid) == 0:
+        if self.users_storage.exists(str(user_guid)) == 0:
             return False
         else:
             return True
 
     def create_user(self, user_guid: str, session_guid: str):
-        self.users_storage.mset({user_guid: session_guid})
+        self.users_storage.mset({str(user_guid): str(session_guid)})
 
     def delete_user(self, user_guid: str):
-        self.users_storage.delete(user_guid)
+        self.users_storage.delete(str(user_guid))
 
     def get_session_guid(self, user_guid):
-        session_guid = self.sessions.get(user_guid).decode("utf-8")
+        session_guid = self.sessions.get(str(user_guid)).decode("utf-8")
         return session_guid
 
 
@@ -131,7 +131,7 @@ permission = {
 
 
 def check_permission(token, service):
-    user_guid = SessionsStorage().get_user_guid(token,)
+    user_guid = SessionsStorage().get_user_guid(token, )
     # Database-side validations:
     user = People.objects.filter(guid=user_guid)
     # Check check availability in the database

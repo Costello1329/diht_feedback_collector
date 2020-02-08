@@ -54,7 +54,7 @@ class UserView(APIView):
                     sessions_storage = SessionsStorage()
                     user_storage = UsersStorage()
                     if all_is_valid:
-                        if user_storage.check_user(user.guid):
+                        if user_storage.check_user(user.guid_id):
                             session_guid = user_storage.get_session_guid(user.guid)
                         else:
                             while True:
