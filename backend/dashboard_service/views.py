@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 # Create your views here.
-from authorization_service.apps import sessions_storage, check_permission
+from authorization_service.apps import SessionsStorage, check_permission
 from dashboard_service.apps import get_dashboard_response_success, get_dashboard_response_error, \
     get_dashboard_response_reject
 from dashboard_service.models import GroupCourse
@@ -22,16 +22,14 @@ class UserView(APIView):
             if session_guid is None:
                 return get_dashboard_response_reject(session_guid)
 
-            session = sessions_storage.get_session(session_guid)
-
             if check_permission(session_guid, "dashboard_service_post"):
                 return get_dashboard_response_error(ResponseErrorType.Validation, 403)
 
-            if session is None:
-                return get_dashboard_response_reject(session_guid)
+            session_storage = SessionsStorage()
+            if not session_storage.check_session(session_guid):
+                return get_dashboard_response_error(ResponseErrorType.Validation, 401)
 
-            sessions_storage.update_session(session_guid)
-            user = People.objects.filter(guid=session.user_guid)
+            user = People.objects.filter(guid=session_storage.get_user_guid(session_guid))
             if user:
                 user = user[0]
                 group = user.guid.group

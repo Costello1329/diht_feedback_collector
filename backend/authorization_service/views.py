@@ -11,7 +11,7 @@ from authorization_service.apps import SessionsStorage, validate_authorization_c
 from diht_feedback_collector.apps import ResponseErrorType, setup_cors_response_headers
 from registration_services.models import People
 
-from authorization_service.apps import sessions_storage
+from authorization_service.apps import SessionsStorage, UsersStorage
 
 
 class UserView(APIView):
@@ -51,10 +51,18 @@ class UserView(APIView):
                         and is_password_valid is True
 
                     session_guid = None
-
+                    sessions_storage = SessionsStorage()
+                    user_storage = UsersStorage()
                     if all_is_valid:
-                        session_guid = uuid.uuid4().hex
-                        sessions_storage.create_session(user.guid, session_guid)
+                        if user_storage.check_user(user.guid_id):
+                            session_guid = user_storage.get_session_guid(user.guid)
+                        else:
+                            while True:
+                                session_guid = uuid.uuid4().hex
+                                if not sessions_storage.check_session(session_guid):
+                                    sessions_storage.create_session(session_guid, user.guid)
+                                    user_storage.create_user(user.guid, session_guid)
+                                    break
 
                     return get_authorization_response_success(
                         does_login_exist,
