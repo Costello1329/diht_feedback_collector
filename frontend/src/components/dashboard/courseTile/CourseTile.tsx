@@ -26,7 +26,7 @@ export class CourseTile extends React.Component<CourseTileProps> {
   }
 
   private getLink (pollGuid: string): string {
-    return "/poll?guid=" + pollGuid;
+    return "poll/" + pollGuid;
   }
 
   private getPollFillingAnnotationText (

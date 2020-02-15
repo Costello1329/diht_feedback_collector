@@ -111,17 +111,20 @@ extends React.Component<AppProps, AppState> {
       <DashboardLayout user = {this.state.user}/> :
       <></>;
 
-    const poll = (): JSX.Element => {
-      var query: string = window.location.href;
-      const start: number = "guid".length + 2 + query.indexOf("?");
-      const delta: number = 32 + 4;
-      const guid: string = query.slice(start, start + delta);
+    const poll = (hash: string): JSX.Element => {
+      const guid: string | undefined = hash.split("/")[1];
 
-      return (
-        this.state.user instanceof AuthorizedUser ?
-        <PollLayout pollGuid = {guid} user = {this.state.user}/> :
-        <></>
-      );
+      if (guid === undefined)
+        return <></>;
+
+      else {
+        return (
+          <PollLayout
+            user = {this.state.user as AuthorizedUser}
+            pollGuid = {guid}
+          />
+        );
+      }
     }
 
     /**
@@ -163,7 +166,7 @@ extends React.Component<AppProps, AppState> {
             <Route path = {this.props.pollLink}>
               {
                 this.state.user instanceof StudentUser ?
-                poll() :
+                poll(window.location.hash) :
                 (
                   this.state.logoutHappened ?
                   redirectHomepage :

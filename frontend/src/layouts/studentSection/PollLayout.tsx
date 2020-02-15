@@ -20,7 +20,8 @@ extends React.Component<PollLayoutProps> {
     const layout: JSX.Element =
       <div>
         <Header userName = {this.props.user.login}/>
-        <PollComponent guid = {this.props.pollGuid}/>
+        {this.props.pollGuid}
+        {/* <PollComponent guid = {this.props.pollGuid}/> */}
         <Footer/>
       </div>;
 
