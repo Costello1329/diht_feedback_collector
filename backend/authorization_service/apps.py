@@ -20,7 +20,7 @@ class SessionsStorage:
     sessions: redis.Redis
 
     def __init__(self):
-        self.sessions = redis.Redis(host='localhost', port=6379, db=0)
+        self.sessions = redis.Redis(host='127.0.0.1', port=6379, db=0)
 
     def create_session(self, session_guid, user_guid):
         self.sessions.mset({str(session_guid): str(user_guid)})
@@ -43,7 +43,7 @@ class UsersStorage:
     users_storage: redis.Redis
 
     def __init__(self):
-        self.users_storage = redis.Redis(host='localhost', port=6379, db=1)
+        self.users_storage = redis.Redis(host='127.0.0.1', port=6379, db=1)
 
     def check_user(self, user_guid):
         if self.users_storage.exists(str(user_guid)) == 0:
