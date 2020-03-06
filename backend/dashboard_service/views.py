@@ -7,7 +7,7 @@ from dashboard_service.apps import get_dashboard_response_success, get_dashboard
     get_dashboard_response_reject
 from dashboard_service.models import GroupCourse
 from diht_feedback_collector.apps import ResponseErrorType, setup_cors_response_headers
-from registration_services.models import People
+from registration_services.models import People, Guid
 
 
 class UserView(APIView):
@@ -28,8 +28,9 @@ class UserView(APIView):
             session_storage = SessionsStorage()
             if not session_storage.check_session(session_guid):
                 return get_dashboard_response_error(ResponseErrorType.Validation, 401)
-
-            user = People.objects.filter(guid=session_storage.get_user_guid(session_guid))
+            guid = Guid.objects.filter(guid=session_storage.get_user_guid(session_guid))
+            guid = guid[0]
+            user = People.objects.filter(guid=guid)
             if user:
                 user = user[0]
                 group = user.guid.group
