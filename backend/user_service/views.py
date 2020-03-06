@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from diht_feedback_collector.apps import setup_cors_response_headers, ResponseErrorType
-from registration_services.models import People
+from registration_services.models import People, Guid
 from user_service.apps import get_user_response_success, get_user_response_reject, get_user_response_error
 from authorization_service.apps import SessionsStorage, check_permission
 
@@ -30,8 +30,9 @@ class UserView(APIView):
 
             if check_permission(session_guid, "user_service_post"):
                 get_user_response_error(ResponseErrorType.Validation, 403)
-
-            user = People.objects.filter(guid=user_guid)
+            guid = Guid.objects.filter(guid=user_guid)
+            guid = guid[0]
+            user = People.objects.filter(guid=guid)
             if user:
                 user = user[0]
                 return get_user_response_success(

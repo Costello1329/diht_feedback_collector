@@ -1,6 +1,5 @@
 from django.shortcuts import render
 
-# Create your views here.
 import uuid
 
 from rest_framework.response import Response

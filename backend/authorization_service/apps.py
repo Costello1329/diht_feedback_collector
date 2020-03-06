@@ -6,7 +6,7 @@ from rest_framework.response import Response
 import json
 import redis
 from diht_feedback_collector.apps import setup_cors_response_headers, get_response_error_string_by_type
-from registration_services.models import People
+from registration_services.models import People, Guid
 
 
 class AuthorizationServiceConfig(AppConfig):
@@ -20,10 +20,10 @@ class SessionsStorage:
     sessions: redis.Redis
 
     def __init__(self):
-        self.sessions = redis.Redis(host='127.0.0.1', port=6379, db=0)
+        self.sessions = redis.Redis(host='localhost', port=6379, db=0)
 
     def create_session(self, session_guid, user_guid):
-        self.sessions.mset({str(session_guid): str(user_guid)})
+        self.sessions.mset({str(session_guid): str(user_guid.guid)})
 
     def check_session(self, session_guid):
         if self.sessions.exists(str(session_guid)) == 0:
@@ -133,7 +133,9 @@ permission = {
 def check_permission(token, service):
     user_guid = SessionsStorage().get_user_guid(token, )
     # Database-side validations:
-    user = People.objects.filter(guid=user_guid)
+    guid = Guid.objects.filter(guid=user_guid)
+    guid = guid[0]
+    user = People.objects.filter(guid=guid)
     # Check check availability in the database
     if user:
         return False
