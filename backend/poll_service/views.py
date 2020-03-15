@@ -11,7 +11,7 @@ from diht_feedback_collector.apps import ResponseErrorType, setup_cors_response_
 from poll_service.apps import get_poll_response_reject, get_poll_response_error, validate_poll_contract, \
     get_poll_response_success, validate_poll_query_params
 from poll_service.models import Questionnaire
-from registration_services.models import People
+from registration_services.models import People, Guid
 import uuid
 
 
@@ -80,7 +80,9 @@ class UserView(APIView):
                 return get_poll_response_error(ResponseErrorType.Validation, 403)
 
             course_guid = params["course_guid"]
-            user = People.objects.filter(guid=session_storage.get_user_guid(session_guid))
+            user_guid = Guid.objects.filter(guid=session_storage.get_user_guid(session_guid))
+            user_guid = user_guid[0]
+            user = People.objects.filter(guid=user_guid)
             if user:
                 user = user[0]
             else:
@@ -88,12 +90,12 @@ class UserView(APIView):
 
             course = Course.objects.filter(guid=course_guid)
             if course:
+                course = course[0]
                 group = user.guid.group
                 teacher_role = TeacherRole.objects.filter(group=group, course=course)
                 list_teacher = dict()
                 for teachers in teacher_role:
                     list_teacher.update({teachers.teacher.full_name: teachers.role})
-                course = course[0]
                 questionnaire = Questionnaire.objects.filter(course=course, user=user)
 
                 if questionnaire:

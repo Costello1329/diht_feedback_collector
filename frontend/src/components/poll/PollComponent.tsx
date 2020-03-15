@@ -15,7 +15,7 @@ import {pollService} from "../../services/api/PollService";
 import "./styles";
 
 
-interface PollComponentProps {
+export interface PollComponentProps {
   guid: string;
 }
 

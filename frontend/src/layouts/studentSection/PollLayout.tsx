@@ -5,9 +5,8 @@ import {PollComponent} from "../../components/poll/PollComponent";
 import {AuthorizedUser} from "../../services/clientWorkers/sessions/User";
 
 
-interface PollLayoutProps {
+export interface PollLayoutProps {
   user: AuthorizedUser;
-  pollGuid: string;
 }
 
 export class PollLayout
@@ -17,14 +16,15 @@ extends React.Component<PollLayoutProps> {
   }
   
   render (): JSX.Element {
+    const pollGuid: string = location.hash.split("/")[1];
+    alert(pollGuid);
+
     const layout: JSX.Element =
       <div>
         <Header userName = {this.props.user.login}/>
-        {this.props.pollGuid}
-        {/* <PollComponent guid = {this.props.pollGuid}/> */}
+        <PollComponent guid = {pollGuid}/>
         <Footer/>
       </div>;
-
 
     return layout;
   }

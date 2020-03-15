@@ -12,6 +12,7 @@ import {PollFillingStatus} from "../../components/dashboard/courseTile/CourseTil
 
 export interface DashboardLayoutProps {
   user: AuthorizedUser;
+  pollLink: string;
 }
 
 interface DashboardLayoutState {

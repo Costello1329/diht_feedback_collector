@@ -7,7 +7,13 @@ import {PollLayout} from "./studentSection/PollLayout";
 import {ForbiddenLayout} from "./errorLayouts/ForbiddenLayout";
 import {NotFoundLayout} from "./errorLayouts/NotFoundLayout";
 import {userService} from "../services/api/UserService";
-import {User, UnauthorizedUser, StudentUser, AuthorizedUser, LeaderUser} from "../services/clientWorkers/sessions/User";
+import {
+  User,
+  UnauthorizedUser,
+  StudentUser,
+  AuthorizedUser,
+  LeaderUser
+} from "../services/clientWorkers/sessions/User";
 import {Notifications} from "../components/notifications/NotificationsComponent";
 
 import "../styles/app.scss";
@@ -108,27 +114,18 @@ extends React.Component<AppProps, AppState> {
 
     const dashboard: JSX.Element =
       this.state.user instanceof AuthorizedUser ?
-      <DashboardLayout user = {this.state.user}/> :
+      <DashboardLayout
+        user = {this.state.user}
+        pollLink = {this.props.pollLink}
+      /> :
       <></>;
 
-    const poll = (hash: string): JSX.Element => {
-      const guid: string | undefined = hash.split("/")[1];
-
-      if (guid === undefined)
-        return <></>;
-
-      else {
-        return (
-          <PollLayout
-            user = {this.state.user as AuthorizedUser}
-            pollGuid = {guid}
-          />
-        );
-      }
-    }
+    const poll: JSX.Element =
+      this.state.user instanceof AuthorizedUser ?
+      <PollLayout user = {this.state.user as AuthorizedUser}/> : <></>;
 
     /**
-     * app instance:
+     * App instance:
      */
 
     const app: JSX.Element =
@@ -166,7 +163,7 @@ extends React.Component<AppProps, AppState> {
             <Route path = {this.props.pollLink}>
               {
                 this.state.user instanceof StudentUser ?
-                poll(window.location.hash) :
+                poll :
                 (
                   this.state.logoutHappened ?
                   redirectHomepage :
