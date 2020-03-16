@@ -30,7 +30,7 @@ interface FormState {
 }
 
 /**
- * Warning: This a static-props component, that was'nt properly designed
+ * Warning: This is a static-props component, that was'nt properly designed
  * to handle props change. Please, don't change props of this
  * component's instances. Use keys instead.
  */

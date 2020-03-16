@@ -107,11 +107,6 @@ class UserView(APIView):
                     }
                     return get_poll_response_success(body, session_guid)
                 else:
-                    group = user.guid.group
-                    teacher_role = TeacherRole.objects.filter(group=group, course=course)
-                    list_teacher = dict()
-                    for teachers in teacher_role:
-                        list_teacher.update({teachers.teacher.full_name: teachers.role})
                     while True:
                         guid = uuid.uuid4().hex
                         if not Questionnaire.objects.filter(guid=guid):
@@ -122,7 +117,6 @@ class UserView(APIView):
                                 "teachers": list_teacher
                             }
                             return get_poll_response_success(body, session_guid)
-
             else:
                 return get_poll_response_error(ResponseErrorType.Validation, 400)
         except Exception:

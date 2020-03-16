@@ -17,7 +17,6 @@ extends React.Component<PollLayoutProps> {
   
   render (): JSX.Element {
     const pollGuid: string = location.hash.split("/")[1];
-    alert(pollGuid);
 
     const layout: JSX.Element =
       <div>
